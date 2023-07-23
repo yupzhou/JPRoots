@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>JPRoots</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/Article-List.css">
+    <link rel="stylesheet" href="assets/css/Footer-Basic.css">
+    <link rel="stylesheet" href="assets/css/iframe.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="icon" type="image/png" href="assets/img/icon.png"/>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?1f4fad3ec08a9ca9c64a0992eb2ce534";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-search fixed-top" style="border-bottom: 1px solid rgb(0,123,255) ;">
+        <div class="container"><a class="navbar-brand" href="index.html" style="text-shadow: 0px 0px;">JPRoots</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-2"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div
+                class="collapse navbar-collapse" id="navcol-2">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item"></li>
+                    <li class="nav-item"></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="chap1.html">道</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="chap2.html">训</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="chap3.html">音</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="chap4.html">他</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-primary" href="JLVDB.html" style="border-width: 1px;border-style: solid;border-radius: 55px;">JLVDB <i class="fa fa-book"></i></a></li>
+                </ul>
+                <form class="form-inline mr-auto" target="_self">
+                    <div class="form-group"><label for="search-field"></label></div>
+                </form>
+        </div><img src="assets/img/logoNNSw.png" style="width: 68px;padding-top: 0px;text-align: left;" /></div>
+    </nav>
+    <div></div>
+    <div class="card" style="padding: 30px;filter: blur(0px);">
+        <div class="container">
+            <div class="row" style="margin-top: 50px;">
+                <div class="col-md-3 col-lg-2 col-xl-3 d-md-block d-none" style="margin: 0px 15px 0px 15px;">
+                    <div class="form-group"><label for="search-field""></label>
+					<input type="search" id="searchInput" class="search-field" name="search" style="width: 110px;margin-top: 15px;margin-right: 12px;border-width: 1px;border-style: none;border-bottom-style: solid;color: rgb(150,150,150);font-style: italic;" placeholder="Search ..."  autocomplete="off"/>
+					<!-- 将搜索结果的容器设置为绝对定位，以解决显示问题 -->
+					<div id="searchResultsContainer">
+					  <div id="searchResults"></div>
+					</div>
+<button class="btn" type="button" style="font-size: 14px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;margin-bottom: 6px;" id="searchBtn"><i class="fa fa-search" style="color: rgb(0,123,255);"></i></button>
+<button class="btn btn-primary" type="button" style="margin-left: 15px;font-size: 14px;margin-bottom: 6px;" id="randomBtn">手气不错</button>
+</div>
+					
+					
+                </div>
+                <div class="col-md-8 col-lg-9 col-xl-8 header-container" style="margin: 0px 15px 0px 15px; padding-top: 10px;">
+                    <h3 class="text-primary">日琉语词汇数据库</h3> <h4 class="text-primary">Japonic Languages Vocabulary DataBase</h4>
+                </div>
+				<!-- 将获取词汇列表的 JavaScript 代码中的 ID 修改为 "wordList" -->
+                <div class="col-md-3 col-lg-2 col-xl-3" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 15px; padding-top: 5px;">
+					<h5><center><i class="fa fa-book"></i> 词汇表</center></h5>
+					<div style="height: 350px; overflow-y: scroll;">
+						<ul id="wordList"></ul>
+					</div>
+				</div>
+								
+                <div class="col-md-8 col-lg-9 col-xl-8" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 15px; padding-top: 7px; line-height: 1;">
+					<div id="wordInfo" style="height: 350px; overflow-y: scroll;"></div>
+				</div>
+
+				
+                <div class="col">
+                    <hr>
+                    <h3 class="text-primary" style="padding-bottom: 5px;"><a name="JVLDB 介绍">JVLDB 介绍</a><br></h3>
+                    <p>JVLDB，全称“日琉语词汇数据库（Japonic Languages Vocabulary DataBase）”，是本网站最核心的数据库。计划收录词汇数量为：8,000 左右。词汇语种包括：本土日语、琉球语等。JLVDB 的开发是在 AI 的帮助下完成的。包括 ① 模糊搜索、② 随机搜索、③ 词汇表查询功能。通过在本页面左上的搜索栏输入罗马字，可通过按回车键或搜索按钮进行模糊搜索，将返回一个候选词列表，通过选取词语，右边将展示词语的各种信息（见下方表格）；搜索栏右侧”手气不错“是一个随机搜索的按钮，会在词汇表中随机选取一个词语展示；搜索栏下方是一个词汇表，可以任选词语进行展示。下方表格展示的词语信息，不是每个词语都包含所有项目，没有的（或暂时未收集到信息的）则不会展示。</p>
+                    <p>注意事项：<br>(1) 本辞典采用严式罗马字进行模糊搜索，具体拼写详见“<a href="chap4.html#罗马字表记">罗马字表记</a>”一节。严式罗马字使用方便，无需考虑历史上的语音变化。<br>(2) 历史上未传承到现代的一些二段动词，本辞典全部改为了统一的一段动词的形式。<br>(3) 不收录（大部分，也收录一些）的词汇包括：明显的汉语词、复合词；明显的派生名词，如接续-i, -sa, -mi等的形式（不过会在对应动词或形容词处提到）；外来语。<br>(4) 由于琉球语语料来源广泛，存在表记不完全统一的问题，仅供参考，可能存在谬误。出于表示方便采用的简单写法：如用 q 表示喉塞音 [ʔ]；用大写辅音字母表示咽化辅音。<br>（※ 目前数据尚未准备完成，现为功能测试阶段，使用的数据仅用于测试，完整数据预计2024年中以后上线）<br></p>
+                    <p class="text-primary">Table JVLDB 收录内容一览</p>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th><strong>收录内容</strong></th>
+                                    <th><strong>词汇&nbsp;</strong><i class="fa fa-book"></i></th>
+                                    <th><strong>日琉对应&nbsp;</strong><i class="fa fa-map"></i></th>
+                                    <th><strong>外部对应&nbsp;</strong><i class="fa fa-globe"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>详细</td>
+                                    <td>(1) 序号<br>(2) 词首<br>(3) 变体平文式<br>(4) 严式<br>(5) 构拟祖型<br>(6) 汉字<br>(7) 词性<br>(8) 重音<br>(9) 释义</td>
+                                    <td>(10) 词根<br>(11) 词缀信息<br>(12) 复合构词<br>(13) 拟声拟态词根<br>(14) 拟声拟态派生模式<br>(15) 方言性分布<br>(16) 标准语<br>(17) 上代东国方言<br>(18) 八丈方言<br>(19) 本土方言<br>(20) 琉球语<br>(21) 大陆倭语<br>(22) 考察</td>
+                                    <td>(23) Ainu语<br>(24) 朝鲜-韩语<br>(25) 汉语<br>(26) 南岛语<br>(27) 侗台语<br>(28) 印欧语<br>(29) 突厥、蒙古、满-通古斯语<br>(30) 南亚语</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">Nanasi 七梨子 © 2023, Ver 0.2</p>
+    </div>
+	
+	<script>
+	  // 使用 Fetch API 加载 JLVDB.json 文件
+	  fetch("JLVDB.json")
+	    .then(response => response.json())
+	    .then(data => {
+			console.log("Loaded JLVDB.json:", data);
+	      const wordData = data;
+		  const searchResultsContainer = document.getElementById("searchResultsContainer");
+	      const searchInput = document.getElementById("searchInput");
+	      const searchBtn = document.getElementById("searchBtn");
+	      const randomBtn = document.getElementById("randomBtn");
+	      const searchResults = document.getElementById("searchResults");
+	      const wordList = document.getElementById("wordList");
+	      const wordInfo = document.getElementById("wordInfo");
+	
+	      // 生成词汇表
+	      for (const wordInfo of wordData) {
+	        const word = wordInfo.word;
+	        const li = document.createElement("li");
+	        li.textContent = word;
+	        li.addEventListener("click", () => displayWordInfo(word));
+	        wordList.appendChild(li);
+	      }
+	
+	      // 搜索功能
+		  // 点击搜索按钮时显示词语列表
+	      searchBtn.addEventListener("click", () => {
+			  searchWord();
+			  searchResultsContainer.style.display = "block";
+			});
+			// 按下回车键时显示词语列表
+	      searchInput.addEventListener("keypress", (event) => {
+	        if (event.key === "Enter") {
+	          searchWord();
+			  searchResultsContainer.style.display = "block";
+	        }
+	      });
+		  
+		  // 点击搜索框时不显示词语列表
+		  searchInput.addEventListener("click", () => {
+		    searchResultsContainer.style.display = "none";
+		  });
+	
+	      // 随机搜索功能
+	      randomBtn.addEventListener("click", () => randomSearchWord());
+	
+	      function searchWord() {
+	        const searchInput = document.getElementById("searchInput");
+			const searchTerm = searchInput.value.toLowerCase();
+			if (searchTerm.trim() === '') {
+			      return;
+			    }
+	        const matchingWords = wordData.filter(item => item.word.toLowerCase().includes(searchTerm));
+	        displaySearchResults(matchingWords);
+	      }
+	
+	      function randomSearchWord() {
+	        const randomWord = wordData[Math.floor(Math.random() * wordData.length)].word;
+	        displayWordInfo(randomWord);
+	      }
+		//生成匹配词汇列表
+	      function displaySearchResults(matchingWords) {
+	        searchResults.innerHTML = ""; // 清空之前的搜索结果
+	
+	        matchingWords.forEach(item => {
+	          const word = item.word;
+	          const resultItem = document.createElement("div");
+			  const wordText = document.createElement("span");
+	          resultItem.textContent = word;
+			  wordText.classList.add("word");
+			      resultItem.appendChild(wordText);
+			  
+			      // 添加分割线
+			      const separator = document.createElement("div");
+			      separator.classList.add("separator2");
+			      resultItem.appendChild(separator);
+			  
+	          resultItem.addEventListener("click", () => displayWordInfo(word));
+	          searchResults.appendChild(resultItem);
+	        });
+	      }
+	
+	      // 显示词语的信息
+	      function displayWordInfo(word) {
+	       
+			const info = wordData.find(item => item.word === word);
+			  let infoHTML = `<h3>${word}</h3>`;
+			  infoHTML += `<div class="separator"></div>`;
+			  if (info.info1 && info.info1.trim() !== "") {
+			    infoHTML += `<p><strong>〔严式〕</strong> ${info.info1}</p>`;
+			  }
+			  if (info.info2 && info.info2.trim() !== "") {
+			    infoHTML += `<p><strong>〔变体平文式〕</strong> ${info.info2}</p>`;
+			  }
+			  if (info.info3 && info.info3.trim() !== "") {
+			    infoHTML += `<p><strong>〔词缀信息〕</strong> ${info.info3}</p>`;
+			  }
+			  wordInfo.innerHTML = infoHTML;
+
+	      }
+		  
+		  // 监听整个文档的点击事件
+		    document.addEventListener("click", (event) => {
+		      // 检查点击的元素是否在搜索结果的容器内或搜索输入框上，如果在则保持显示词语列表
+		      if (searchResultsContainer.contains(event.target)) {
+		        searchResultsContainer.style.display = "block"; // 确保词语列表显示
+		      } else {
+		        searchResultsContainer.style.display = "none"; // 否则，隐藏词语列表
+		      }
+		    });
+		  
+		  // 点击搜索按钮时不隐藏词汇列表
+		  searchBtn.addEventListener("click", (event) => {
+		    event.stopPropagation(); // 阻止事件传播，防止文档点击事件的处理程序执行
+		    searchWord(); // 执行搜索功能
+		    searchResultsContainer.style.display = "block"; // 确保词语列表显示
+		  });
+		  
+	    })
+	    .catch(error => console.error("Failed to load JLVDB.json:", error));
+	</script>
+	
+	<style>
+	  #searchResultsContainer {
+	    position: absolute;
+	    z-index: 1;
+	    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+		background-color: white;
+		width: 160px;
+		overflow-y: auto; /* 添加纵向滚动条，当内容超过容器高度时显示滚动条 */
+		display: none;
+		height: 100px;
+	  }
+
+		#wordList {
+		    list-style-type: none; /* 去掉圆点 */
+			padding: 0; /* 移除默认的列表项内边距 */
+			font-size: 15px;
+		  }
+		
+		#wordList li::before {
+		  content: "»"; /* 添加自定义的汉字作为列表项的标记 */
+		  margin-right: 5px; /* 可选：增加一些空间，使汉字与列表项内容之间有一定距离 */
+		  padding: 3px;
+		}
+		
+		  #wordList li {
+		    border-bottom: 1px solid #ccc; /* 使用边框分隔词汇 */
+		    padding: 3px;
+			margin: 0px 10px 0px 0px;
+		  }
+		
+		.separator {
+		  border-top: 1px solid #ccc; /* 添加上边框作为分割线，可以根据需要调整颜色和粗细 */
+		  margin: 5px 10px 12px 0px; /* 调整分割线与其他内容的间距，根据需要调整值 */
+		}
+			
+		/* 词汇文本的样式 */
+		div#searchResults {
+		  font-size: 15px;
+		  margin: 0px 10px 0px 10px;
+		}
+		
+		/* 分割线样式 */
+		.separator2 {
+		  border-top: 1px solid #ccc; /* 添加上边框作为分割线，可以根据需要调整颜色和粗细 */
+		margin: 2px 0;
+		}
+		
+		.header-container{
+			display: flex;
+			justify-content: space-evenly;
+		}
+	
+	</style>
+</body>
+
+</html>
