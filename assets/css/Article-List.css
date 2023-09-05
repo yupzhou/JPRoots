@@ -73,7 +73,7 @@
 
 h3.name {
   position: absolute;
-  top: 30%;
+  top: 22%;
   bottom: 30%;
   left: 10%;
   right: 10%;
@@ -82,5 +82,9 @@ h3.name {
 .item {
   position: relative;
   display: inline-block;
+}
+
+a:hover {
+  text-decoration: none;
 }
 
