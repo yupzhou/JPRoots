@@ -57,7 +57,7 @@ var _hmt = _hmt || [];
                 <form class="form-inline mr-auto" target="_self">
                     <div class="form-group"><label for="search-field"></label></div>
                 </form>
-        </div><img src="assets/img/logoNNSw.png" style="width: 68px;padding-top: 0px;text-align: left;"></div>
+        </div><img class="d-none d-print-block d-sm-none d-md-block d-lg-block d-xl-block" src="assets/img/logoNNSw.png" style="width: 68px;padding-top: 0px;text-align: left;"></div>
     </nav>
     <div></div>
     <div class="card" style="padding: 30px;filter: blur(0px);">
@@ -260,7 +260,90 @@ var _hmt = _hmt || [];
                                         <p>较早的不成体系的吴音（和音）很少用上声点，后来一些早期用去声点标记的单假名汉字被标记上声点。这或许不是音系发展，而是学术上的发展（因为没有影响到 1.3b 调型）。佚名《書写山声明抄》中提到：去声不在单假名出现。也许汉音的去声是很长的调，不适合用作单假名的声点。</p>
                                         <p>历史上有佛僧曾比较过吴音和汉音音调的区别：</p>
                                         <p>仲算《法華経釈文》（976）：平声字都司馬音渡上去音、上去字対馬音渡平音（都司馬音 = 対馬音，指吴音）。<br>心蓮《悉曇口伝》（1180）：呉音平重成漢上声、呉音上成漢平、呉音去成漢平軽、呉平軽成漢去、呉音入則漢入也、於漢無入重於呉無入軽也。<br>了尊《悉曇輪略図抄》（1287）：次明呉漢音声者、私頌云、呉漢音声互相博、平声重与上声軽、平声軽与去声重、上声重与去声軽（《切韻》之后的浊上变去？）、入声軽与同声重。</p>
-                                        <p>镰仓时代传入的宋音及江户时代传入的唐音，无声点文献。<br></p>
+                                        <p>镰仓时代传入的宋音及江户时代传入的唐音，无声点文献。</p>
+                                        <p>虽然最早记录晚期中古汉语声调的是安然 9 世纪的记录，但是后来的悉昙学学者对安然记录的解读并不能直接反映中古汉语的声调：这个调式由复杂的 /R/ 调和 /F/ 调序列构成，与中古汉语的声调几乎无关。金田一在考虑中古日语调式标准理论的时候，对中古汉音音调的传统解读 /R/, /F/ 分别修改为 /H/, /L/，使得中古日语调式和中古汉音音调的调值相一致。但是，这个修改与悉昙学的描述相背离。Ramsey主张，悉昙学学者的佛教音调与中古日语的音调其实是
+                                            2 种不同的调式：佛教音调标记的用途是正确地诵经，而不是标记日语的音调，但是，通过改编，可以将它们应用到中古日语中。</p>
+                                        <p>由于汉音入声字在方言中的反映通常与 2.1 调类一致（根据 Ramsey 理论是 /LL/），而且根据高山，《日本書紀》里的声调对立是平 vs 上去入，de Boer 由此给出汉日音的“汉音”的原型的音调的音高应为如此：入 L，平 H，上 L。根据悉昙藏，9 世纪时，长安音发生了词首音调的分裂：辅音清者为 H，浊为 L，该分裂只影响到天台宗和真言宗。该分裂在 11 世纪时以轻 vs 重的形式正式引入到日语的调式中。11
+                                            世纪末，明覚通过分析前人的文献构拟出 8 音调系统，他将字音按反切分成 2 部分，每个部分都有独立的音调。<br></p>
+                                        <p class="text-primary">Table 佛教音调与中古日语中的应用<br></p>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th><strong>调</strong></th>
+                                                        <th><strong>真言宗</strong></th>
+                                                        <th><strong>天台宗</strong></th>
+                                                        <th><strong>金田一</strong></th>
+                                                        <th><strong>早期汉音</strong><br><strong>应用到陀罗尼</strong> dhāraṇī <strong>的声点的值</strong></th>
+                                                        <th>早期汉音<br>应用到 MJ 的声点的值<br>Ramsey</th>
+                                                        <th>晚期汉音<br>应用到陀罗尼 dhāraṇī 的声点的值</th>
+                                                        <th>晚期汉音<br>应用到 MJ 的声点的值<br>Ramsey<br></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>平轻</td>
+                                                        <td>RF</td>
+                                                        <td>RF</td>
+                                                        <td>HL = F</td>
+                                                        <td>R (R:)</td>
+                                                        <td>R:</td>
+                                                        <td>RF</td>
+                                                        <td>×</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>平重</td>
+                                                        <td>F</td>
+                                                        <td>F</td>
+                                                        <td>L</td>
+                                                        <td>F</td>
+                                                        <td>H</td>
+                                                        <td>F</td>
+                                                        <td>H/F:</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>上</td>
+                                                        <td>R</td>
+                                                        <td>R</td>
+                                                        <td>H</td>
+                                                        <td>R</td>
+                                                        <td>L</td>
+                                                        <td>R</td>
+                                                        <td>L/R:</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>去</td>
+                                                        <td>F + “曲”</td>
+                                                        <td>FR</td>
+                                                        <td>LR（真言宗）/ LH（天台宗） = R</td>
+                                                        <td>F:</td>
+                                                        <td>F:</td>
+                                                        <td>F:</td>
+                                                        <td>F:</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>入轻</td>
+                                                        <td>R</td>
+                                                        <td>R</td>
+                                                        <td>H</td>
+                                                        <td>R</td>
+                                                        <td>L（汉日音中）</td>
+                                                        <td>R</td>
+                                                        <td>L（汉日音中）</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>入重</td>
+                                                        <td>F</td>
+                                                        <td>F</td>
+                                                        <td>L</td>
+                                                        <td>F</td>
+                                                        <td>H（汉日音中）</td>
+                                                        <td>F</td>
+                                                        <td>H（汉日音中）</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                         <hr>
                                         <h3 class="text-primary" style="padding-bottom: 5px;"><a name="中古汉语传承">中古汉语传承</a><br></h3><button class="btn btn-primary" type="button" style="margin-right: 20px;margin-bottom: 20px;margin-top: 10px;"><a class="text-light" href="#《廣韻》">《廣韻》<br></a></button>
                                         <button
@@ -280,7 +363,7 @@ var _hmt = _hmt || [];
                                                                 <p>38 声母体系的分析脱胎于唐朝 30 声母与宋朝36声母体系，顺序传承自悉昙音图顺序的倒序（正序：a ā i ī u ū e ai o au aṃ aḥ k kh g gh c ch j jh ṭ ṭh ḍ ḍh t th d dh ñ ṇ n p ph b bh m y r l v）。也称纽、声纽。38声母体系与36声母体系不同在于，将“照穿牀審禪”分成莊（照二）、章（照三）组，将喻母分成云以母，合并幫滂並明与非敷奉微（轻唇化条件：唇音三等韵（明+尤、東除外）
                                                                     &gt; 非敷奉微）。</p>
                                                                 <p>声母传统上区分唇、舌、齿、牙、喉音，全清（清送气）、次清（清不送气）、全浊（浊）、次浊（鼻）四分对立。<br></p>
-                                                                <p class="text-primary">Table 38字母表<br></p>
+                                                                <p class="text-primary">Table 38 字母表<br></p>
                                                                 <div class="table-responsive">
                                                                     <table class="table">
                                                                         <thead>

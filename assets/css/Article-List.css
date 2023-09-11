@@ -88,3 +88,18 @@ a:hover {
   text-decoration: none;
 }
 
+.navbar-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.form-inline {
+  display: none;
+}
+
+.nav-link.text-success.JLVDB:hover {
+  background-color: rgb(23,162,184) !important;
+  color: rgb(256,256,256) !important;
+}
+
