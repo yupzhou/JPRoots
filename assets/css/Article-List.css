@@ -103,3 +103,11 @@ a:hover {
   color: rgb(256,256,256) !important;
 }
 
+.indexbox {
+  overflow-y: scroll;
+}
+
+.dicindex-close {
+  height: 100px;
+}
+
