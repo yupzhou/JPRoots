@@ -4,9 +4,9 @@ $('#indexbtn').click(function() {
   if (indexinsopen) {
     $('.indexbox').css("visibility","hidden");
     $('.dicindex').css("height","0px");
-    $('.dicindex').css("padding-bottom","63px"); 
+    $('.dicindex').css("padding-bottom","61px"); 
     $('.dicindex').css("width","94px");
-    $('.dicindexmenu').css("width","60px");  
+    $('.dicindexmenu').css("width","59px");  
     $(this).html('目录');
     $('.dicindex').addClass('dicindex-close');
     indexinsopen = false;
