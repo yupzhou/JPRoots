@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>JPRoots</title>
-    <meta name="description" content="日琉语之道">
+    <title>JPRoots - 日琉语之道</title>
+    <meta name="description" content="日琉语综合知识站">
     <link rel="icon" type="image/png" sizes="100x100" href="assets/img/icon.png">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
@@ -40,25 +40,43 @@
     <div class="card" style="padding: 30px;filter: blur(0px);">
         <div class="container">
                     <div class="row" style="margin-top: 50px;">
+
                         <div class="col-md-3 col-lg-2 col-xl-3 d-block d-md-block d-none" style="margin: 0px 15px 0px 15px;">
                             <div class="form-group"><label for="search-field""></label>
-        					<input type="search" id="searchInput" class="search-field" name="search" style="width: 110px;margin-top: 15px;margin-right: 12px;border-width: 1px;border-style: none;border-bottom-style: solid;color: rgb(150,150,150);font-style: italic;" placeholder="Search ..."  autocomplete="off"/>
+        					<input type="search" id="searchInput" class="search-field" name="search" style="width: 110px;margin-top: 15px;margin-right: 12px;border-width: 1px;border-style: none;border-bottom-style: solid;color: rgb(150,150,150);font-size: 14px; padding-left: 8px;" placeholder="查询 ..."  autocomplete="off"/>
         					<!-- 将搜索结果的容器设置为绝对定位，以解决显示问题 -->
         					<div id="searchResultsContainer">
         					  <div id="searchResults"></div>
         					</div>
         <button class="btn" type="button" style="font-size: 14px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;margin-bottom: 6px;" id="searchBtn"><i class="fa fa-search" style="color: rgb(0,123,255);"></i></button>
         <button class="btn btn-primary" type="button" style="margin-left: 15px;font-size: 14px;margin-bottom: 6px;" id="randomBtn">手气不错</button>
-        </div>
-        					
-        					
+
+		<!-- 新增的下拉框 -->
+		<div class="filter-container">
+			<!-- 隐藏原生select保留数据绑定 -->
+			<select id="info19Filter" style="display:none">
+			  <option value="">请选择词根 ...</option>
+			</select>
+			
+			<!-- 新增自定义下拉UI -->
+			<div class="custom-select" id="customSelectTrigger" style="color: rgb(130, 130, 130); font-size:14px;">
+			  <span class="selected-text">请选择词根 ...</span>
+			  <span class="arrow">▼</span>
+			</div>
+			<div class="custom-options" id="customDropdown"></div>
+		  </div>
+
+		<!-- 新增的下拉框 -->
+        </div>	
                         </div>
-                        <div class="col-md-8 col-lg-9 col-xl-8 header-container" style="margin: 0px 15px 0px 15px; padding-top: 10px;">
-                            <h3 class="text-primary">日琉语词汇数据库</h3> <h4 class="text-primary"><em>Japonic Languages Vocabulary DataBase β</em></h4>
+
+                        <div class="col-md-8 col-lg-9 col-xl-8 header-container" style="margin: 0px 15px 0px 15px; padding: 10px;">
+                            <h3 class="text-primary">日琉语词汇数据库</h3><h4 class="text-primary"><em>Japonic Languages Vocabulary DataBase β1</em></h4>
                         </div>
+
         				<!-- 将获取词汇列表的 JavaScript 代码中的 ID 修改为 "wordList" -->
                         <div class="col-md-3 col-lg-2 col-xl-3" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 15px; padding-top: 5px;">
-        					<h5><center><i class="fa fa-book"></i> 词汇表</center></h5>
+        					<h5><center><i class="fa fa-book"></i> 辞典</center></h5>
         					<div style="height: 350px; overflow-y: scroll;">
         						<ul id="wordList"></ul>
         					</div>
@@ -72,31 +90,37 @@
                         <div class="col">
 							<hr>
 							<h3 class="text-primary" style="padding-bottom: 5px;"><a name="JVLDB 介绍">JVLDB 介绍</a><br></h3>
-							<p>JVLDB，全称“日琉语词汇数据库（Japonic Languages Vocabulary DataBase）”，是本网站最核心的数据库（词典）。计划收录词汇数量为：7200 + 3615。JLVDB 的开发在 AI 的帮助下完成。主要功能有 ① 模糊搜索、② 随机搜索、③ 词汇表查询：<br>① 模糊搜索：通过在本页面左上的搜索栏输入罗马字，按回车键或搜索按钮进行模糊搜索，返回一个候选词列表，通过选取词语，右栏展示词语的各种信息，涵盖词汇的音韵学、词源学、比较语言学信息；<br>②
-								随机搜索：搜索栏右侧”手气不错“是一个随机搜索的按钮，会在词汇表中随机选取一个词语展示；<br>③ 词汇表查询：搜索栏下方是一个词汇表，可以任选词语进行展示。<br>下方表格展示的词语信息，不是每个词语都包含所有项目，没有的（或暂时未收集到信息的）则不会展示。</p>
-							<p>注意事项：<br>(1) 本辞典采用严式罗马字进行模糊搜索。<br>(2) 历史上未传承到现代的（或未发生应该发生的变化的）一些形式，或者只见于琉球语的形式，本数据库提供了推导形式（带星号）。<br>(3) 不收录（大部分，也收录一些）的词汇包括：明显的汉语词、复合词；明显的派生（转成）名词，如接续 -i, -sa, -mi 等的派生形式（有些会在对应动词或形容词处提到，因此这种形式需查询原本的形式）；外来语。<br>(4) 由于琉球语语料来源广泛，存在表记不完全统一的问题，出于直观与易读的考虑，本数据库采用音系学表记，仅供参考，可能存在谬误。<br>(5)
-								重音部分采用 Martin（1987，可能有少许修改），格式：类；名义抄 - 东京-京都-鹿儿岛 诸钝-首里-与那国。Martin 用不同的字母表示不同的琉球语词调：A（2.1/2）、B（2.3）、C（2.4/5）。<br>※ 目前数据尚未完全准备好，现为功能测试阶段，使用的数据仅用于测试，完整资料预计 2026 年上线。<br></p>
+							<p>JVLDB，全称“日琉语词汇数据库（Japonic Languages Vocabulary DataBase）”，是本网站的数据库（辞典）。收录词汇数量为 7 千左右。JLVDB 的主要功能有：模糊搜索、随机搜索（”手气不错“按钮）、辞典查询、词根反查。下方表格展示的词语信息，不是每个词语都包含所有项目，没有的（或暂时未收集到信息的）则不会展示。</p>
+							<p>注意事项：<br></p>
+							<ol>
+								<li>本典采用严式罗马字进行模糊搜索。</li>
+								<li>历史上未传承到现代的（或未发生本该发生的变化的）一些形式，或者只见于琉球语的形式，本典提供了推导形式（词尾带星号）。</li>
+								<li>对于明显的汉语词、复合词、派生（转成）名词（如接续 -i, -sa, -mi 等的派生形式，有些会在对应动词或形容词处提到，因此这种形式需查询原本的形式）、外来词，大部分没有收录。</li>
+								<li>由于琉球语资料来源广泛，表记不完全统一，出于直观与易读上的考虑，本典采用较统一的音系学表记，仅供参考，可能存在谬误。</li>
+								<li>重音部分采用 Martin（1987，少许修改），格式：调类; 名义抄音调 - 东京-京都-鹿儿岛 诸钝-首里-与那国。Martin 用不同的字母表示不同的琉球语词调：A（2.1/2）、B（2.3）、C（2.4/5）。</li>
+								<li>更新计划：2025/5 第一批次（已更新）；2025/9 第二批次；2025/12 第三批次。</li>
+							</ol>
 							<p class="text-primary">JVLDB 预定收录内容</p>
 							<div class="table-responsive">
 								<table class="table">
 									<thead>
 										<tr>
-											<th><strong>收录内容</strong></th>
-											<th>基本信息</th>
-											<th>历史音韵学</th>
-											<th>方言音韵学</th>
-											<th>词源学</th>
-											<th>比较语言学</th>
+											<th><strong>域</strong></th>
+											<th>基本信息域</th>
+											<th>历史音韵学<strong>域</strong></th>
+											<th>方言音韵学<strong>域</strong></th>
+											<th>词源学<strong>域</strong></th>
+											<th>比较语言学<strong>域</strong></th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
-											<td>详细</td>
-											<td>(1) MdJ 严式<br>(2) MdJ 变体平文式<br>(3) 汉字<br>(4) 词性<br>(5) 重音<br>(6) 释义</td>
-											<td>(1) OJ 以前形式<br>(2) 半岛日语<br>(3) WOJ<br>(4) AOJ（EOJ + TSOJ）<br>(5) 其他 OJ<br>(6) EMJ<br>(7) LMJ<br>(8) MdJ<br>(9) 历史（文语）假名遣<br>(10) 现代（口语）假名遣</td>
-											<td>(1) 本土方言<br>(2) 八丈方言<br>(3) 琉球语</td>
-											<td>(1) 构拟祖型（如果有）<br>(2) 词根<br>(3) 词缀信息<br>(4) 复合构词<br>(5) 拟声拟态词根<br>(6) 考察</td>
-											<td>(1) Ainu 语<br>(2) 朝鲜-韩语<br>(3) 汉语<br>(4) 南岛语<br>(5) 侗台语<br>(6) 印欧语<br>(7) 尼夫赫语<br>(8) 突厥、蒙古、满-通古斯语<br>(9) 南亚语</td>
+											<td>收录内容</td>
+											<td>① 辞典形（现代严式）② 变体平文 ③ 汉字 ④ 词性 ⑤ 重音 ⑥ 释义</td>
+											<td>① 上代以前 ② 上代半岛 ③ 上代中央 ④ 上代东国 ⑤ 上代其他 ⑥ 中古 ⑦ 中世 ⑧ 近世现代 ⑨ 历史假名 ⑩ 现代假名</td>
+											<td>① 本土方言 ② 琉球诸语</td>
+											<td>① 语言集合 ② 词根 ③ 分解 ④ 琉球祖语 ⑤ 日琉祖语 ⑥ 后缀 ⑦ 复合</td>
+											<td>① Ainu ② 朝鲜 ③ 汉藏 ④ 南岛 ⑤ 侗台 ⑥ 印欧 ⑦ 泛欧亚语 ⑧&nbsp;其他</td>
 										</tr>
 									</tbody>
 								</table>
@@ -104,16 +128,64 @@
 						</div>
 					</div>
 				</div>
-				<p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">Nanasi 七梨子 © 2023-2025, Ver 0.6</p>
+				<p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">Nanasi 七梨子 © 2023-2025, Ver 0.7</p>
     </div>
 	
 	<script>
+
+let customDropdown, selectedText, originalSelect;
+
+// 初始化函数（全局可用）
+function initCustomDropdown() {
+  customDropdown = document.getElementById("customDropdown");
+  selectedText = document.querySelector(".selected-text");
+  originalSelect = document.getElementById("info19Filter");
+  
+  // 绑定点击事件（改为事件委托）
+  document.getElementById("customSelectTrigger").addEventListener("click", toggleCustomDropdown);
+}
+
+// 交互函数（全局可用）
+function toggleCustomDropdown() {
+  const isOpen = customDropdown.style.display === "block";
+  document.querySelectorAll(".custom-options").forEach(d => {
+    d.style.display = "none";
+    d.parentElement.classList.remove("dropdown-open");
+  });
+
+  if (!isOpen) {
+    customDropdown.style.display = "block";
+    document.querySelector(".filter-container").classList.add("dropdown-open");
+    setTimeout(() => {
+      document.addEventListener("click", closeIfOutside);
+    });
+  }
+}
+
+function closeCustomDropdown() {
+  // 确保元素已初始化
+  if (!customDropdown) return;
+  customDropdown.style.display = "none";
+  const container = document.querySelector(".filter-container");
+  if (container) container.classList.remove("dropdown-open");
+  document.removeEventListener("click", closeIfOutside);
+}
+
+function closeIfOutside(e) {
+  if (!e.target.closest(".filter-container")) {
+    closeCustomDropdown();
+  }
+}
+
 	  // 使用 Fetch API 加载 JLVDB.json 文件
 	  fetch("JLVDB.json")
 	    .then(response => response.json())
 	    .then(data => {
 			console.log("Loaded JLVDB.json:", data);
 	      const wordData = data;
+		      // 初始化自定义下拉
+			  initCustomDropdown();
+    populateCustomDropdown(wordData);
 		  const searchResultsContainer = document.getElementById("searchResultsContainer");
 	      const searchInput = document.getElementById("searchInput");
 	      const searchBtn = document.getElementById("searchBtn");
@@ -130,7 +202,89 @@
 	        li.addEventListener("click", () => displayWordInfo(word));
 	        wordList.appendChild(li);
 	      }
-	
+
+		  //250330新增反查功能
+		  const info19Filter = document.getElementById("info19Filter");
+
+    // 获取所有唯一的 info19 值
+    const uniqueinfo19 = [...new Set(wordData.map(item => item.info19))];
+    // 填充下拉框
+    uniqueinfo19.forEach(info19 => {
+      if (info19 && info19.trim() !== "") {
+        const option = document.createElement("option");
+        option.value = info19;
+        option.textContent = info19;
+        info19Filter.appendChild(option);
+      }
+    });
+
+    // 生成词汇表
+    function generateWordList(filteredData = wordData) {
+      wordList.innerHTML = "";
+      filteredData.forEach(item => {
+        const word = item.word;
+        const li = document.createElement("li");
+        li.textContent = word;
+        li.addEventListener("click", () => displayWordInfo(word));
+        wordList.appendChild(li);
+      });
+    }
+    generateWordList();
+
+// 筛选功能
+info19Filter.addEventListener("change", () => {
+      const selectedinfo19 = info19Filter.value;
+      if (selectedinfo19) {
+        const filteredData = wordData.filter(item => item.info19 === selectedinfo19);
+        generateWordList(filteredData);
+      } else {
+        generateWordList();
+      }
+    });
+
+
+// 独立的填充函数
+function populateCustomDropdown(wordData) {
+  if (!customDropdown) return;
+  
+  customDropdown.innerHTML = '';
+  
+  // 添加空选项
+  const emptyOption = document.createElement("div");
+  emptyOption.className = "custom-option";
+  emptyOption.textContent = "请选择词根 ...";
+  emptyOption.onclick = () => {
+    if (selectedText) selectedText.textContent = "请选择词根 ...";
+    if (originalSelect) {
+      originalSelect.value = "";
+      originalSelect.dispatchEvent(new Event("change"));
+    }
+    closeCustomDropdown();
+  };
+  customDropdown.appendChild(emptyOption);
+
+  // 添加数据选项
+  const uniqueinfo19 = [...new Set(wordData.map(item => item.info19))];
+  uniqueinfo19.forEach(info19 => {
+    if (info19 && info19.trim() !== "") {
+      const option = document.createElement("div");
+      option.className = "custom-option";
+      option.textContent = info19;
+      option.onclick = () => {
+        if (selectedText) selectedText.textContent = info19;
+        if (originalSelect) {
+          originalSelect.value = info19;
+          originalSelect.dispatchEvent(new Event("change"));
+        }
+        closeCustomDropdown();
+      };
+      customDropdown.appendChild(option);
+    }
+  });
+}
+
+//250330新增反查功能
+
 	      // 搜索功能
 		  // 点击搜索按钮时显示词语列表
 	      searchBtn.addEventListener("click", () => {
@@ -195,75 +349,114 @@
 			const info = wordData.find(item => item.word === word);
 			  let infoHTML = `<h3>${word}</h3>`;
 			  infoHTML += `<div class="separator"></div>`;
-			  infoHTML += `<p style="color: #007bff;line-height: 1.5; margin: 0 0 10px;"><strong>基本信息 ▷</strong></p>`;
+			  infoHTML += `<p><strong class="underlined-text">基本信息</strong></p>`;
 			  if (info.info1 && info.info1.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>MdJ 严式 |</strong> ${info.info1}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">变体平文</strong> ${info.info1}</p>`;
 			  }
 			  if (info.info2 && info.info2.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>MdJ 变体平文式 |</strong> ${info.info2}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">汉　　字</strong> ${info.info2}</p>`;
 			  }
 			  if (info.info3 && info.info3.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>汉字 |</strong> ${info.info3}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">词　　性</strong> ${info.info3}</p>`;
 			  }
 			  if (info.info4 && info.info4.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>词性 |</strong> ${info.info4}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">重　　音</strong> ${info.info4}</p>`;
 			  }
 			  if (info.info5 && info.info5.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>重音 |</strong> ${info.info5}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">释　　义</strong> ${info.info5}</p>`;
+			  }
+              if (info.class2 && info.class2.trim() !== "0") {
+			    infoHTML += `<p><strong class="underlined-text">历史音韵学</strong></p>`;
 			  }
 			  if (info.info6 && info.info6.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>释义 |</strong> ${info.info6}</p>`;
-			  }
-              if (info.class2 && info.class2.trim() !== "") {
-			    infoHTML += `<p style="color: #007bff;line-height: 1.5; margin: 0 0 10px;"><strong>历史音韵学 ▷</strong></p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代以前</strong> ${info.info6}</p>`;
 			  }
 			  if (info.info7 && info.info7.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>OJ 以前形式 |</strong> ${info.info7}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代半岛</strong> ${info.info7}</p>`;
 			  }
 			  if (info.info8 && info.info8.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>大陆倭语 |</strong> ${info.info8}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代中央</strong> ${info.info8}</p>`;
 			  }
 			  if (info.info9 && info.info9.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>WOJ |</strong> ${info.info9}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代东国</strong> ${info.info9}</p>`;
 			  }
 			  if (info.info10 && info.info10.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>AOJ |</strong> ${info.info10}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代其他</strong> ${info.info10}</p>`;
 			  }
 			  if (info.info11 && info.info11.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>其他 OJ |</strong> ${info.info11}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">中　　古</strong> ${info.info11}</p>`;
 			  }
 			  if (info.info12 && info.info12.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>EMJ |</strong> ${info.info12}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">中　　世</strong> ${info.info12}</p>`;
 			  }
 			  if (info.info13 && info.info13.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>LMJ |</strong> ${info.info13}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">近世现代</strong> ${info.info13}</p>`;
 			  }
 			  if (info.info14 && info.info14.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>MdJ |</strong> ${info.info14}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">历史假名</strong> ${info.info14}</p>`;
 			  }
 			  if (info.info15 && info.info15.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>历史假名遣 |</strong> ${info.info15}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">现代假名</strong> ${info.info15}</p>`;
+			  }
+			  if (info.class3 && info.class3.trim() !== "0") {
+			    infoHTML += `<p><strong class="underlined-text">方言音韵学</strong></p>`;
 			  }
 			  if (info.info16 && info.info16.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>现代假名遣 |</strong> ${info.info16}</p>`;
-			  }
-			  if (info.class3 && info.class3.trim() !== "") {
-			    infoHTML += `<p style="color: #007bff;line-height: 1.5; margin: 0 0 10px;"><strong>方言音韵学 ▷</strong></p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">本土方言</strong> ${info.info16}</p>`;
 			  }
 			  if (info.info17 && info.info17.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>本土方言 |</strong> ${info.info17}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">琉球诸语</strong> ${info.info17}</p>`;
+			  }
+			  if (info.class4 && info.class4.trim() !== "0") {
+			    infoHTML += `<p><strong class="underlined-text">词源学</strong></p>`;
 			  }
 			  if (info.info18 && info.info18.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>八丈方言 |</strong> ${info.info18}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">语言集合</strong> ${info.info18}</p>`;
 			  }
 			  if (info.info19 && info.info19.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong>琉球语 |</strong> ${info.info19}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">词　　根</strong> ${info.info19}</p>`;
 			  }
-			  if (info.class4 && info.class4.trim() !== "") {
-			    infoHTML += `<p style="color: #007bff;line-height: 1.5; margin: 0 0 10px;"><strong>词源学 ▷</strong></p>`;
+			  if (info.info20 && info.info20.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">分　　解</strong> ${info.info20}</p>`;
 			  }
-			  if (info.class5 && info.class5.trim() !== "") {
-			    infoHTML += `<p style="color: #007bff;line-height: 1.5; margin: 0 0 10px;"><strong>比较语言学 ▷</strong></p>`;
+			  if (info.info21 && info.info21.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">琉球祖语</strong> ${info.info21}</p>`;
+			  }
+			  if (info.info22 && info.info22.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">日琉祖语</strong> ${info.info22}</p>`;
+			  }
+			  if (info.info23 && info.info23.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">后　　缀</strong> ${info.info23}</p>`;
+			  }
+			  if (info.info24 && info.info24.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">复　　合</strong> ${info.info24}</p>`;
+			  }
+			  if (info.class5 && info.class5.trim() !== "0") {
+			    infoHTML += `<p><strong class="underlined-text">比较语言学</strong></p>`;
+			  }
+			  if (info.info25 && info.info25.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">Ａｉｎｕ</strong> ${info.info25}</p>`;
+			  }
+			  if (info.info26 && info.info26.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">朝　　鲜</strong> ${info.info26}</p>`;
+			  }
+			  if (info.info27 && info.info27.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">汉　　藏</strong> ${info.info27}</p>`;
+			  }
+			  if (info.info28 && info.info28.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">南　　岛</strong> ${info.info28}</p>`;
+			  }
+			  if (info.info29 && info.info29.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">侗　　台</strong> ${info.info29}</p>`;
+			  }
+			  if (info.info30 && info.info30.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">印　　欧</strong> ${info.info30}</p>`;
+			  }
+			  if (info.info31 && info.info31.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">泛欧亚语</strong> ${info.info31}</p>`;
+			  }
+			  if (info.info32 && info.info32.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">其　　他</strong> ${info.info32}</p>`;
 			  }
 			  wordInfo.innerHTML = infoHTML;
 	
@@ -309,7 +502,7 @@
 		  }
 		
 		#wordList li::before {
-		  content: "»"; /* 添加自定义的汉字作为列表项的标记 */
+		  content: "»"; /* 添加自定义的符号作为列表项的标记 */
 		  margin-right: 5px; /* 可选：增加一些空间，使汉字与列表项内容之间有一定距离 */
 		  padding: 3px;
 		}
@@ -321,13 +514,14 @@
 		  }
 		
 		.separator {
-		  border-top: 1px solid #ccc; /* 添加上边框作为分割线，可以根据需要调整颜色和粗细 */
+		  border-top: 1px solid #007bff; /* 添加上边框作为分割线，可以根据需要调整颜色和粗细 */
 		  margin: 5px 10px 12px 0px; /* 调整分割线与其他内容的间距，根据需要调整值 */
 		}
 			
 		/* 词汇文本的样式 */
 		div#searchResults {
-		  font-size: 15px;
+		  font-size: 14px;
+		  padding: 3px;
 		  margin: 0px 10px 0px 10px;
 		}
 		
@@ -339,9 +533,82 @@
 		
 		.header-container{
 			display: flex;
+			flex-direction: column;
 			justify-content: space-evenly;
+			text-align: center;
 		}
-	
+
+/* 自定义下拉样式 */
+.filter-container {
+  position: relative;
+  width: 97%;
+}
+
+.custom-select {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  margin-top: 5px;
+}
+
+.custom-options {
+  position: absolute;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  background: white;
+  display: none;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.custom-option {
+  padding: 4px 6px;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  font-size: 14px;
+  border-top: 1px solid #ccc; /* 添加上边框作为分割线，可以根据需要调整颜色和粗细 */
+	margin: 0px 5px;
+}
+
+.custom-option:hover {
+  background: #f8f9fa;
+}
+
+.arrow {
+  transition: transform 0.2s;
+  font-size: 12px;
+  color: #007bff;
+}
+
+.dropdown-open .arrow {
+  transform: rotate(180deg);
+}
+
+strong.bordered-text {
+    border: 3px solid #007bff; 
+    border-radius: 10px; 
+    padding: 1px 5px 4px 5px; 
+    margin: 0 5px 0 0; 
+	font-size: 14px;
+	color: #007bff;
+}
+
+strong.underlined-text{
+	color: #007bff;
+	line-height: 1.5; 
+	margin: 0px 0 10px;
+	padding-bottom: 3px;
+	font-size: 18px;
+	border-bottom: 3px solid #007bff;
+}
+
 	</style>
 	
     <script src="assets/js/jquery.min.js"></script>
