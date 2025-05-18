@@ -111,3 +111,21 @@ a:hover {
   height: 100px;
 }
 
+@media (max-width: 575.98px) {
+  .row.articles.hidden-xs {
+    display: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  body {
+    background: url("../../assets/img/Nanasiko-d-b.jpg") top / cover no-repeat fixed;
+  }
+}
+
+@media (min-width: 767.98px) {
+  body {
+    background: url("../../assets/img/Nanasiko-c-b.jpg") top / cover no-repeat fixed;
+  }
+}
+
