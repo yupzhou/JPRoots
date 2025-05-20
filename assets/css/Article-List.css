@@ -126,6 +126,7 @@ a:hover {
 @media (min-width: 767.98px) {
   body.index {
     background: url("../../assets/img/Nanasiko-c-b.jpg") top / cover no-repeat fixed;
+    background-position: center 15%;
   }
 }
 
