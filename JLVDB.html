@@ -43,13 +43,13 @@
 
                         <div class="col-md-3 col-lg-2 col-xl-3 d-block d-md-block d-none" style="margin: 0px 15px 0px 15px;">
                             <div class="form-group"><label for="search-field""></label>
-        					<input type="search" id="searchInput" class="search-field" name="search" style="width: 110px;margin-top: 15px;margin-right: 12px;border-width: 1px;border-style: none;border-bottom-style: solid;color: rgb(150,150,150);font-size: 14px; padding-left: 8px;" placeholder="查询 ..."  autocomplete="off"/>
+        					<input type="search" id="searchInput" class="search-field" name="search"  placeholder="查询 ..."  autocomplete="off"/>
         					<!-- 将搜索结果的容器设置为绝对定位，以解决显示问题 -->
         					<div id="searchResultsContainer">
         					  <div id="searchResults"></div>
         					</div>
-        <button class="btn" type="button" style="font-size: 14px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;margin-bottom: 6px;" id="searchBtn"><i class="fa fa-search" style="color: rgb(0,123,255);"></i></button>
-        <button class="btn btn-primary" type="button" style="margin-left: 15px;font-size: 14px;margin-bottom: 6px;" id="randomBtn">手气不错</button>
+        <button class="btn" type="button"  id="searchBtn"><i class="fa fa-search" style="color: rgb(0,123,255);"></i></button>
+        <button class="btn btn-primary" type="button"  id="randomBtn">抽 !</button>
 
 		<!-- 新增的下拉框 -->
 		<div class="filter-container">
@@ -71,7 +71,7 @@
                         </div>
 
                         <div class="col-md-8 col-lg-9 col-xl-8 header-container" style="margin: 0px 15px 0px 15px; padding: 10px;">
-                            <h3 class="text-primary">日琉语词汇数据库</h3><h4 class="text-primary"><em>Japonic Languages Vocabulary DataBase β1</em></h4>
+                            <h3 class="text-primary">日琉语词汇参考数据库</h3><h4 class="text-primary"><em>Japonic Languages Vocabulary DataBase β1</em></h4>
                         </div>
 
         				<!-- 将获取词汇列表的 JavaScript 代码中的 ID 修改为 "wordList" -->
@@ -301,6 +301,53 @@ function populateCustomDropdown(wordData) {
 	          searchResults.appendChild(resultItem);
 	        });
 	      }
+
+// 250609 新增词根弹窗
+// 加载词根数据
+let rootData = [];
+fetch("JPRoots.json")
+    .then(response => response.json())
+    .then(data => {
+        rootData = data;
+        console.log("Loaded JPRoots.json:", rootData);
+    // 添加全局事件监听器（关闭按钮）
+        document.querySelector('.root-close-btn').addEventListener('click', closeRootModal);
+        document.getElementById('root-info-modal').addEventListener('click', function(event) {
+            if (event.target === this) closeRootModal();
+        });
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') closeRootModal();
+        });
+    })
+    .catch(error => console.error("Failed to load JPRoots.json:", error));
+
+// 显示词根信息函数
+function showRootInfo(rootName) {
+    const rootInfo = rootData.find(item => item.root === rootName);
+    if (rootInfo) {
+        document.getElementById('root-name').textContent = rootInfo.root;
+        
+        let detailsHTML = '';
+        if (rootInfo.PJR) detailsHTML += `<p class="root-detail"><strong>日琉祖语</strong> ${rootInfo.PJR}</p>`;
+        if (rootInfo.POJ) detailsHTML += `<p class="root-detail"><strong>表日祖语</strong> ${rootInfo.POJ}</p>`;
+        if (rootInfo.PR) detailsHTML += `<p class="root-detail"><strong>琉球祖语</strong> ${rootInfo.PR}</p>`;
+        if (rootInfo.accent) detailsHTML += `<p class="root-detail"><strong>音　　调</strong> ${rootInfo.accent}</p>`;
+        if (rootInfo.pos) detailsHTML += `<p class="root-detail"><strong>词　　性</strong> ${rootInfo.pos}</p>`;
+        if (rootInfo.meaning) detailsHTML += `<p class="root-detail"><strong>含　　义</strong> ${rootInfo.meaning}</p>`;
+        
+        document.getElementById('root-details').innerHTML = detailsHTML;
+        document.getElementById('root-info-modal').style.display = 'flex';
+    } else {
+        alert(`未找到词根“${rootName}”的信息`);
+    }
+}
+
+// 关闭词根弹窗
+function closeRootModal() {
+    document.getElementById('root-info-modal').style.display = 'none';
+}
+
+//250609 新增词根弹窗
 	
 	      // 显示词语的信息
 	      function displayWordInfo(word) {
@@ -372,9 +419,13 @@ function populateCustomDropdown(wordData) {
 			  if (info.info18 && info.info18.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">语言集合</strong> ${info.info18}</p>`;
 			  }
-			  if (info.info19 && info.info19.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">词　　根</strong> ${info.info19}</p>`;
-			  }
+			  // 修改词根显示为可点击链接
+    if (info.info19 && info.info19.trim() !== "") {
+        infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;">
+            <strong class="bordered-text">词　　根</strong> 
+            <span class="root-link" data-root="${info.info19}">${info.info19}</span>
+        </p>`;
+    }
 			  if (info.info20 && info.info20.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">分　　解</strong> ${info.info20}</p>`;
 			  }
@@ -419,6 +470,17 @@ function populateCustomDropdown(wordData) {
 			  }
 			  wordInfo.innerHTML = infoHTML;
 	
+
+			  //250609 新增词根弹窗
+// 为新创建的元素添加事件监听
+    document.querySelectorAll('.root-link').forEach(link => {
+        link.addEventListener('click', function() {
+            showRootInfo(this.dataset.root);
+        });
+    });
+			  //250609 新增词根弹窗
+
+
 	      }
 		  
 		  // 监听整个文档的点击事件
@@ -440,6 +502,8 @@ function populateCustomDropdown(wordData) {
 		  
 	    })
 	    .catch(error => console.error("Failed to load JLVDB.json:", error));
+
+
 	</script>
 	
 	<style>
@@ -568,8 +632,212 @@ strong.underlined-text{
 	border-bottom: 3px solid #007bff;
 }
 
+/* 250609 新增词根弹窗 */
+
+/* 词根弹窗样式 */
+    .root-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .root-modal-content {
+        background-color: white;
+        border-radius: 15px;
+        padding: 20px;
+        width: 75%;
+        max-width: 300px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+        position: relative;
+        border: 1px solid #007bff;
+        animation: popIn 0.3s;
+    }
+    
+    @keyframes popIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    
+    .root-close-btn {
+        position: absolute;
+        top: 12px;
+        right: 20px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #777;
+    }
+    
+    .root-close-btn:hover {
+        color: #007bff;
+    }
+    
+    #root-name {
+        color: #333;
+        margin-top: 0;
+		margin-bottom: 15px;
+        font-size: 24px;
+        border-bottom: 1px solid #007bff;
+        padding-bottom: 10px;
+    }
+    
+    .root-detail {
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+    
+    .root-detail strong {
+        border: 3px solid #007bff; 
+    border-radius: 10px; 
+    padding: 1px 4px 2px 4px; 
+    margin: 0 5px 0 0; 
+	font-size: 14px;
+	color: #007bff;
+    }
+    
+    /* 词根链接样式 */
+    .root-link {
+        color: #007bff;
+        cursor: pointer;
+        text-decoration:none;
+        font-weight: bold;
+        transition: all 0.2s;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+    
+    .root-link:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        text-decoration: none;
+    }
+
+@media screen and (max-width: 397px) {
+  input#searchInput.search-field {
+    width: 55%;
+	margin-top: 15px;
+	margin-right: 0%;
+	border-width: 1px;
+	border-style: none;
+	border-bottom-style: solid;
+	color: rgb(150,150,150);
+	font-size: 14px; 
+	padding-left: 2%;
+  }
+  button#searchBtn.btn{
+	width: 0%;
+	font-size: 14px;
+	margin-bottom: 6px;
+	margin-left: 1%;
+  }    
+  button#randomBtn.btn.btn-primary {
+	width: 20%;
+	margin-left: 5%;
+	font-size: 14px;
+	margin-bottom: 6px;
+  }
+}
+
+@media screen and (min-width: 397px)  and (max-width: 768px) {
+  input#searchInput.search-field {
+    width: 60%;
+	margin-top: 15px;
+	margin-right: 0%;
+	border-width: 1px;
+	border-style: none;
+	border-bottom-style: solid;
+	color: rgb(150,150,150);
+	font-size: 14px; 
+	padding-left: 2%;
+  }
+  button#searchBtn.btn{
+	width: 0%;
+	font-size: 14px;
+	margin-bottom: 6px;
+	margin-left: 1%;
+  }    
+  button#randomBtn.btn.btn-primary {
+	width: 20%;
+	margin-left: 5%;
+	font-size: 14px;
+	margin-bottom: 6px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  input#searchInput.search-field {
+    width: 60%;
+	margin-top: 15px;
+	margin-right: 0%;
+	border-width: 1px;
+	border-style: none;
+	border-bottom-style: solid;
+	color: rgb(150,150,150);
+	font-size: 14px; 
+	padding-left: 5%;
+  }
+  button#searchBtn.btn{
+	width: 0%;
+	font-size: 14px;
+	margin-bottom: 6px;
+	margin-left: -2%;
+  }    
+  button#randomBtn.btn.btn-primary {
+	width: 20%;
+	margin-left: 3%;
+	font-size: 14px;
+	margin-bottom: 6px;
+  }
+
+}
+
+@media screen and (min-width: 768px) and (max-width: 1200px) {
+  input#searchInput.search-field {
+    width: 40%;
+	margin-top: 15px;
+	margin-right: 0%;
+	border-width: 1px;
+	border-style: none;
+	border-bottom-style: solid;
+	color: rgb(150,150,150);
+	font-size: 14px; 
+	padding-left: 5%;
+  }
+  button#searchBtn.btn{
+	width: 0%;
+	font-size: 14px;
+	margin-bottom: 6px;
+	margin-left: -6%;
+  }    
+  button#randomBtn.btn.btn-primary {
+	width: 30%;
+	margin-left: 3%;
+	font-size: 14px;
+	margin-bottom: 6px;
+  }
+
+}
+
+/* 250609 新增词根弹窗 */
+
 	</style>
-	
+
+	<!--250609 新增词根弹窗-->
+	<!-- 词根弹窗 -->
+<div id="root-info-modal" class="root-modal">
+    <div class="root-modal-content">
+        <span class="root-close-btn">&times;</span>
+        <h3 id="root-name"></h3>
+        <div id="root-details"></div>
+    </div>
+</div>
+<!--250609 新增词根弹窗-->
+
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/accent_sta.js"></script>
