@@ -642,7 +642,6 @@ strong.underlined-text{
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0,0,0,0.4);
         z-index: 2000;
         align-items: center;
         justify-content: center;
@@ -658,6 +657,8 @@ strong.underlined-text{
         position: relative;
         border: 1px solid #007bff;
         animation: popIn 0.3s;
+		background-color: rgba(255, 255, 255, 0.5); /* 半透明 */
+		backdrop-filter: blur(15px); /* 模糊 */
     }
     
     @keyframes popIn {
