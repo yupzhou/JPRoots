@@ -130,3 +130,9 @@ a:hover {
   }
 }
 
+@media (max-width: 990px) {
+  .projects-horizontal {
+    display: none;
+  }
+}
+
