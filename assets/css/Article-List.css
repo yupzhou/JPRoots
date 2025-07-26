@@ -136,3 +136,15 @@ a:hover {
   }
 }
 
+@media (min-width: 767.98px) {
+  body {
+  }
+}
+
+@media (min-width: 767.98px) {
+  .card {
+    padding: 30px;
+    background: url("../../assets/img/大头3.png") left 20px bottom / 200px no-repeat fixed;
+  }
+}
+
