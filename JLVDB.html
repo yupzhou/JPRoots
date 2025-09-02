@@ -34,7 +34,7 @@
                 <form class="form-inline mr-auto" target="_self">
                     <div class="form-group"><label for="search-field"></label></div>
                 </form>
-        </div><img class="d-none d-print-block d-sm-none d-md-block d-lg-block d-xl-block" src="assets/img/logoNNSw.png" style="width: 68px;padding-top: 0px;text-align: left;"></div>
+        </div></div>
     </nav>
     <div></div>
     <div class="card" style="padding: 30px;filter: blur(0px);">
@@ -43,47 +43,75 @@
 
                         <div class="col-md-3 col-lg-2 col-xl-3 d-block d-md-block d-none" style="margin: 0px 15px 0px 15px;">
                             <div class="form-group"><label for="search-field""></label>
-        					<input type="search" id="searchInput" class="search-field" name="search"  placeholder="查询 ..."  autocomplete="off"/>
-        					<!-- 将搜索结果的容器设置为绝对定位，以解决显示问题 -->
+                              <!-- 将两个搜索框组合在一起 -->
+        <div class="search-combo-container">
+            <!-- 单词搜索框组合 -->
+            <div class="search-field-combo">
+        					<input type="search" id="searchInput" class="search-field" name="search"  placeholder="Search ..."  autocomplete="off"/>
+        					<!-- 将搜索结果的容器设置为绝对定位，以解决显示问题 移除
         					<div id="searchResultsContainer">
         					  <div id="searchResults"></div>
-        					</div>
+        					</div>-->
         <button class="btn" type="button"  id="searchBtn"><i class="fa fa-search" style="color: rgb(0,123,255);"></i></button>
-        <button class="btn btn-primary" type="button"  id="randomBtn">抽 !</button>
-
-		<!-- 新增的下拉框 -->
+        <button class="btn btn-primary" type="button"  id="randomBtn"><i class="fa fa-random" style="color: rgb(255, 255, 255);"></i></button>
+            </div>
+            <!-- 词族搜索框组合 -->
+            <div class="filter-combo">
+		<!-- 新增的下拉框 - 修改为带搜索功能的结构 -->
 		<div class="filter-container">
 			<!-- 隐藏原生select保留数据绑定 -->
-			<select id="info19Filter" style="display:none">
-			  <option value="">请选择词根 ...</option>
+			<select id="wd_fFilter" style="display:none">
+			  <option value="">词族选择 ...</option>
 			</select>
 			
-			<!-- 新增自定义下拉UI -->
-			<div class="custom-select" id="customSelectTrigger" style="color: rgb(130, 130, 130); font-size:14px;">
-			  <span class="selected-text">请选择词根 ...</span>
-			  <span class="arrow">▼</span>
-			</div>
-			<div class="custom-options" id="customDropdown"></div>
+			<!-- 修改为带搜索功能的下拉框 -->
+            <div class="filter-input-container">
+                <input type="text" id="wd_fSearchInput" placeholder="词族搜索 ..." autocomplete="off">
+                <div class="dropdown-button" id="customSelectTrigger">
+                    <span class="arrow">▼</span>
+                </div>
+            </div>
+            <div class="custom-options" id="customDropdown"></div>
 		  </div>
-
-		<!-- 新增的下拉框 -->
+</div>
         </div>	
+        </div>
                         </div>
 
-                        <div class="col-md-8 col-lg-9 col-xl-8 header-container" style="margin: 0px 15px 0px 15px; padding: 10px;">
-                            <h3 class="text-primary">日琉语词汇参考数据库</h3><h4 class="text-primary"><em>Japonic Languages Vocabulary DataBase β1</em></h4>
+                        <div class="col-md-8 col-lg-9 col-xl-8 header-container" style="margin: 0px 15px 0px 10px; padding: 10px;">
+                            <h3 class="text-primary" style="font-weight:normal;">日琉语词汇参考数据库 [建设中]</h3><h5 class="text-primary" style="font-weight:normal; text-decoration:overline;"><em>Japonic Languages Vocabulary DataBase</em></h5>
                         </div>
 
         				<!-- 将获取词汇列表的 JavaScript 代码中的 ID 修改为 "wordList" -->
-                        <div class="col-md-3 col-lg-2 col-xl-3" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 15px; padding-top: 5px;">
-        					<h5><center><i class="fa fa-book"></i> JLVDB</center></h5>
-        					<div style="height: 400px; overflow-y: scroll;">
-        						<ul id="wordList"></ul>
+                        <div class="col-md-3 col-lg-2 col-xl-3" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 15px; padding-top: 5px; background-color: white;">
+        					<h5><center><i class="fa fa-book"></i> 词汇表</center></h5>
+        					<div style="height: 400px; ">
+        						<ul id="wordList" style="height: 390px; overflow-y: scroll; "></ul>
         					</div>
         				</div>
         								
-                        <div class="col-md-8 col-lg-9 col-xl-8" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 15px; padding-top: 7px; line-height: 1;">
-        					<div id="wordInfo" style="height: 400px; overflow-y: scroll;"></div>
+                        <div class="col-md-8 col-lg-9 col-xl-8" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 10px; padding-top: 7px; line-height: 1; background-color: white;">
+        					<div id="wordInfo" style="height: 420px; overflow-y: scroll; ">
+								<p style="line-height: 1;  margin-bottom: 0px;"><center style="color:#007BFF; font-size: 20px;">～小贴士～</center></p>
+									<p style="line-height: 1.5; margin-top: -5px;margin-bottom: 10px;">日琉语词汇参考数据库（JLVDB）是收录了丰富的日琉语词汇的辞典，支持 ① 词汇表直接搜索（宽屏左侧/窄屏上侧）、② 全字段模糊搜索（左上角第一搜索框）、③ 词族选择/模糊搜索（左上角第二搜索框）、④ 随机搜索（左上角第一搜索框右侧蓝色按钮）。</p>
+									<p style="line-height: 1.5; margin-bottom: 10px;">由于前三个功能共用同一个单词表位置，在功能上是互斥的。</p>
+									<p style="line-height: 1.5; margin-bottom: 10px;">全字段模糊搜索间接实现了筛选功能，如搜索「与那国」可得到存在与那国语形式的词汇，搜索「2.5」可得到 2.5 调类的词汇。</p>
+									<p style="line-height: 1.5; margin-bottom: 10px;">全字段模糊搜索是实时查询的。如需精确搜索，请使用正则表达式：</p>
+										<ol style="line-height: 1.5; margin-bottom: 10px;" type="1">
+										<li>普通模式（默认）：可通过星号（*）匹配任意字符。</li>
+										<li>正则模式：通过双斜杠包裹内容（/.../）触发，支持正则表达式规则：</li>
+										</ol>
+										<ol style="line-height: 1.5; margin-bottom: 10px;" type="i">
+										<li>点号（.）匹配任意单个字符。</li>
+										<li>星号（*）匹配任意字符。</li>
+										<li>问号（?）匹配前一个字符 0 次或 1 次。</li>
+										<li>加号（+）匹配前一个字符 1 次或多次。</li>
+										<li>字符集（[...]）匹配方括号内任意一个字符。</li>
+										<li>起始锚点（^）匹配字符串开头。</li>
+										<li>结束锚点（$）匹配字符串结尾。</li>
+										</ol>
+										<p style="line-height: 1.5; margin-bottom: 10px;">方言形态、琉球诸语形态部分，由于采用了较宽的音位表记，不宜视为严谨的语音记录。</p>
+							</div>
         				</div>
 					</div>
 				</div>
@@ -98,15 +126,24 @@ let customDropdown, selectedText, originalSelect;
 function initCustomDropdown() {
   customDropdown = document.getElementById("customDropdown");
   selectedText = document.querySelector(".selected-text");
-  originalSelect = document.getElementById("info19Filter");
+  originalSelect = document.getElementById("wd_fFilter");
   
-  // 绑定点击事件（改为事件委托）
+  // 绑定点击事件
   document.getElementById("customSelectTrigger").addEventListener("click", toggleCustomDropdown);
 }
 
 // 交互函数（全局可用）
 function toggleCustomDropdown() {
   const isOpen = customDropdown.style.display === "block";
+  const trigger = document.getElementById("customSelectTrigger");
+  
+  // 更新箭头方向
+  if (isOpen) {
+    trigger.classList.remove('open');
+  } else {
+    trigger.classList.add('open');
+  }
+
   document.querySelectorAll(".custom-options").forEach(d => {
     d.style.display = "none";
     d.parentElement.classList.remove("dropdown-open");
@@ -115,10 +152,25 @@ function toggleCustomDropdown() {
   if (!isOpen) {
     customDropdown.style.display = "block";
     document.querySelector(".filter-container").classList.add("dropdown-open");
+    
+    // 设置下拉菜单位置
+    positionDropdown();
+    
     setTimeout(() => {
       document.addEventListener("click", closeIfOutside);
     });
   }
+}
+
+function positionDropdown() {
+  const comboContainer = document.querySelector('.filter-input-container');
+  const dropdown = document.getElementById('customDropdown');
+    // 正常定位
+    dropdown.style.position = 'absolute';
+    dropdown.style.top = '100%';
+    dropdown.style.left = '0';
+    dropdown.style.width = '100%';
+    dropdown.style.zIndex = '1000';
 }
 
 function closeCustomDropdown() {
@@ -128,6 +180,10 @@ function closeCustomDropdown() {
   const container = document.querySelector(".filter-container");
   if (container) container.classList.remove("dropdown-open");
   document.removeEventListener("click", closeIfOutside);
+  
+  // 恢复箭头方向
+  const trigger = document.getElementById("customSelectTrigger");
+  trigger.classList.remove('open');
 }
 
 function closeIfOutside(e) {
@@ -163,17 +219,17 @@ function closeIfOutside(e) {
 	      }
 
 		  //250330新增反查功能
-		  const info19Filter = document.getElementById("info19Filter");
+		  const wd_fFilter = document.getElementById("wd_fFilter");
 
-    // 获取所有唯一的 info19 值
-    const uniqueinfo19 = [...new Set(wordData.map(item => item.info19))];
+    // 获取所有唯一的 wd_f 值
+    const uniquewd_f = [...new Set(wordData.map(item => item.wd_f))];
     // 填充下拉框
-    uniqueinfo19.forEach(info19 => {
-      if (info19 && info19.trim() !== "") {
+    uniquewd_f.forEach(wd_f => {
+      if (wd_f && wd_f.trim() !== "") {
         const option = document.createElement("option");
-        option.value = info19;
-        option.textContent = info19;
-        info19Filter.appendChild(option);
+        option.value = wd_f;
+        option.textContent = wd_f;
+        wd_fFilter.appendChild(option);
       }
     });
 
@@ -191,10 +247,14 @@ function closeIfOutside(e) {
     generateWordList();
 
 // 筛选功能
-info19Filter.addEventListener("change", () => {
-      const selectedinfo19 = info19Filter.value;
-      if (selectedinfo19) {
-        const filteredData = wordData.filter(item => item.info19 === selectedinfo19);
+wd_fFilter.addEventListener("change", () => {
+      const selectedwd_f = wd_fFilter.value;
+
+		// 清空搜索框
+  searchInput.value = '';
+
+      if (selectedwd_f) {
+        const filteredData = wordData.filter(item => item.wd_f === selectedwd_f);
         generateWordList(filteredData);
       } else {
         generateWordList();
@@ -211,9 +271,9 @@ function populateCustomDropdown(wordData) {
   // 添加空选项
   const emptyOption = document.createElement("div");
   emptyOption.className = "custom-option";
-  emptyOption.textContent = "请选择词根 ...";
+  emptyOption.textContent = "词族选择 ...";
   emptyOption.onclick = () => {
-    if (selectedText) selectedText.textContent = "请选择词根 ...";
+    if (selectedText) selectedText.textContent = "词族选择 ...";
     if (originalSelect) {
       originalSelect.value = "";
       originalSelect.dispatchEvent(new Event("change"));
@@ -223,16 +283,16 @@ function populateCustomDropdown(wordData) {
   customDropdown.appendChild(emptyOption);
 
   // 添加数据选项
-  const uniqueinfo19 = [...new Set(wordData.map(item => item.info19))];
-  uniqueinfo19.forEach(info19 => {
-    if (info19 && info19.trim() !== "") {
+  const uniquewd_f = [...new Set(wordData.map(item => item.wd_f))];
+  uniquewd_f.forEach(wd_f => {
+    if (wd_f && wd_f.trim() !== "") {
       const option = document.createElement("div");
       option.className = "custom-option";
-      option.textContent = info19;
+      option.textContent = wd_f;
       option.onclick = () => {
-        if (selectedText) selectedText.textContent = info19;
+        if (selectedText) selectedText.textContent = wd_f;
         if (originalSelect) {
-          originalSelect.value = info19;
+          originalSelect.value = wd_f;
           originalSelect.dispatchEvent(new Event("change"));
         }
         closeCustomDropdown();
@@ -241,6 +301,52 @@ function populateCustomDropdown(wordData) {
     }
   });
 }
+
+// 添加词族搜索功能
+const wd_fSearchInput = document.getElementById("wd_fSearchInput");
+wd_fSearchInput.addEventListener("input", function() {
+    const searchTerm = this.value.toLowerCase();
+    const options = customDropdown.querySelectorAll(".custom-option");
+    
+    // 自动打开下拉菜单
+    if (customDropdown.style.display !== "block") {
+        toggleCustomDropdown();
+    }
+    
+    // 原有过滤逻辑
+    if (searchTerm === '') {
+        options.forEach(option => option.style.display = "block");
+        return;
+    }
+    
+    options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        option.style.display = text.includes(searchTerm) ? "block" : "none";
+    });
+});
+
+// 按下回车键选择第一个匹配项
+wd_fSearchInput.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        const searchTerm = this.value.toLowerCase();
+        const options = customDropdown.querySelectorAll(".custom-option");
+        let found = false;
+        
+        // 寻找第一个可见的选项
+        for (const option of options) {
+            if (option.style.display !== 'none') {
+                option.click(); // 模拟点击选择
+                found = true;
+                break;
+            }
+        }
+        
+        // 如果没有找到，则恢复显示所有选项
+        if (!found && options.length > 0) {
+            options[0].click();
+        }
+    }
+});
 
 //250330新增反查功能
 
@@ -265,16 +371,60 @@ function populateCustomDropdown(wordData) {
 	
 	      // 随机搜索功能
 	      randomBtn.addEventListener("click", () => randomSearchWord());
-	
-	      function searchWord() {
-	        const searchInput = document.getElementById("searchInput");
-			const searchTerm = searchInput.value.toLowerCase();
-			if (searchTerm.trim() === '') {
-			      return;
-			    }
-	        const matchingWords = wordData.filter(item => item.word.toLowerCase().includes(searchTerm));
-	        displaySearchResults(matchingWords);
-	      }
+
+//250811通配符和多字段搜索
+
+	      function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function searchWord() {
+    //const searchInput = document.getElementById("searchInput");
+    let searchTerm = searchInput.value.trim();
+    
+    if (searchTerm === '') {
+    generateWordList(wordData);
+    wd_fFilter.value = ''; // 重置词族选择
+    return;
+  }
+    
+    // 检查用户是否主动使用正则表达式（以/开头和结尾）
+    let regex;
+    if (searchTerm.startsWith('/') && searchTerm.endsWith('/')) {
+        try {
+            // 提取正则表达式内容（忽略首尾的/）
+            regex = new RegExp(searchTerm.slice(1, -1), 'i');
+        } catch (e) {
+            return;
+        }
+    } else {
+        // 普通搜索模式：转义所有正则特殊字符，支持*和?作为通配符
+        const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // 将输入的*替换为.*
+        const pattern = escapedTerm.replace(/\*/g, '.*');
+        regex = new RegExp(pattern, 'i');
+    }
+    
+    const matchingWords = wordData.filter(item => {
+        for (const key in item) {
+            if (item.hasOwnProperty(key)) {
+                const value = String(item[key] || ''); // 确保值为字符串
+                if (regex.test(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    });
+    
+    //displaySearchResults(matchingWords);
+
+	// 直接更新词汇表
+  generateWordList(matchingWords);
+  wd_fFilter.value = ''; // 重置词族选择
+}
+
+//250811通配符和多字段搜索
 	
 	      function randomSearchWord() {
 	        const randomWord = wordData[Math.floor(Math.random() * wordData.length)].word;
@@ -348,125 +498,183 @@ function closeRootModal() {
 }
 
 //250609 新增词根弹窗
-	
+
+//250825新增内容
+//添加输入监听
+searchInput.addEventListener("input", () => {
+  if (searchInput.value === '') {
+    generateWordList(wordData);
+    wd_fFilter.value = '';
+  } else {
+    searchWord();
+  }
+});
+
+//添加防抖处理
+let searchTimeout;
+searchInput.addEventListener("input", () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    if (searchInput.value === '') {
+      generateWordList(wordData);
+      wd_fFilter.value = '';
+    } else {
+      searchWord();
+    }
+  }, 300);
+});
+
+
+//250825新增内容
+
 	      // 显示词语的信息
 	      function displayWordInfo(word) {
 	       
 			const info = wordData.find(item => item.word === word);
 			  let infoHTML = `<h3>${word}</h3>`;
 			  infoHTML += `<div class="separator"></div>`;
-			  infoHTML += `<p><strong class="underlined-text">基本信息</strong></p>`;
-			  if (info.info1 && info.info1.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">变体平文</strong> ${info.info1}</p>`;
+			  infoHTML += `<p><strong class="underlined-text">基 本 信 息</strong></p>`;
+			  if (info.hb && info.hb.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">变体平文</strong> ${info.hb}</p>`;
 			  }
-			  if (info.info2 && info.info2.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">汉　　字</strong> ${info.info2}</p>`;
+			  if (info.kz && info.kz.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">汉字</strong> ${info.kz}</p>`;
 			  }
-			  if (info.info3 && info.info3.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">词　　性</strong> ${info.info3}</p>`;
+			  if (info.wd_c && info.wd_c.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">词性</strong> ${info.wd_c}</p>`;
 			  }
-			  if (info.info4 && info.info4.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">重　　音</strong> ${info.info4}</p>`;
+			  if (info.ky && info.ky.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">活用</strong> ${info.ky}</p>`;
 			  }
-			  if (info.info5 && info.info5.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">释　　义</strong> ${info.info5}</p>`;
+			  if (info.ac && info.ac.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">音调</strong> ${info.ac}</p>`;
+			  }
+			  if (info.mn && info.mn.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">释义</strong> ${info.mn}</p>`;
 			  }
               if (info.class2 && info.class2.trim() !== "0") {
-			    infoHTML += `<p><strong class="underlined-text">历史音韵学</strong></p>`;
+			    infoHTML += `<p><strong class="underlined-text">历 史 音 韵 学</strong></p>`;
 			  }
-			  if (info.info6 && info.info6.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代以前</strong> ${info.info6}</p>`;
+			  if (info.preoj && info.preoj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代以前</strong> ${info.preoj}</p>`;
 			  }
-			  if (info.info7 && info.info7.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代半岛</strong> ${info.info7}</p>`;
+			  if (info.pij && info.pij.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代半岛</strong> ${info.pij}</p>`;
 			  }
-			  if (info.info8 && info.info8.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代中央</strong> ${info.info8}</p>`;
+			  if (info.woj && info.woj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代中央</strong> ${info.woj}</p>`;
 			  }
-			  if (info.info9 && info.info9.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代东国</strong> ${info.info9}</p>`;
+			  if (info.aoj && info.aoj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代东国</strong> ${info.aoj}</p>`;
 			  }
-			  if (info.info10 && info.info10.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">上代其他</strong> ${info.info10}</p>`;
+			  if (info.ooj && info.ooj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代其他</strong> ${info.ooj}</p>`;
 			  }
-			  if (info.info11 && info.info11.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">中　　古</strong> ${info.info11}</p>`;
+			  if (info.emj && info.emj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">中古</strong> ${info.emj}</p>`;
 			  }
-			  if (info.info12 && info.info12.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">中　　世</strong> ${info.info12}</p>`;
+			  if (info.lmj && info.lmj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">中世</strong> ${info.lmj}</p>`;
 			  }
-			  if (info.info13 && info.info13.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">近世现代</strong> ${info.info13}</p>`;
+			  if (info.mdj && info.mdj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">近世现代</strong> ${info.mdj}</p>`;
 			  }
-			  if (info.info14 && info.info14.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">历史假名</strong> ${info.info14}</p>`;
+			  if (info.hkz && info.hkz.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">历史假名</strong> ${info.hkz}</p>`;
 			  }
-			  if (info.info15 && info.info15.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">现代假名</strong> ${info.info15}</p>`;
+			  if (info.mkz && info.mkz.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">现代假名</strong> ${info.mkz}</p>`;
 			  }
 			  if (info.class3 && info.class3.trim() !== "0") {
-			    infoHTML += `<p><strong class="underlined-text">方言音韵学</strong></p>`;
+			    infoHTML += `<p><strong class="underlined-text">本 土 方 言 形 态</strong></p>`;
 			  }
-			  if (info.info16 && info.info16.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">本土方言</strong> ${info.info16}</p>`;
+			  if (info.ej && info.ej.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">东部日本</strong> ${info.ej}</p>`;
 			  }
-			  if (info.info17 && info.info17.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">琉球诸语</strong> ${info.info17}</p>`;
+			  if (info.wj && info.wj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">西部日本</strong> ${info.wj}</p>`;
+			  }
+			  if (info.itj && info.itj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">出云|东北</strong> ${info.itj}</p>`;
+			  }
+			  if (info.kj && info.kj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">九州方言</strong> ${info.kj}</p>`;
 			  }
 			  if (info.class4 && info.class4.trim() !== "0") {
-			    infoHTML += `<p><strong class="underlined-text">词源学</strong></p>`;
+			    infoHTML += `<p><strong class="underlined-text">琉 球 诸 语 形 态</strong></p>`;
 			  }
-			  if (info.info18 && info.info18.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">语言集合</strong> ${info.info18}</p>`;
+			  if (info.am && info.am.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">奄美诸语</strong> ${info.am}</p>`;
 			  }
-			  // 修改词根显示为可点击链接
-    if (info.info19 && info.info19.trim() !== "") {
-        infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;">
-            <strong class="bordered-text">词　　根</strong> 
-            <span class="root-link" data-root="${info.info19}">${info.info19}</span>
-        </p>`;
-    }
-			  if (info.info20 && info.info20.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">分　　解</strong> ${info.info20}</p>`;
+			  if (info.ok && info.ok.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">冲绳诸语</strong> ${info.ok}</p>`;
 			  }
-			  if (info.info21 && info.info21.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">琉球祖语</strong> ${info.info21}</p>`;
+			  if (info.mi && info.mi.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">宫古诸语</strong> ${info.mi}</p>`;
 			  }
-			  if (info.info22 && info.info22.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">日琉祖语</strong> ${info.info22}</p>`;
-			  }
-			  if (info.info23 && info.info23.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">后　　缀</strong> ${info.info23}</p>`;
-			  }
-			  if (info.info24 && info.info24.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">复　　合</strong> ${info.info24}</p>`;
+			  if (info.ya && info.ya.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">大八重山</strong> ${info.ya}</p>`;
 			  }
 			  if (info.class5 && info.class5.trim() !== "0") {
-			    infoHTML += `<p><strong class="underlined-text">比较语言学</strong></p>`;
+			    infoHTML += `<p><strong class="underlined-text">词 源 学</strong></p>`;
 			  }
-			  if (info.info25 && info.info25.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">Ａｉｎｕ</strong> ${info.info25}</p>`;
+			  if (info.lg_c && info.lg_c.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">语言集合</strong> ${info.lg_c}</p>`;
 			  }
-			  if (info.info26 && info.info26.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">朝　　鲜</strong> ${info.info26}</p>`;
+			  // 修改词根（词族）显示为可点击链接
+    if (info.wd_f && info.wd_f.trim() !== "") {
+        infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;">
+            <strong class="bordered-text justify-text">词族</strong> 
+            <span class="root-link" data-root="${info.wd_f}">${info.wd_f}</span>
+        </p>`;
+    }
+	if (info.cp && info.cp.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">复合</strong> ${info.cp}</p>`;
 			  }
-			  if (info.info27 && info.info27.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">汉　　藏</strong> ${info.info27}</p>`;
+			  if (info.da && info.da.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">分解</strong> ${info.da}</p>`;
 			  }
-			  if (info.info28 && info.info28.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">南　　岛</strong> ${info.info28}</p>`;
+			  if (info.pr && info.pr.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">琉球祖语</strong> ${info.pr}</p>`;
 			  }
-			  if (info.info29 && info.info29.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">侗　　台</strong> ${info.info29}</p>`;
+			  if (info.pjr && info.pjr.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">日琉祖语</strong> ${info.pjr}</p>`;
 			  }
-			  if (info.info30 && info.info30.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">印　　欧</strong> ${info.info30}</p>`;
+			  if (info.pf && info.pf.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">前缀</strong> ${info.pf}</p>`;
 			  }
-			  if (info.info31 && info.info31.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">泛欧亚语</strong> ${info.info31}</p>`;
+			  if (info.sf && info.sf.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">后缀</strong> ${info.sf}</p>`;
 			  }
-			  if (info.info32 && info.info32.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">其　　他</strong> ${info.info32}</p>`;
+			  if (info.uc && info.uc.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">ＵniＣog</strong> ${info.uc}</p>`;
+			  }
+			  if (info.class6 && info.class6.trim() !== "0") {
+			    infoHTML += `<p><strong class="underlined-text">比 较 语 言 学</strong></p>`;
+			  }
+			  if (info.ai && info.ai.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">Ａｉｎｕ</strong> ${info.ai}</p>`;
+			  }
+			  if (info.ko && info.ko.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">朝鲜</strong> ${info.ko}</p>`;
+			  }
+			  if (info.st && info.st.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">汉藏</strong> ${info.st}</p>`;
+			  }
+			  if (info.as && info.as.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">南岛</strong> ${info.as}</p>`;
+			  }
+			  if (info.kt && info.kt.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">侗台</strong> ${info.kt}</p>`;
+			  }
+			  if (info.ie && info.ie.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">印欧</strong> ${info.ie}</p>`;
+			  }
+			  if (info.te && info.te.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">突蒙满通</strong> ${info.te}</p>`;
+			  }
+			  if (info.ol && info.ol.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">其他</strong> ${info.ol}</p>`;
 			  }
 			  wordInfo.innerHTML = infoHTML;
 	
@@ -629,7 +837,7 @@ strong.underlined-text{
 	margin: 0px 0 10px;
 	padding-bottom: 3px;
 	font-size: 18px;
-	border-bottom: 3px solid #007bff;
+	border-bottom: 3px solid #ff67c0;
 }
 
 /* 250609 新增词根弹窗 */
@@ -718,113 +926,200 @@ strong.underlined-text{
         text-decoration: none;
     }
 
-@media screen and (max-width: 397px) {
+
+/* 250609 新增词根弹窗 */
+
+/* 两个框响应式设计 */
+
   input#searchInput.search-field {
-    width: 55%;
-	margin-top: 15px;
-	margin-right: 0%;
+	height: 35px;
+	margin-bottom: 10px;
 	border-width: 1px;
 	border-style: none;
 	border-bottom-style: solid;
 	color: rgb(150,150,150);
 	font-size: 14px; 
-	padding-left: 2%;
-  }
-  button#searchBtn.btn{
-	width: 0%;
-	font-size: 14px;
-	margin-bottom: 6px;
-	margin-left: 1%;
-  }    
-  button#randomBtn.btn.btn-primary {
-	width: 20%;
-	margin-left: 5%;
-	font-size: 14px;
-	margin-bottom: 6px;
-  }
-}
-
-@media screen and (min-width: 397px)  and (max-width: 768px) {
-  input#searchInput.search-field {
-    width: 60%;
-	margin-top: 15px;
-	margin-right: 0%;
-	border-width: 1px;
-	border-style: none;
-	border-bottom-style: solid;
-	color: rgb(150,150,150);
-	font-size: 14px; 
-	padding-left: 2%;
-  }
-  button#searchBtn.btn{
-	width: 0%;
-	font-size: 14px;
-	margin-bottom: 6px;
-	margin-left: 1%;
-  }    
-  button#randomBtn.btn.btn-primary {
-	width: 20%;
-	margin-left: 5%;
-	font-size: 14px;
-	margin-bottom: 6px;
-  }
-}
-
-@media screen and (min-width: 1200px) {
-  input#searchInput.search-field {
-    width: 60%;
-	margin-top: 15px;
-	margin-right: 0%;
-	border-width: 1px;
-	border-style: none;
-	border-bottom-style: solid;
-	color: rgb(150,150,150);
-	font-size: 14px; 
-	padding-left: 5%;
-  }
-  button#searchBtn.btn{
-	width: 0%;
-	font-size: 14px;
-	margin-bottom: 6px;
-	margin-left: -2%;
-  }    
-  button#randomBtn.btn.btn-primary {
-	width: 20%;
-	margin-left: 3%;
-	font-size: 14px;
-	margin-bottom: 6px;
+	padding-left: 12px;
   }
 
+  button#searchBtn.btn{
+	font-size: 14px;
+	margin-bottom: 6px;
+  }   
+
+button#randomBtn.btn.btn-primary {
+	height: 37px;
+	width: 40px;
+  margin-right: 3%;
+	font-size: 14px;
+	margin-bottom: 6px;
+	padding-bottom: 30px;
+  }
+
+@media screen and (max-width: 768px) {
+  button#searchBtn.btn{
+	width: 10%;
+  }
 }
 
 @media screen and (min-width: 768px) and (max-width: 1200px) {
-  input#searchInput.search-field {
-    width: 40%;
-	margin-top: 15px;
-	margin-right: 0%;
-	border-width: 1px;
-	border-style: none;
-	border-bottom-style: solid;
-	color: rgb(150,150,150);
-	font-size: 14px; 
-	padding-left: 5%;
-  }
   button#searchBtn.btn{
-	width: 0%;
-	font-size: 14px;
-	margin-bottom: 6px;
-	margin-left: -6%;
+	width: 10%;
+  margin-left: 5%;
+  margin-right: 5%;
   }    
   button#randomBtn.btn.btn-primary {
-	width: 30%;
-	margin-left: 3%;
-	font-size: 14px;
-	margin-bottom: 6px;
+	margin-left: 2%;
   }
 
 }
 
-/* 250609 新增词根弹窗 */
+@media screen and (min-width: 1200px) {
+  button#searchBtn.btn{
+	width: 15%;
+  }    
+  button#randomBtn.btn.btn-primary {
+	margin-left: 2%;
+  }
+
+}
+
+#randomBtn, #searchBtn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+#randomBtn .fa-random, #searchBtn .fa-search {
+        margin: 0 !important;                /* 移除图标边距 */
+    font-size: 16px;                     /* 调整图标大小 */
+    display: block !important;            /* 确保图标是块级元素 */
+    line-height: 1;
+}
+
+/* 新增词族搜索框 */
+        .filter-input-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: -5px;
+        }
+        @media screen and (min-width: 1200px) {
+        #wd_fSearchInput {
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            outline: none;
+            font-size: 14px;
+        }}
+
+		@media screen and (min-width: 768px) and (max-width: 1200px) {
+        #wd_fSearchInput {
+			width: 70px;
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            outline: none;
+            font-size: 14px;
+        }}
+        
+		@media screen and (max-width: 768px){
+			#wd_fSearchInput {
+        width: 30%;
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            outline: none;
+            font-size: 14px;
+        }}
+
+
+        .dropdown-button {
+            width: 40px;
+            padding: 0 12px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-button:hover {
+            background: #e9ecef;
+        }
+        
+        .dropdown-button.open .arrow {
+            transform: rotate(180deg);
+        }
+        
+        .arrow {
+            font-size: 12px;
+            color: #007BFF;
+            transition: transform 0.3s ease;
+        }
+        
+/* 两个搜索框对齐 */
+
+.search-combo-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-field-combo {
+  margin-top: -10px;
+  display: flex;
+  width: 100%;
+}
+
+.search-field {
+  flex-grow: 1; /* 填充剩余空间 */
+  min-width: 0; /* 防止内容溢出 */
+}
+
+.search-field:focus {
+    outline: none; /* 移除默认轮廓 */
+    border-color: #007BFF; /* 设置新的边框颜色 */
+}
+
+#wd_fSearchInput:focus {
+    outline: none; /* 移除默认轮廓 */
+    border-color: #007BFF; /* 设置新的边框颜色 */
+}
+
+.btn, .btn-primary {
+  width: 100px; /* 固定宽度 */
+  flex-shrink: 0; /* 禁止收缩 */
+}
+
+.filter-combo {
+  width: 100%;
+}
+
+#searchInput::placeholder {
+    font-style: italic;
+    font-size: 16px;
+}
+
+.justify-text {
+    display: inline-block;
+    width: 5em;
+    text-align: justify; /* 普通对齐 */
+    text-align-last: justify; /* 最后一行对齐 */
+    -moz-text-align-last: justify; /* Firefox 支持 */
+    overflow: hidden;
+    vertical-align: middle;
+    font-size: calc(5em / var(--char-count, 4));
+    word-break: break-all; /* 强制所有字符都参与分散对齐 */
+    letter-spacing: 0; /* 重置字母间距 */
+    word-spacing: 0; /* 重置单词间距 */
+    text-justify: inter-character; /* 使用字符间距调整 */
+}
 
 	</style>
 
