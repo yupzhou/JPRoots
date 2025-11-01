@@ -47,13 +47,18 @@
         <div class="search-combo-container">
             <!-- 单词搜索框组合 -->
             <div class="search-field-combo">
-        					<input type="search" id="searchInput" class="search-field" name="search"  placeholder="Search ..."  autocomplete="off"/>
+        					<input type="search" id="searchInput" class="search-field" name="search"  placeholder="寻觅 ..."  autocomplete="off"/>
         					<!-- 将搜索结果的容器设置为绝对定位，以解决显示问题 移除
         					<div id="searchResultsContainer">
         					  <div id="searchResults"></div>
         					</div>-->
-        <button class="btn" type="button"  id="searchBtn"><i class="fa fa-search" style="color: rgb(0,123,255);"></i></button>
-        <button class="btn btn-primary" type="button"  id="randomBtn"><i class="fa fa-random" style="color: rgb(255, 255, 255);"></i></button>
+                  <button class="btn" type="button"  id="searchBtn"><i class="fa fa-search" style="color: rgb(0,123,255);"></i></button>
+                  <!-- 高级搜索按钮 -->
+    <button class="btn btn-primary" type="button" id="advancedSearchBtn" title="高级搜索">
+        <i class="fa fa-list" style="color: white; "></i>
+    </button>
+        <button class="btn btn-primary" type="button"  id="randomBtn" title="随机搜索"><i class="fa fa-random" style="color: rgb(255, 255, 255);"></i></button>
+        
             </div>
             <!-- 词族搜索框组合 -->
             <div class="filter-combo">
@@ -66,7 +71,7 @@
 			
 			<!-- 修改为带搜索功能的下拉框 -->
             <div class="filter-input-container">
-                <input type="text" id="wd_fSearchInput" placeholder="词族搜索 ..." autocomplete="off">
+                <input type="text" id="wd_fSearchInput" placeholder="查阅​词族宝典 ..." autocomplete="off">
                 <div class="dropdown-button" id="customSelectTrigger">
                     <span class="arrow">▼</span>
                 </div>
@@ -79,12 +84,12 @@
                         </div>
 
                         <div class="col-md-8 col-lg-9 col-xl-8 header-container" style="margin: 0px 15px 0px 10px; padding: 10px;">
-                            <h3 class="text-primary" style="font-weight:normal;">日琉语词汇参考数据库 [建设中]</h3><h5 class="text-primary" style="font-weight:normal; text-decoration:overline;"><em>Japonic Languages Vocabulary DataBase</em></h5>
+                            <h3 class="text-primary" style="font-weight:normal;">東 瀛 球 陽 語 林 [建设中]</h3><h5 class="text-primary" style="font-weight:normal; text-decoration:overline;"><em>Japonic Languages Vocabulary DataBase</em></h5>
                         </div>
 
         				<!-- 将获取词汇列表的 JavaScript 代码中的 ID 修改为 "wordList" -->
                         <div class="col-md-3 col-lg-2 col-xl-3" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 15px; padding-top: 5px; background-color: white;">
-        					<h5><center><i class="fa fa-book"></i> 词汇表</center></h5>
+        					<h5><center><i class="fa fa-book"></i> 和琉语汇</center></h5>
         					<div style="height: 400px; ">
         						<ul id="wordList" style="height: 390px; overflow-y: scroll; "></ul>
         					</div>
@@ -92,8 +97,8 @@
         								
                         <div class="col-md-8 col-lg-9 col-xl-8" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 10px; padding-top: 7px; line-height: 1; background-color: white;">
         					<div id="wordInfo" style="height: 420px; overflow-y: scroll; ">
-								<p style="line-height: 1;  margin-bottom: 0px;"><center style="color:#007BFF; font-size: 20px;">～小贴士～</center></p>
-									<p style="line-height: 1.5; margin-top: -5px;margin-bottom: 10px;">日琉语词汇参考数据库（JLVDB）是收录了丰富的日琉语词汇的辞典，支持 ① 词汇表直接搜索（宽屏左侧/窄屏上侧）、② 全字段模糊搜索（左上角第一搜索框）、③ 词族选择/模糊搜索（左上角第二搜索框）、④ 随机搜索（左上角第一搜索框右侧蓝色按钮）。</p>
+								<p style="line-height: 1;  margin-bottom: 0px;"><center style="color:#007BFF; font-size: 20px;">～ 指南 ～</center></p>
+									<p style="line-height: 1.5; margin-top: -5px;margin-bottom: 10px;">「东瀛球阳语林（日琉语词汇参考数据库，JLVDB）」是收录了丰富的日琉语词汇的辞典，支持 ① 词汇表直接搜索（宽屏左侧/窄屏上侧）、② 全字段模糊搜索（左上角第一搜索框）、③ 词族选择/模糊搜索（左上角第二搜索框）、④ 随机搜索（左上角第一搜索框右侧蓝色按钮）。</p>
 									<p style="line-height: 1.5; margin-bottom: 10px;">由于前三个功能共用同一个单词表位置，在功能上是互斥的。</p>
 									<p style="line-height: 1.5; margin-bottom: 10px;">全字段模糊搜索间接实现了筛选功能，如搜索「与那国」可得到存在与那国语形式的词汇，搜索「2.5」可得到 2.5 调类的词汇。</p>
 									<p style="line-height: 1.5; margin-bottom: 10px;">全字段模糊搜索是实时查询的。如需精确搜索，请使用正则表达式：</p>
@@ -208,6 +213,10 @@ function closeIfOutside(e) {
 	      const searchResults = document.getElementById("searchResults");
 	      const wordList = document.getElementById("wordList");
 	      const wordInfo = document.getElementById("wordInfo");
+
+        // 高级搜索功能
+const advancedSearchBtn = document.getElementById("advancedSearchBtn");
+let advancedSearchPanel = document.getElementById("advancedSearchPanel");
 	
 	      // 生成词汇表
 	      for (const wordInfo of wordData) {
@@ -271,9 +280,9 @@ function populateCustomDropdown(wordData) {
   // 添加空选项
   const emptyOption = document.createElement("div");
   emptyOption.className = "custom-option";
-  emptyOption.textContent = "词族选择 ...";
+  emptyOption.textContent = "欢迎查阅词族宝典";
   emptyOption.onclick = () => {
-    if (selectedText) selectedText.textContent = "词族选择 ...";
+    if (selectedText) selectedText.textContent = "欢迎查阅词族宝典";
     if (originalSelect) {
       originalSelect.value = "";
       originalSelect.dispatchEvent(new Event("change"));
@@ -382,6 +391,13 @@ function searchWord() {
     //const searchInput = document.getElementById("searchInput");
     let searchTerm = searchInput.value.trim();
     
+// 检查是否有选中的高级搜索字段
+    const selectedFields = getSelectedFields();
+    if (selectedFields.length > 0) {
+        performAdvancedSearch(searchTerm, selectedFields);
+        return;
+    }
+
     if (searchTerm === '') {
     generateWordList(wordData);
     wd_fFilter.value = ''; // 重置词族选择
@@ -526,6 +542,235 @@ searchInput.addEventListener("input", () => {
 
 
 //250825新增内容
+
+//251031新增内容
+
+// 如果面板不存在则创建
+if (!advancedSearchPanel) {
+    advancedSearchPanel = document.createElement("div");
+    advancedSearchPanel.id = "advancedSearchPanel";
+    advancedSearchPanel.className = "advanced-search-panel";
+    document.querySelector(".search-field-combo").appendChild(advancedSearchPanel);
+}
+
+// 字段名称映射（用于显示友好名称）
+const fieldNameMap = {
+    'word': '词条（严式）',
+    'hb': '词条（变体平文式）', 
+    'kz': '汉字',
+    'wd_c': '词性',
+    'ky': '活用型',
+    'ac': '音调',
+    'mn': '释义',
+    'preoj': '上代以前日语',
+    'pij': '上代半岛日语',
+    'woj': '上代中央方言',
+    'aoj': '上代东国方言（广义）',
+    'ooj': '上代其他日语',
+    'emj': '中古日语',
+    'lmj': '中世日语',
+    'mdj': '近世现代日语',
+    'hkz': '历史假名遣',
+    'mkz': '现代假名遣',
+    'ej': '东日本方言',
+    'wj': '西日本方言',
+    'itj': '出云-东北方言',
+    'kj': '九州方言',
+    'am': '奄美语',
+    'ok': '冲绳语',
+    'mi': '宫古语',
+    'ya': '广域八重山语',
+    //'lg_c': '语言集合',
+    'wd_f': '词族',
+    'cp': '复合',
+    'da': '分解',
+    'pr': '琉球祖语',
+    'pjr': '日琉祖语',
+    'pf': '前缀',
+    'sf': '后缀',
+    'uc': 'UniCog',
+    //'ai': '阿伊努',
+    'ko': '朝鲜语',
+    //'st': '汉藏',
+    //'as': '南岛',
+    //'kt': '侗台',
+    //'ie': '印欧',
+    //'te': '突蒙满通',
+    //'ol': '其他'
+};
+
+// 从第一个词条提取所有字段
+function extractAllFields(wordData) {
+    if (wordData.length === 0) return [];
+    const sampleEntry = wordData[0];
+    const allFields = Object.keys(sampleEntry);
+    
+    // 过滤掉不需要搜索的字段
+    return allFields.filter(field => 
+        field !== 'class1' && 
+        field !== 'class2' && 
+        field !== 'class3' && 
+        field !== 'class4' && 
+        field !== 'class5' && 
+        field !== 'class6' && 
+        field !== 'lg_c' && 
+        field !== 'ai' && 
+        field !== 'st' && 
+        field !== 'as' && 
+        field !== 'kt' && 
+        field !== 'ie' && 
+        field !== 'te' && 
+        field !== 'ol' && 
+        field !== 'or'
+    );
+}
+
+// 渲染字段选择界面
+function renderFieldCheckboxes(fields) {
+    advancedSearchPanel.innerHTML = `
+        <h4>探秘分野 ...</h4>
+        <div class="field-checkboxes">
+            ${fields.map(field => `
+                <div class="field-checkbox">
+                    <input type="checkbox" id="field-${field}" value="${field}">
+                    <label for="field-${field}">${fieldNameMap[field] || field}</label>
+                </div>
+            `).join('')}
+        </div>
+        <div class="advanced-actions">
+            <button id="applyAdvancedSearch" disabled>甄选</button>
+            <button id="resetAdvancedFields">复始</button>
+            <button id="selectAllFields">网罗</button>
+        </div>
+    `;
+}
+
+// 初始化高级搜索面板
+function initAdvancedSearch(wordData) {
+    const availableFields = extractAllFields(wordData);
+    renderFieldCheckboxes(availableFields);
+    
+    // 绑定事件
+    advancedSearchBtn.addEventListener("click", toggleAdvancedPanel);
+    
+    // 使用事件委托处理面板内的交互
+    advancedSearchPanel.addEventListener("click", function(e) {
+        e.stopPropagation();
+        
+        if (e.target.id === "applyAdvancedSearch") {
+            applyAdvancedSearch();
+        } else if (e.target.id === "resetAdvancedFields") {
+            resetFieldSelection();
+        } else if (e.target.id === "selectAllFields") {
+            selectAllFields();
+        } else if (e.target.type === "checkbox") {
+            updateApplyButtonState();
+        }
+    });
+    
+    // 点击页面其他地方关闭面板
+    document.addEventListener("click", function(e) {
+        if (!advancedSearchPanel.contains(e.target) && e.target !== advancedSearchBtn) {
+            advancedSearchPanel.style.display = "none";
+        }
+    });
+}
+
+// 切换高级搜索面板显示
+function toggleAdvancedPanel() {
+    const isVisible = advancedSearchPanel.style.display === "block";
+    advancedSearchPanel.style.display = isVisible ? "none" : "block";
+}
+
+// 获取选中的字段
+function getSelectedFields() {
+    const checkboxes = advancedSearchPanel.querySelectorAll('input[type="checkbox"]:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+}
+
+// 更新应用按钮状态
+function updateApplyButtonState() {
+    const applyBtn = document.getElementById("applyAdvancedSearch");
+    const selectedCount = getSelectedFields().length;
+    applyBtn.disabled = selectedCount === 0;
+    applyBtn.textContent = selectedCount > 0 ? 
+        `甄选 ${selectedCount} 域` : '甄选';
+}
+
+// 应用高级搜索
+function applyAdvancedSearch() {
+    const searchTerm = document.getElementById("searchInput").value.trim();
+    const selectedFields = getSelectedFields();
+    
+    if (!searchTerm) {
+        alert('请输入搜索关键词');
+        return;
+    }
+    
+    if (selectedFields.length === 0) {
+        alert('请至少选择一个搜索字段');
+        return;
+    }
+    
+    // 执行搜索
+    performAdvancedSearch(searchTerm, selectedFields);
+    advancedSearchPanel.style.display = "none";
+}
+
+// 执行高级搜索逻辑
+function performAdvancedSearch(searchTerm, fields) {
+    // 检查正则表达式模式
+    let regex;
+    if (searchTerm.startsWith('/') && searchTerm.endsWith('/')) {
+        try {
+            regex = new RegExp(searchTerm.slice(1, -1), 'i');
+        } catch (e) {
+            alert('正则表达式格式错误');
+            return;
+        }
+    } else {
+        // 普通搜索模式
+        const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const pattern = escapedTerm.replace(/\*/g, '.*');
+        regex = new RegExp(pattern, 'i');
+    }
+    
+    // 过滤数据
+    const matchingWords = wordData.filter(item => {
+        return fields.some(field => {
+            const value = String(item[field] || '');
+            return regex.test(value);
+        });
+    });
+    
+    // 更新词汇表显示
+    generateWordList(matchingWords);
+    document.getElementById("wd_fFilter").value = ''; // 重置词族选择
+}
+
+// 重置字段选择
+function resetFieldSelection() {
+    advancedSearchPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+    });
+    updateApplyButtonState();
+}
+
+// 全选字段
+function selectAllFields() {
+    advancedSearchPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = true;
+    });
+    updateApplyButtonState();
+}
+
+// 在数据加载完成后初始化高级搜索
+const availableFields = extractAllFields(wordData);
+initAdvancedSearch(wordData);
+
+//251031新增内容
+
+
 
 	      // 显示词语的信息
 	      function displayWordInfo(word) {
@@ -947,7 +1192,7 @@ strong.underlined-text{
 	margin-bottom: 6px;
   }   
 
-button#randomBtn.btn.btn-primary {
+button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
 	height: 37px;
 	width: 40px;
   margin-right: 3%;
@@ -956,10 +1201,22 @@ button#randomBtn.btn.btn-primary {
 	padding-bottom: 30px;
   }
 
+
+
 @media screen and (max-width: 768px) {
   button#searchBtn.btn{
 	width: 10%;
+  margin-right: 1%;
   }
+
+  button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
+	margin-left: -1.5%;
+  }
+
+    .advanced-search-panel {
+        width: 97%;
+    }
+
 }
 
 @media screen and (min-width: 768px) and (max-width: 1200px) {
@@ -968,35 +1225,42 @@ button#randomBtn.btn.btn-primary {
   margin-left: 5%;
   margin-right: 5%;
   }    
-  button#randomBtn.btn.btn-primary {
-	margin-left: 2%;
+  button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
+	margin-left: 0%;
   }
+
 
 }
 
 @media screen and (min-width: 1200px) {
   button#searchBtn.btn{
 	width: 15%;
+  margin-right: 1%;
   }    
-  button#randomBtn.btn.btn-primary {
-	margin-left: 2%;
+  button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
+	margin-left: -1%;
   }
+  .advanced-search-panel {
+        width: 248px;
+    }
 
 }
 
-#randomBtn, #searchBtn {
+#randomBtn, #searchBtn, #advancedSearchBtn {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     padding: 0 !important;
 }
 
-#randomBtn .fa-random, #searchBtn .fa-search {
+#randomBtn .fa-random, #searchBtn .fa-search, #advancedSearchBtn .fa-list {
         margin: 0 !important;                /* 移除图标边距 */
     font-size: 16px;                     /* 调整图标大小 */
     display: block !important;            /* 确保图标是块级元素 */
     line-height: 1;
 }
+
+
 
 /* 新增词族搜索框 */
         .filter-input-container {
@@ -1103,7 +1367,7 @@ button#randomBtn.btn.btn-primary {
 
 #searchInput::placeholder {
     font-style: italic;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .justify-text {
@@ -1119,6 +1383,89 @@ button#randomBtn.btn.btn-primary {
     letter-spacing: 0; /* 重置字母间距 */
     word-spacing: 0; /* 重置单词间距 */
     text-justify: inter-character; /* 使用字符间距调整 */
+}
+
+/* 251031高级搜索面板样式 */
+.advanced-search-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: none;
+    padding: 15px;
+    margin-top: 0px;
+}
+
+#advancedSearchBtn .fa-list {
+    pointer-events: none; /* 关键代码：让点击事件穿透图标 */
+}
+
+.advanced-search-panel h4 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.field-checkboxes {
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 10px 0;
+}
+
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.field-checkbox input {
+    margin-right: 8px;
+}
+
+.field-checkbox label {
+    margin: 0;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.advanced-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.advanced-actions button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+#applyAdvancedSearch {
+    background: #007bff;
+    color: white;
+}
+
+#applyAdvancedSearch:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+#resetAdvancedFields {
+    background: #858585;
+    color: white;
+}
+
+/* 确保搜索按钮容器有相对定位 */
+.search-field-combo {
+    position: relative;
 }
 
 	</style>
