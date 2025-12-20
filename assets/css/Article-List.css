@@ -117,27 +117,9 @@ a:hover {
   }
 }
 
-@media (max-width: 767.98px) {
-  body.index {
-    background: url("../../assets/img/Nanasiko-d-b.jpg") top / cover no-repeat fixed;
-  }
-}
-
-@media (min-width: 767.98px) {
-  body.index {
-    background: url("../../assets/img/Nanasiko-c-b.jpg") top / cover no-repeat fixed;
-    background-position: center 15%;
-  }
-}
-
 @media (max-width: 990px) {
   .projects-horizontal {
     display: none;
-  }
-}
-
-@media (min-width: 767.98px) {
-  body {
   }
 }
 
