@@ -120,7 +120,7 @@
         				</div>
 					</div>
 				</div>
-				<p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">© 2023-2025 Nanasi 七梨子</p>
+				<p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">© 2023-2026 Nanasi 七梨子</p>
     </div>
 	
 	<script>
@@ -492,15 +492,15 @@ function showRootInfo(rootName) {
     const rootInfo = rootData.find(item => item.root === rootName);
     if (rootInfo) {
         document.getElementById('root-name').textContent = rootInfo.root;
-        
         let detailsHTML = '';
-        if (rootInfo.PJR) detailsHTML += `<p class="root-detail"><strong>日琉祖语</strong> ${rootInfo.PJR}</p>`;
-        if (rootInfo.POJ) detailsHTML += `<p class="root-detail"><strong>表日祖语</strong> ${rootInfo.POJ}</p>`;
-        if (rootInfo.PR) detailsHTML += `<p class="root-detail"><strong>琉球祖语</strong> ${rootInfo.PR}</p>`;
-        if (rootInfo.accent) detailsHTML += `<p class="root-detail"><strong>音　　调</strong> ${rootInfo.accent}</p>`;
-        if (rootInfo.pos) detailsHTML += `<p class="root-detail"><strong>词　　性</strong> ${rootInfo.pos}</p>`;
-        if (rootInfo.meaning) detailsHTML += `<p class="root-detail"><strong>含　　义</strong> ${rootInfo.meaning}</p>`;
-        
+        if (rootInfo.pjr) detailsHTML += `<p class="root-detail"><strong>日琉祖语</strong> ${rootInfo.pjr}</p>`;
+        if (rootInfo.poj) detailsHTML += `<p class="root-detail"><strong>表日祖语</strong> ${rootInfo.poj}</p>`;
+        if (rootInfo.pr) detailsHTML += `<p class="root-detail"><strong>琉球祖语</strong> ${rootInfo.pr}</p>`;
+        if (rootInfo.ac_r) detailsHTML += `<p class="root-detail"><strong>音　　调</strong> ${rootInfo.ac_r}</p>`;
+        if (rootInfo.wd_cl) detailsHTML += `<p class="root-detail"><strong>词　　性</strong> ${rootInfo.wd_cl}</p>`;
+        if (rootInfo.mn) detailsHTML += `<p class="root-detail"><strong>含　　义</strong> ${rootInfo.mn}</p>`;
+        if (rootInfo.era) detailsHTML += `<p class="root-detail"><strong>日语初出</strong> ${rootInfo.era}</p>`;
+        if (rootInfo.lg_c) detailsHTML += `<p class="root-detail"><strong>语言集合</strong> ${rootInfo.lg_c}</p>`;
         document.getElementById('root-details').innerHTML = detailsHTML;
         document.getElementById('root-info-modal').style.display = 'flex';
     } else {
@@ -558,15 +558,20 @@ const fieldNameMap = {
     'word': '词条（严式）',
     'hb': '词条（变体平文式）', 
     'kz': '汉字',
-    'wd_c': '词性',
+    'wd_cl': '词性',
     'ky': '活用型',
     'ac': '音调',
+    'ac_c': '调类',
     'mn': '释义',
-    'preoj': '上代以前日语',
-    'pij': '上代半岛日语',
+    'pij': '半岛日语',
+    'yyj': '弥生日语',
+    'kfj': '古坟日语',
+    'skj': '推古遗文',
     'woj': '上代中央方言',
+    //'woj_2',
     'aoj': '上代东国方言（广义）',
-    'ooj': '上代其他日语',
+    'izj': '上代出云方言',
+    'ksj': '上代九州方言',
     'emj': '中古日语',
     'lmj': '中世日语',
     'mdj': '近世现代日语',
@@ -580,16 +585,22 @@ const fieldNameMap = {
     'ok': '冲绳语',
     'mi': '宫古语',
     'ya': '广域八重山语',
-    //'lg_c': '语言集合',
+    'lg_c': '语言集合',
     'wd_f': '词族',
+    //'wd_f_2': '下位词族',
     'cp': '复合',
     'da': '分解',
     'pr': '琉球祖语',
     'pjr': '日琉祖语',
     'pf': '前缀',
+    'if': '中缀',
     'sf': '后缀',
     'uc': 'UniCog',
+    //"if_o": "分析中缀插入的成因",
+    //"rd_o": "分析连浊的成因",
     //'ai': '阿伊努',
+    'alt': '音位交替',
+    'wd_cg': '名词词类',
     'ko': '朝鲜语',
     //'st': '汉藏',
     //'as': '南岛',
@@ -621,7 +632,11 @@ function extractAllFields(wordData) {
         field !== 'ie' && 
         field !== 'te' && 
         field !== 'ol' && 
-        field !== 'or'
+        field !== 'or' && 
+        field !== 'wd_f_2' && 
+        field !== 'if_o' && 
+        field !== 'rd_o' &&
+        field !== 'woj_2'
     );
 }
 
@@ -785,8 +800,8 @@ initAdvancedSearch(wordData);
 			  if (info.kz && info.kz.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">汉字</strong> ${info.kz}</p>`;
 			  }
-			  if (info.wd_c && info.wd_c.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">词性</strong> ${info.wd_c}</p>`;
+			  if (info.wd_cl && info.wd_cl.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">词性</strong> ${info.wd_cl}</p>`;
 			  }
 			  if (info.ky && info.ky.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">活用</strong> ${info.ky}</p>`;
@@ -794,17 +809,26 @@ initAdvancedSearch(wordData);
 			  if (info.ac && info.ac.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">音调</strong> ${info.ac}</p>`;
 			  }
+        if (info.ac_c && info.ac_c.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">调类</strong> ${info.ac_c}</p>`;
+			  }
 			  if (info.mn && info.mn.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">释义</strong> ${info.mn}</p>`;
 			  }
               if (info.class2 && info.class2.trim() !== "0") {
 			    infoHTML += `<p><strong class="underlined-text">历 史 音 韵 学</strong></p>`;
 			  }
-			  if (info.preoj && info.preoj.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代以前</strong> ${info.preoj}</p>`;
-			  }
 			  if (info.pij && info.pij.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代半岛</strong> ${info.pij}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">半岛日语</strong> ${info.pij}</p>`;
+			  }
+        if (info.yyj && info.yyj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">弥生日语</strong> ${info.yyj}</p>`;
+			  }
+        if (info.kfj && info.kfj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">古坟日语</strong> ${info.kfj}</p>`;
+			  }
+        if (info.skj && info.skj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">推古遗文</strong> ${info.skj}</p>`;
 			  }
 			  if (info.woj && info.woj.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代中央</strong> ${info.woj}</p>`;
@@ -812,8 +836,11 @@ initAdvancedSearch(wordData);
 			  if (info.aoj && info.aoj.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代东国</strong> ${info.aoj}</p>`;
 			  }
-			  if (info.ooj && info.ooj.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代其他</strong> ${info.ooj}</p>`;
+        if (info.izj && info.izj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代出云</strong> ${info.izj}</p>`;
+			  }
+        if (info.ksj && info.ksj.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">上代九州</strong> ${info.ksj}</p>`;
 			  }
 			  if (info.emj && info.emj.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">中古</strong> ${info.emj}</p>`;
@@ -873,6 +900,9 @@ initAdvancedSearch(wordData);
             <span class="root-link" data-root="${info.wd_f}">${info.wd_f}</span>
         </p>`;
     }
+    if (info.wd_f_2 && info.wd_f_2.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">下位词族</strong> ${info.wd_f_2}</p>`;
+			  }
 	if (info.cp && info.cp.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">复合</strong> ${info.cp}</p>`;
 			  }
@@ -888,11 +918,26 @@ initAdvancedSearch(wordData);
 			  if (info.pf && info.pf.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">前缀</strong> ${info.pf}</p>`;
 			  }
+        if (info.if && info.if.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">中缀</strong> ${info.if}</p>`;
+			  }
 			  if (info.sf && info.sf.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">后缀</strong> ${info.sf}</p>`;
 			  }
 			  if (info.uc && info.uc.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">ＵniＣog</strong> ${info.uc}</p>`;
+			  }
+        if (info.if_o && info.if_o.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">中缀成因</strong> ${info.if_o}</p>`;
+			  }
+        if (info.rd_o && info.rd_o.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">连浊成因</strong> ${info.rd_o}</p>`;
+			  }
+        if (info.alt && info.alt.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">音位交替</strong> ${info.alt}</p>`;
+			  }
+        if (info.wd_cg && info.wd_cg.trim() !== "") {
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">名词词类</strong> ${info.wd_cg}</p>`;
 			  }
 			  if (info.class6 && info.class6.trim() !== "0") {
 			    infoHTML += `<p><strong class="underlined-text">比 较 语 言 学</strong></p>`;
