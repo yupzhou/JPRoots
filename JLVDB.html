@@ -867,7 +867,7 @@ initAdvancedSearch(wordData);
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">西部日本</strong> ${info.wj}</p>`;
 			  }
 			  if (info.itj && info.itj.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">出云|东北</strong> ${info.itj}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text-2">出云|东北</strong> ${info.itj}</p>`;
 			  }
 			  if (info.kj && info.kj.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">九州方言</strong> ${info.kj}</p>`;
@@ -925,7 +925,7 @@ initAdvancedSearch(wordData);
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">后缀</strong> ${info.sf}</p>`;
 			  }
 			  if (info.uc && info.uc.trim() !== "") {
-			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">ＵniＣog</strong> ${info.uc}</p>`;
+			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">UniCog</strong> ${info.uc}</p>`;
 			  }
         if (info.if_o && info.if_o.trim() !== "") {
 			    infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">中缀成因</strong> ${info.if_o}</p>`;
@@ -1424,6 +1424,21 @@ button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
     overflow: hidden;
     vertical-align: middle;
     font-size: calc(5em / var(--char-count, 4));
+    word-break: break-all; /* 强制所有字符都参与分散对齐 */
+    letter-spacing: 0; /* 重置字母间距 */
+    word-spacing: 0; /* 重置单词间距 */
+    text-justify: inter-character; /* 使用字符间距调整 */
+}
+
+.justify-text-2 {
+    display: inline-block;
+    width: 5.5em;
+    text-align: justify; /* 普通对齐 */
+    text-align-last: justify; /* 最后一行对齐 */
+    -moz-text-align-last: justify; /* Firefox 支持 */
+    overflow: hidden;
+    vertical-align: middle;
+    font-size: calc(5.5em / var(--char-count, 5));
     word-break: break-all; /* 强制所有字符都参与分散对齐 */
     letter-spacing: 0; /* 重置字母间距 */
     word-spacing: 0; /* 重置单词间距 */

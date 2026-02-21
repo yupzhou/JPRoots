@@ -146,11 +146,33 @@
     "wd_cl": "拟声・拟态",
     "ac_r": "",
     "root": "wa",
-    "mn": "声：哇、嗡；态：喧闹、快速（哇的一下）。",
+    "mn": "声：哇、嗡、犬吠；态：喧闹、快速（哇地一下）。",
     "pr": "",
     "pjr": "",
     "poj": "*wa",
     "era": "LMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wada",
+    "mn": "态：战战兢兢。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wada",
+    "era": "EMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wagu",
+    "mn": "态：张大嘴咬。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wagu",
+    "era": "MdJ",
     "lg_c": "日"
   },
   {
@@ -162,6 +184,160 @@
     "pjr": "",
     "poj": "*waiya",
     "era": "MdJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wako",
+    "mn": "态：眯眼睛。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wako",
+    "era": "LMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "waku",
+    "mn": "象：心情躁动。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*waku",
+    "era": "MdJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "A",
+    "root": "wana",
+    "mn": "象：（因恐惧、紧张、寒冷等）战栗。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wana",
+    "era": "OJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wani",
+    "mn": "态：圆润丰满。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wani",
+    "era": "MdJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wansa",
+    "mn": "态：人多混乱。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wansa",
+    "era": "LMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟声",
+    "ac_r": "",
+    "root": "wapa",
+    "mn": "声：大声喊叫。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wapa",
+    "era": "LMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态・拟象",
+    "ac_r": "",
+    "root": "wara",
+    "mn": "态：混乱、易燃；象：快活（来自 *wara（笑））。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wara",
+    "era": "EMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wari",
+    "mn": "态：广受好评。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wari",
+    "era": "MdJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wasa",
+    "mn": "态：有活力；人多混乱；声：风吹动草和树叶。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wasa",
+    "era": "LMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟声",
+    "ac_r": "",
+    "root": "wasi",
+    "mn": "声：多人说话。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wasi",
+    "era": "LMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wata",
+    "mn": "态：平静；（东北）竭尽全力。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wata",
+    "era": "MdJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wati",
+    "mn": "态：（东北）强硬。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wati",
+    "era": "方言",
+    "lg_c": "东北日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "waya",
+    "mn": "声：哇呀；态：多人喧闹。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*waya",
+    "era": "LMJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "拟态",
+    "ac_r": "",
+    "root": "wazi",
+    "mn": "态：发抖。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wadi",
+    "era": "LMJ",
     "lg_c": "日"
   },
   {
@@ -198,6 +374,28 @@
     "lg_c": "日|琉"
   },
   {
+    "wd_cl": "自动",
+    "ac_r": "?A",
+    "root": "侘",
+    "mn": "沮丧、寂寞。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wabu",
+    "era": "OJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "",
+    "root": "蟾",
+    "mn": "（九州）蟾蜍、青蛙。",
+    "pr": "*wakU",
+    "pjr": "*wakU",
+    "poj": "*waku",
+    "era": "九州",
+    "lg_c": "九|北琉冲"
+  },
+  {
     "wd_cl": "名",
     "ac_r": "2.1",
     "root": "城",
@@ -220,6 +418,28 @@
     "lg_c": "日|琉"
   },
   {
+    "wd_cl": "形",
+    "ac_r": "B",
+    "root": "悪",
+    "mn": "不好的。",
+    "pr": "*waro",
+    "pjr": "*waro",
+    "poj": "*waro",
+    "era": "EMJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "2.3",
+    "root": "鰐",
+    "mn": "（上代）鲨鱼、（中古）鲨鱼。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wani",
+    "era": "OJ",
+    "lg_c": "日"
+  },
+  {
     "wd_cl": "名",
     "ac_r": "",
     "root": "発情",
@@ -227,17 +447,72 @@
     "pr": "宮古 *sirare",
     "pjr": "",
     "poj": "",
-    "era": "",
+    "era": "琉球语",
     "lg_c": "南琉宫"
   },
   {
-    "wd_cl": "他动",
-    "ac_r": "",
-    "root": "分",
-    "mn": "分开。",
+    "wd_cl": "自动",
+    "ac_r": "A",
+    "root": "沸",
+    "mn": "沸腾。",
     "pr": "*wak",
     "pjr": "*wak",
     "poj": "*wak",
+    "era": "EMJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "他动",
+    "ac_r": "B",
+    "root": "分",
+    "mn": "区别、分开。",
+    "pr": "*wak",
+    "pjr": "*wak",
+    "poj": "*wak",
+    "era": "OJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "2.4",
+    "root": "藁",
+    "mn": "晒干的稻子、麦子等。",
+    "pr": "*wara",
+    "pjr": "*wara",
+    "poj": "*wara",
+    "era": "EMJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "他动",
+    "ac_r": "A",
+    "root": "割",
+    "mn": "破坏、破裂、分割。",
+    "pr": "*war",
+    "pjr": "*war",
+    "poj": "*war",
+    "era": "EMJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "",
+    "root": "共同作業",
+    "mn": "（琉球）两人以上合力办事。",
+    "pr": "*waku",
+    "pjr": "",
+    "poj": "",
+    "era": "",
+    "lg_c": "琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "?2.1",
+    "root": "海",
+    "mn": "海（琉球用派生形式）。",
+    "pr": "*wata",
+    "pjr": "*wata",
+    "poj": "*wata",
     "era": "OJ",
     "lg_c": "日|琉"
   },
@@ -249,6 +524,17 @@
     "pr": "*wa",
     "pjr": "*wa",
     "poj": "*wa",
+    "era": "OJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "形动・副",
+    "ac_r": "3.7b",
+    "root": "僅",
+    "mn": "微少。",
+    "pr": "*wadu",
+    "pjr": "*waNtu",
+    "poj": "*wadu",
     "era": "OJ",
     "lg_c": "日|琉"
   },
@@ -275,6 +561,39 @@
     "lg_c": "朝|日|琉"
   },
   {
+    "wd_cl": "名",
+    "ac_r": "?2.2a",
+    "root": "鷲",
+    "mn": "鹫。",
+    "pr": "*wasi",
+    "pjr": "*wasi",
+    "poj": "*wasi",
+    "era": "",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "3.4",
+    "root": "蕨",
+    "mn": "蕨。",
+    "pr": "*wara.bi",
+    "pjr": "*wara.bi",
+    "poj": "*wara.Npi",
+    "era": "OJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "他动",
+    "ac_r": "",
+    "root": "開",
+    "mn": "（西中国以西）撬开。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wazik",
+    "era": "方言",
+    "lg_c": "西日"
+  },
+  {
     "wd_cl": "自动",
     "ac_r": "A",
     "root": "利",
@@ -284,6 +603,28 @@
     "poj": "*kik",
     "era": "EMJ",
     "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "2.3",
+    "root": "棉",
+    "mn": "棉、人的腹部或其内容物（肠）。",
+    "pr": "*wata",
+    "pjr": "*wata",
+    "poj": "*wata",
+    "era": "OJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "4.3",
+    "root": "木天蓼",
+    "mn": "木天蓼。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*watata.bi",
+    "era": "EMJ",
+    "lg_c": "日"
   },
   {
     "wd_cl": "名",
@@ -304,12 +645,12 @@
     "pr": "*kura",
     "pjr": "",
     "poj": "",
-    "era": "",
+    "era": "琉球语",
     "lg_c": "琉"
   },
   {
     "wd_cl": "形",
-    "ac_r": "B",
+    "ac_r": "",
     "root": "若",
     "mn": "年幼的。",
     "pr": "*waka",
@@ -317,6 +658,17 @@
     "poj": "*waka",
     "era": "OJ",
     "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "?3.3",
+    "root": "山葵",
+    "mn": "山葵。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wasa.bi",
+    "era": "OJ",
+    "lg_c": "日"
   },
   {
     "wd_cl": "他动",
@@ -341,6 +693,28 @@
     "lg_c": "日"
   },
   {
+    "wd_cl": "名",
+    "ac_r": "3.5b",
+    "root": "童",
+    "mn": "儿童。",
+    "pr": "*wara",
+    "pjr": "*warapa",
+    "poj": "*warapa",
+    "era": "EMJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "他动",
+    "ac_r": "A",
+    "root": "忘",
+    "mn": "忘记。",
+    "pr": "*wasu",
+    "pjr": "*wasu",
+    "poj": "*wasu",
+    "era": "OJ",
+    "lg_c": "日|琉"
+  },
+  {
     "wd_cl": "他动",
     "ac_r": "A",
     "root": "聞",
@@ -361,6 +735,50 @@
     "poj": "*wa",
     "era": "OJ",
     "lg_c": "日"
+  },
+  {
+    "wd_cl": "自动",
+    "ac_r": "A",
+    "root": "笑",
+    "mn": "笑。",
+    "pr": "*wara",
+    "pjr": "*wara",
+    "poj": "*wara",
+    "era": "OJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "2.2b",
+    "root": "業",
+    "mn": "具有深刻意义或重大意图的行为或活动。",
+    "pr": "*waza",
+    "pjr": "*waNsa",
+    "poj": "*waza",
+    "era": "OJ",
+    "lg_c": "日|琉"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "",
+    "root": "早稲",
+    "mn": "成熟较早的水稻。",
+    "pr": "",
+    "pjr": "",
+    "poj": "*wasɛ",
+    "era": "OJ",
+    "lg_c": "日"
+  },
+  {
+    "wd_cl": "名",
+    "ac_r": "2.3",
+    "root": "枠",
+    "mn": "卷线的工具。",
+    "pr": "*waku",
+    "pjr": "*waku",
+    "poj": "*waku",
+    "era": "EMJ",
+    "lg_c": "日|琉"
   },
   {
     "wd_cl": "名",
