@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>JPRoots - 日琉语之道</title>
+    <meta name="description" content="日琉语综合知识站">
+    <link rel="icon" type="image/png" sizes="100x100" href="assets/img/icon.png">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/Article-List.css">
+    <link rel="stylesheet" href="assets/css/Footer-Basic.css">
+    <link rel="stylesheet" href="assets/css/iframe.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="assets/css/Projects-Horizontal.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-search fixed-top" style="border-bottom: 1px solid rgb(0,123,255) ;">
+        <div class="container"><a class="navbar-brand" href="index.html" style="text-shadow: 0px 0px;">JPRoots</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-2"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div
+                class="collapse navbar-collapse" id="navcol-2">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="road.html">道</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="accent.html">调</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="kunyomi.html">训</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="onyomi.html">音</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-primary" href="others.html" style="border-width: 1px;border-style: solid;border-radius: 55px;">他</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="table.html">表</a></li>
+                    <li class="nav-item"><a class="nav-link text-center text-secondary" href="JLVDB.html"><i class="fa fa-book"></i></a></li>
+                </ul>
+                <form class="form-inline mr-auto" target="_self">
+                    <div class="form-group"><label for="search-field"></label></div>
+                </form>
+        </div><img class="d-none d-print-block d-sm-none d-md-block d-lg-block d-xl-block" src="assets/img/logoNNSw.png" style="width: 68px;padding-top: 0px;text-align: left;"></div>
+    </nav>
+    
+<div class="main-container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1><b>图书馆</b></h1>
+        </div>
+        
+        <!-- 主要内容区域 -->
+        <div class="content-area">
+            <!-- 左侧区域 -->
+            <div class="left-panel">
+                <!-- 搜索区域 -->
+                <div class="search-section">
+                    <div class="search-box-container">
+                        <input type="text" id="searchInput" class="search-input" placeholder="寻觅...">
+                        <button id="searchBtn" class="search-btn">搜索</button>
+                    </div>
+                    
+                    <div class="search-options">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="regexToggle">
+                            <label for="regexToggle">正则表达式</label>
+                        </div>
+                        
+                        <div class="multi-select-container">
+                            <button id="tagFilterBtn" class="multi-select-btn">标签筛选</button>
+                            <div class="multi-select-dropdown" id="tagDropdown">
+                                <!-- 标签选项将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+                        
+                        <button id="clearBtn" class="multi-select-btn">清除筛选</button>
+                    </div>
+                    
+                    <div class="selected-tags" id="selectedTagsContainer">
+                        <!-- 已选标签将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 文献列表 -->
+                <div class="list-section">
+                    <div class="list-header">
+                        <h3>文献列表</h3>
+                        <div class="result-count" id="resultCount">0 篇文献</div>
+                    </div>
+                    
+                    <ul class="document-list" id="documentList">
+                        <!-- 文献列表将通过JavaScript动态生成 -->
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 右侧区域 -->
+            <div class="right-panel">
+                <!-- 标签栏 -->
+                <div class="tab-bar">
+                    <div class="tab active" data-tab="metadata">元数据</div>
+                </div>
+                
+                <!-- 元数据内容 -->
+                <div class="tab-content active" id="metadataContent">
+                    <div class="metadata-content">
+                        <div class="empty-state">请从列表中选择一篇文献</div>
+                    </div>
+                </div>
+                
+                <!-- PDF查看器 -->
+                <div class="tab-content" id="pdfContent">
+                    <div class="pdf-content">
+                        <div class="pdf-toolbar">
+                            <div class="pdf-controls" id="pdfControls" style="display: none;">
+                                <button id="prevPage" class="pdf-btn">上一页</button>
+                                <span class="page-info">第 <span id="currentPage">1</span> 页 / 共 <span id="totalPages">1</span> 页</span>
+                                <button id="nextPage" class="pdf-btn">下一页</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);margin-bottom: 90px;">© 2023-2026 Nanasi 七梨子</p>
+<style>
+        /* 重置样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+            background: url(assets/img/大头3.png) left 20px bottom / 200px no-repeat fixed;
+            height: 85vh;
+        }
+        
+        /* 主容器 - 类似JLVDB风格 */
+        .main-container {
+            max-width: 1150px;
+            height: 85vh;
+            margin: 0 auto;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* 头部区域 */
+        .header {
+            padding: 15px 20px;
+            padding-top: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* 主要内容区域 */
+        .content-area {
+            display: flex;
+            height: 100%;
+            min-height: 0;
+        }
+        
+        /* 左侧区域 */
+        .left-panel {
+            width: 40%;
+            min-height: 0;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            height: 85%;
+        }
+        
+        /* 搜索区域 - 类似JLVDB顶部样式 */
+        .search-section {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+        
+        .search-box-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .search-btn {
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .search-btn:hover {
+            background: #3a5ce5;
+        }
+        
+        .search-options {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .checkbox-group label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .multi-select-container {
+            position: relative;
+        }
+        
+        .multi-select-btn {
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #333;
+        }
+        
+        .multi-select-btn:hover {
+            background: #e8e8e8;
+        }
+        
+        .multi-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 5px;
+            padding: 10px;
+            z-index: 100;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .multi-select-dropdown.show {
+            display: block;
+            width: 170px;
+        }
+        
+        .tag-option {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+        }
+        
+        .tag-option input {
+            margin-right: 8px;
+        }
+        
+        .tag-option label {
+            font-size: 12px;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .selected-tag {
+            background: #eef2ff;
+            color: #007bff;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .remove-tag {
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        /* 文献列表区域 */
+        .list-section {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .list-header {
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .list-header h3 {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .result-count {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .document-list {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding-right: 5px;
+        }
+        
+        .document-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .document-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .document-item.active {
+            background: #f0f7ff;
+            border-left: 3px solid #007bff;
+        }
+        
+        .document-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .document-meta {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .document-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        
+        .document-tag {
+            background: #f0f0f0;
+            color: #666;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 10px;
+        }
+        
+        /* 右侧区域 */
+        .right-panel {
+            width: 60%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            height: 85%; 
+            overflow: hidden;
+        }
+        
+        /* 标签栏 - 类似JLVDB的标签样式 */
+        .tab-bar {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+            flex-shrink: 0;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+            background: white;
+        }
+        
+        .tab-content {
+            flex: 1;
+            display: none;
+            overflow: hidden; /* 隐藏自身溢出 */
+            min-height: 0; /* 关键：允许收缩 */
+            position: relative;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* 元数据区域 */
+        .metadata-content {
+            position: absolute; /* 使用绝对定位确保占满父容器 */
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto; /* 关键：允许垂直滚动 */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .metadata-group {
+            margin-bottom: 20px;
+        }
+        
+        .metadata-group h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .metadata-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .metadata-label {
+            width: 80px;
+            font-size: 12px;
+            color: #666;
+            flex-shrink: 0;
+        }
+        
+        .metadata-value {
+            font-size: 12px;
+            color: #333;
+            flex: 1;
+        }
+        
+        .metadata-value.abstract {
+            line-height: 1.6;
+        }
+        
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+            font-size: 13px;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 0rem;
+        }
+
+
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+                height: 50vh;
+            }
+
+            .right-panel {
+                width: 100%;
+                height: 50vh;
+            }
+
+            .main-container, .content-area {
+              height: auto;
+            }
+        }
+    </style>    
+
+<script>
+    // 文献数据将从JSON文件加载
+    let documents = [];
+    let allTags = [];
+    
+    // 当前状态
+    let state = {
+        searchQuery: "",
+        selectedTags: [],
+        isRegexMode: false,
+        filteredDocuments: [],
+        selectedDocument: null,
+        currentPage: 1,
+        totalPages: 1,
+    };
+
+    // DOM元素
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const regexToggle = document.getElementById('regexToggle');
+    const tagFilterBtn = document.getElementById('tagFilterBtn');
+    const tagDropdown = document.getElementById('tagDropdown');
+    const clearBtn = document.getElementById('clearBtn');
+    const selectedTagsContainer = document.getElementById('selectedTagsContainer');
+    const resultCount = document.getElementById('resultCount');
+    const documentList = document.getElementById('documentList');
+    const metadataContent = document.getElementById('metadataContent');
+    const prevPageBtn = document.getElementById('prevPage');
+    const nextPageBtn = document.getElementById('nextPage');
+    const currentPageSpan = document.getElementById('currentPage');
+    const totalPagesSpan = document.getElementById('totalPages');
+    const tabs = document.querySelectorAll('.tab');
+
+    // 从JSON文件加载文献数据
+    async function loadDocuments() {
+        try {
+            const response = await fetch('documents.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            documents = await response.json();
+            
+            // 提取所有标签
+            allTags = Array.from(new Set(documents.flatMap(doc => doc.tags))).sort();
+            
+            // 初始化状态
+            state.filteredDocuments = [...documents];
+            
+            // 初始化标签下拉菜单
+            initTagDropdown();
+            
+            // 渲染文献列表
+            renderDocumentList();
+            
+            return true;
+        } catch (error) {
+            console.error('加载文献数据失败:', error);
+            documentList.innerHTML = '<li class="document-item"><div class="document-title">无法加载文献数据</div></li>';
+            resultCount.textContent = '加载失败';
+            return false;
+        }
+    }
+
+    // 初始化标签下拉菜单
+    function initTagDropdown() {
+        tagDropdown.innerHTML = '';
+        
+        allTags.forEach(tag => {
+            const tagOption = document.createElement('div');
+            tagOption.className = 'tag-option';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `tag-${tag}`;
+            checkbox.value = tag;
+            checkbox.checked = state.selectedTags.includes(tag);
+            checkbox.addEventListener('change', handleTagChange);
+            
+            const label = document.createElement('label');
+            label.htmlFor = `tag-${tag}`;
+            label.textContent = tag;
+            
+            tagOption.appendChild(checkbox);
+            tagOption.appendChild(label);
+            tagDropdown.appendChild(tagOption);
+        });
+        
+        updateSelectedTagsDisplay();
+    }
+
+    // 处理标签选择变化
+    function handleTagChange() {
+        const selectedCheckboxes = tagDropdown.querySelectorAll('input[type="checkbox"]:checked');
+        state.selectedTags = Array.from(selectedCheckboxes).map(cb => cb.value);
+        updateSelectedTagsDisplay();
+        filterDocuments();
+    }
+
+    // 更新已选标签显示
+    function updateSelectedTagsDisplay() {
+        selectedTagsContainer.innerHTML = '';
+        
+        if (state.selectedTags.length === 0) {
+            return;
+        }
+        
+        state.selectedTags.forEach(tag => {
+            const tagElement = document.createElement('span');
+            tagElement.className = 'selected-tag';
+            tagElement.innerHTML = `
+                ${tag}
+                <span class="remove-tag" data-tag="${tag}">×</span>
+            `;
+            selectedTagsContainer.appendChild(tagElement);
+        });
+        
+        // 添加移除标签的事件监听
+        selectedTagsContainer.querySelectorAll('.remove-tag').forEach(removeBtn => {
+            removeBtn.addEventListener('click', function() {
+                const tagToRemove = this.getAttribute('data-tag');
+                const checkbox = document.getElementById(`tag-${tagToRemove}`);
+                if (checkbox) {
+                    checkbox.checked = false;
+                    handleTagChange();
+                }
+            });
+        });
+    }
+
+    // 过滤文献
+    function filterDocuments() {
+        let filtered = [...documents];
+        
+        // 应用搜索过滤
+        if (state.searchQuery.trim()) {
+            if (state.isRegexMode) {
+                try {
+                    const regex = new RegExp(state.searchQuery, 'i');
+                    filtered = filtered.filter(doc => regex.test(doc.title));
+                } catch (e) {
+                    // 正则表达式无效，不进行过滤
+                    console.error("无效的正则表达式:", e);
+                    // 显示错误信息
+                    resultCount.textContent = "正则表达式无效";
+                    return;
+                }
+            } else {
+                const query = state.searchQuery.toLowerCase();
+                filtered = filtered.filter(doc => 
+                    doc.title.toLowerCase().includes(query)
+                );
+            }
+        }
+        
+        // 应用标签过滤
+        if (state.selectedTags.length > 0) {
+            filtered = filtered.filter(doc => 
+                state.selectedTags.some(tag => doc.tags.includes(tag))
+            );
+        }
+        
+        state.filteredDocuments = filtered;
+        renderDocumentList();
+    }
+
+    // 渲染文献列表
+    function renderDocumentList() {
+        documentList.innerHTML = '';
+        
+        if (state.filteredDocuments.length === 0) {
+            const noResults = document.createElement('li');
+            noResults.className = 'document-item';
+            noResults.innerHTML = '<div class="document-title">没有找到匹配的文献</div>';
+            documentList.appendChild(noResults);
+            resultCount.textContent = '0 篇文献';
+            return;
+        }
+        
+        state.filteredDocuments.forEach(doc => {
+            const item = document.createElement('li');
+            item.className = 'document-item';
+            if (state.selectedDocument && state.selectedDocument.id === doc.id) {
+                item.classList.add('active');
+            }
+            
+            item.innerHTML = `
+                <div class="document-title">${doc.title}</div>
+                <div class="document-meta">${doc.meta.authors.join(', ')} · ${doc.meta.year}</div>
+                <div class="document-tags">
+                    ${doc.tags.map(tag => `<span class="document-tag">${tag}</span>`).join('')}
+                </div>
+            `;
+            
+            item.addEventListener('click', () => selectDocument(doc));
+            documentList.appendChild(item);
+        });
+        
+        resultCount.textContent = `${state.filteredDocuments.length} 篇文献`;
+    }
+
+    // 选择文献
+    function selectDocument(doc) {
+        state.selectedDocument = doc;
+        state.currentPage = 1;
+        
+        // 更新列表选中状态
+        document.querySelectorAll('.document-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+        
+        // 显示元数据
+        renderMetadata();
+    
+        
+        // 切换到元数据标签
+        switchTab('metadata');
+    }
+
+    // 渲染文献元数据
+    function renderMetadata() {
+        if (!state.selectedDocument) {
+            metadataContent.innerHTML = '<div class="empty-state">请从左侧列表中选择一篇文献</div>';
+            return;
+        }
+        
+        const doc = state.selectedDocument;
+        metadataContent.innerHTML = `
+            <div class="metadata-content">
+                <div class="metadata-group">
+                    <h3>基本信息</h3>
+                    <div class="metadata-item">
+                        <div class="metadata-label">标题</div>
+                        <div class="metadata-value">${doc.title}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">作者</div>
+                        <div class="metadata-value">${doc.meta.authors.join(', ')}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">年份</div>
+                        <div class="metadata-value">${doc.meta.year}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">标签</div>
+                        <div class="metadata-value">
+                            ${doc.tags.map(tag => `<span class="document-tag">${tag}</span>`).join(' ')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metadata-group">
+                    <h3>摘　　要</h3>
+                    <div class="metadata-value abstract">${doc.meta.abstract}</div>
+                </div>
+                <div class="metadata-group">
+                    <h3>阅　　读</h3>
+                    <div class="metadata-value">${doc.meta.pdfUrl}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    
+
+    // 切换标签页
+    function switchTab(tabName) {
+        // 更新标签栏
+        tabs.forEach(tab => {
+            if (tab.getAttribute('data-tab') === tabName) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+    
+    }
+
+    // 事件监听
+    searchInput.addEventListener('input', function() {
+        state.searchQuery = this.value;
+        filterDocuments();
+    });
+
+    searchBtn.addEventListener('click', function() {
+        filterDocuments();
+    });
+
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            filterDocuments();
+        }
+    });
+
+    regexToggle.addEventListener('change', function() {
+        state.isRegexMode = this.checked;
+        filterDocuments();
+    });
+
+    // 标签筛选下拉菜单
+    tagFilterBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        tagDropdown.classList.toggle('show');
+    });
+
+    // 点击外部关闭下拉菜单
+    document.addEventListener('click', function() {
+        tagDropdown.classList.remove('show');
+    });
+
+    // 阻止下拉菜单内部点击事件冒泡
+    tagDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+
+    clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        state.searchQuery = '';
+        state.selectedTags = [];
+        
+        // 取消所有选中的标签
+        const checkboxes = tagDropdown.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = false);
+        
+        regexToggle.checked = false;
+        state.isRegexMode = false;
+        
+        updateSelectedTagsDisplay();
+        filterDocuments();
+    });
+
+    // 标签页切换
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            switchTab(tabName);
+        });
+    });
+
+    prevPageBtn.addEventListener('click', function() {
+        if (state.currentPage > 1) {
+            state.currentPage--;
+            renderPage();
+        }
+    });
+
+    nextPageBtn.addEventListener('click', function() {
+        if (state.currentPage < state.totalPages) {
+            state.currentPage++;
+            renderPage();
+        }
+    });
+
+    // 初始化应用
+    async function initApp() {
+        // 显示加载状态
+        documentList.innerHTML = '<li class="document-item"><div class="document-title">正在加载文献数据...</div></li>';
+        resultCount.textContent = '加载中...';
+        
+        // 加载文献数据
+        const loaded = await loadDocuments();
+        
+        if (!loaded) {
+            // 如果加载失败，显示错误信息
+            documentList.innerHTML = '<li class="document-item"><div class="document-title">无法加载文献数据，请检查文档格式或网络连接</div></li>';
+            resultCount.textContent = '加载失败';
+        }
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', initApp);
+</script>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/accent_sta.js"></script>
+    <script src="assets/js/cont.js"></script>
+    <script src="assets/js/index_sta.js"></script>
+    <script src="assets/js/JLVDB_sta.js"></script>
+    <script src="assets/js/kunyomi_sta.js"></script>
+    <script src="assets/js/onyomi_sta.js"></script>
+    <script src="assets/js/others_sta.js"></script>
+    <script src="assets/js/road_sta.js"></script>
+</body>
+
+</html>
