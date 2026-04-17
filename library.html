@@ -684,41 +684,62 @@
         });
     }
 
-    // 过滤文献
-    function filterDocuments() {
-        let filtered = [...documents];
-        
-        // 应用搜索过滤
-        if (state.searchQuery.trim()) {
-            if (state.isRegexMode) {
-                try {
-                    const regex = new RegExp(state.searchQuery, 'i');
-                    filtered = filtered.filter(doc => regex.test(doc.title));
-                } catch (e) {
-                    // 正则表达式无效，不进行过滤
-                    console.error("无效的正则表达式:", e);
-                    // 显示错误信息
-                    resultCount.textContent = "正则表达式无效";
-                    return;
-                }
-            } else {
-                const query = state.searchQuery.toLowerCase();
+    // 过滤文献 - 修复版（同时搜索标题、作者、年份）
+function filterDocuments() {
+    let filtered = [...documents];
+    
+    // 应用搜索过滤
+    if (state.searchQuery.trim()) {
+        if (state.isRegexMode) {
+            try {
+                const regex = new RegExp(state.searchQuery, 'i');
                 filtered = filtered.filter(doc => 
-                    doc.title.toLowerCase().includes(query)
+                    regex.test(doc.title) || 
+                    regex.test(doc.meta.authors.join(', ')) || 
+                    regex.test(doc.meta.year.toString())
                 );
+            } catch (e) {
+                // 正则表达式无效，不进行过滤
+                console.error("无效的正则表达式:", e);
+                // 显示错误信息
+                resultCount.textContent = "正则表达式无效";
+                return;
             }
+        } else {
+            const query = state.searchQuery.toLowerCase();
+            filtered = filtered.filter(doc => {
+                // 1. 搜索标题
+                if (doc.title.toLowerCase().includes(query)) {
+                    return true;
+                }
+                
+                // 2. 搜索作者（每个作者单独检查）
+                for (let author of doc.meta.authors) {
+                    if (author.toLowerCase().includes(query)) {
+                        return true;
+                    }
+                }
+                
+                // 3. 搜索年份
+                if (doc.meta.year.toString().includes(state.searchQuery)) {
+                    return true;
+                }
+                
+                return false;
+            });
         }
-        
-        // 应用标签过滤
-        if (state.selectedTags.length > 0) {
-            filtered = filtered.filter(doc => 
-                state.selectedTags.some(tag => doc.tags.includes(tag))
-            );
-        }
-        
-        state.filteredDocuments = filtered;
-        renderDocumentList();
     }
+    
+    // 应用标签过滤
+    if (state.selectedTags.length > 0) {
+        filtered = filtered.filter(doc => 
+            state.selectedTags.some(tag => doc.tags.includes(tag))
+        );
+    }
+    
+    state.filteredDocuments = filtered;
+    renderDocumentList();
+}
 
     // 渲染文献列表
     function renderDocumentList() {

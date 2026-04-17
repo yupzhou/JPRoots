@@ -1,14 +1,4 @@
 [
-  {
-    "title": "日琉祖語の分岐年代 [日琉祖语的分歧年代]",
-    "tags": ["日语", "琉球语", "日琉祖语"],
-    "meta": {
-      "authors": ["Thomas Pellard"],
-      "year": 2016,
-      "abstract": "本土日语与琉球群岛的语言之间存在亲缘关系是毋庸置疑的，但关于其关系的具体细节仍存在许多未解之谜。本文旨在为日本列岛语言史研究作出贡献，通过考察日琉语族的历史发展，并结合考古学、人类学的观点，尝试推测日琉祖语的分化年代及向琉球群岛的传播年代。",
-      "pdfUrl": "https://hal.science/hal-02507426/document"
-    }
-  },
     {
     "title": "Japan considered from the hypothesis of farmer/language spread [从农民/语言传播假说的视角看日本]",
     "tags": ["日语", "弥生时代的农业", "绳文人基因", "语言农业共传播假说", "无文-弥生迁徙"],
@@ -19,17 +9,7 @@
       "pdfUrl": "https://www.cambridge.org/core/journals/evolutionary-human-sciences/article/japan-considered-from-the-hypothesis-of-farmerlanguage-spread/BD91E69AEA3CCAEDC567519EF7F5AA97"
     }
   },
-  {
-    "title": "日琉祖語の分岐年代 [日琉祖语的分歧年代]",
-    "tags": ["日语", "琉球语", "日琉祖语"],
-    "meta": {
-      "authors": ["Thomas Pellard"],
-      "year": 2016,
-      "abstract": "本土日语与琉球群岛的语言之间存在亲缘关系是毋庸置疑的，但关于其关系的具体细节仍存在许多未解之谜。本文旨在为日本列岛语言史研究作出贡献，通过考察日琉语族的历史发展，并结合考古学、人类学的观点，尝试推测日琉祖语的分化年代及向琉球群岛的传播年代。",
-      "pdfUrl": "https://hal.science/hal-02507426/document"
-    }
-  },
-  {
+    {
     "title": "日琉祖語の分岐年代 [日琉祖语的分歧年代]",
     "tags": ["日语", "琉球语", "日琉祖语"],
     "meta": {
@@ -39,4 +19,6 @@
       "pdfUrl": "https://hal.science/hal-02507426/document"
     }
   }
+
+
 ]
