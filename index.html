@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/Article-List.css">
     <link rel="stylesheet" href="assets/css/Footer-Basic.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/css/lightbox.min.css">
     <link rel="stylesheet" href="assets/css/iframe.css">
+    <link rel="stylesheet" href="assets/css/Lightbox-Gallery.css">
     <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
     <link rel="stylesheet" href="assets/css/Navigation-with-Search.css">
     <link rel="stylesheet" href="assets/css/Projects-Horizontal.css">
@@ -131,17 +133,18 @@
             </div>
         </div>
     </div>
+    <div class="photo-gallery"></div>
     <div class="projects-horizontal" style="margin-top: 100px;background: rgba(255,255,255,0);margin-bottom: 80px;">
         <div class="container">
             <div class="intro">
                 <h1 class="text-center" style="color: rgb(255,255,255);text-shadow: 0px 0px 5px #36f3ff;margin-bottom: 37px;"><strong>更新履历</strong></h1>
             </div>
-            <div role="tablist" id="accordion-1">
+            <div role="tablist" id="accordion-2">
                 <div class="card">
                     <div class="card-header" role="tab" style="background: rgba(255,255,255,0.85);">
-                        <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-1 .item-1" href="#accordion-1 .item-1">测试版</a></h5>
+                        <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-2 .item-1" href="#accordion-2 .item-1">测试版</a></h5>
                     </div>
-                    <div class="collapse item-1" role="tabpanel" data-parent="#accordion-1" style="background: rgba(255,255,255,0.62);">
+                    <div class="collapse item-1" role="tabpanel" data-parent="#accordion-2" style="background: rgba(255,255,255,0.62);">
                         <div class="card-body">
                             <ul>
                                 <li>[20230521/0616 v0.1a/b]&nbsp;初回测试</li>
@@ -159,9 +162,9 @@
                 </div>
                 <div class="card">
                     <div class="card-header" role="tab" style="background: rgba(255,255,255,0.85);">
-                        <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-2" href="#accordion-1 .item-2">正式版</a></h5>
+                        <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-2 .item-2" href="#accordion-2 .item-2">正式版</a></h5>
                     </div>
-                    <div class="collapse item-2" role="tabpanel" data-parent="#accordion-1" style="background: rgba(255,255,255,0.62);">
+                    <div class="collapse item-2" role="tabpanel" data-parent="#accordion-2" style="background: rgba(255,255,255,0.62);">
                         <div class="card-body">
                             <ul>
                                 <li>[2026 v1.0] JPRoots 正式版</li>
@@ -172,13 +175,14 @@
             </div>
             <div class="row projects">
                 <div class="col">
-                    <p style="text-align: center;"><img src="assets/img/贴纸2.png" style="height: 132px;margin-top: 33px;"><br></p>
+                    <p style="text-align: center;"><a href="others.html#奈梨子写真集"><img src="assets/img/贴纸2.png" style="height: 132px;margin-top: 33px;"></a><br></p>
+                    <div role="tablist" id="accordion-1"></div>
                 </div>
             </div>
         </div>
     </div>
     <div class="footer-basic" style="background: rgba(255,255,255,0.65);height: 96px;">
-        <p class="copyright" style="margin-top: -22px;color: rgb(72,72,72);text-shadow: 0px 0px 8px rgb(255,255,255);">© 2023-2026 Nanasi 七梨子<br><i class="fa fa-weixin" style="color: rgb(43,190,84);"></i>&nbsp; 微信公众号&nbsp;nanasi_jp |&nbsp;&nbsp;<a class="btn btn-primary" role="button" style="height: 19px;width: 1px;font-size: 9px;padding: 2px;padding-right: 12px;padding-left: 3px;"
+        <p class="copyright" style="margin-top: -22px;color: rgb(72,72,72);text-shadow: 0px 0px 8px rgb(255,255,255);">© 2023 至今 Nanasi 七梨子<br><i class="fa fa-weixin" style="color: rgb(43,190,84);"></i>&nbsp; 微信公众号&nbsp;nanasi_jp |&nbsp;&nbsp;<a class="btn btn-primary" role="button" style="height: 19px;width: 1px;font-size: 9px;padding: 2px;padding-right: 12px;padding-left: 3px;"
                 href="https://www.zhihu.com/column/c_1279027320243077120" target="_blank">知</a>&nbsp; 知乎专栏<br>「Nanasi 的日语教室」<br></p>
         <footer></footer>
     </div>
@@ -186,6 +190,7 @@
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/accent_sta.js"></script>
     <script src="assets/js/cont.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/js/lightbox.min.js"></script>
     <script src="assets/js/index_sta.js"></script>
     <script src="assets/js/JLVDB_sta.js"></script>
     <script src="assets/js/kunyomi_sta.js"></script>
