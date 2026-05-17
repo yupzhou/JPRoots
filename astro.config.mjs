@@ -6,6 +6,10 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	site: 'https://yupzhou.github.io/JPRoots/',
 	base: '/JPRoots',
+	build: {
+    assets: '_astro',
+    format: 'directory',
+  },
 	integrations: [
 		starlight({
 			title: 'JPRoots',
