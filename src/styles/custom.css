@@ -1,0 +1,278 @@
+/* 正文（内容区 + UI 文字）= Inter */
+:root {
+  --sl-font: 'Inter', system-ui, -apple-system, sans-serif;
+  /* 标题层级（含左上角 logo/标题）= Inter */
+  --sl-font-headings: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.header img[alt='JPRoots LOGO']{
+  height: 2.5rem; 
+  width: auto;
+  margin-right: -0.5rem;
+  vertical-align: middle;
+}
+
+/* 左上角标题 */
+.header [slot='title'],
+a[slot='title'],
+.site-title {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700; 
+  letter-spacing: -0.03em; 
+  color: var(--sl-color-text, inherit);
+}
+
+/* 1. 让 Hero 区域变成圆角矩形容器 */
+.hero {
+    border: none; 
+    border-radius: 1rem; 
+    overflow: hidden; /* 背景图不溢出 */
+    position: relative; /* 绝对定位背景图 */
+    padding: 2rem 2rem; /* 内边距，让文字不贴边 */
+    margin: 2rem; /* 让整个框与屏幕边缘保持距离 */
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 上下分布 */
+    align-items: flex-start; /* 左对齐 */
+    min-height: 70vh;
+}
+/* 2. 设置背景图样式 */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/Sunset.jpg');
+    background-size: cover; /* 图片铺满整个框 */
+    background-position: center; /* 图片居中 */
+    z-index: -1; /* 确保背景在文字后面 */
+}
+
+/* 标题 */
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    margin-bottom: -0.5rem;
+    text-shadow: /* 标题发光 */
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(255, 255, 255, 0.6),
+    0 0 40px rgba(255, 255, 255, 0.4);
+    line-height: 1.1;
+}
+
+/* 副标题 */
+.hero .tagline {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-shadow: 
+    0 0 8px rgba(255, 255, 255, 0.7),
+    0 0 16px rgba(255, 255, 255, 0.5);
+  max-width: 600px;
+}
+
+/* 按钮固定 */
+.hero .actions {
+  position: absolute;
+  right: 2rem;    /* 左边距 */
+  bottom: 2rem;  /* 底边距 */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* 按钮发光 */
+.hero .actions a {
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px); /* 毛玻璃质感，更高级 */
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* 悬停效果：光晕增强 */
+.hero .actions a:hover {
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(255, 255, 255, 0.4),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.hero img[src*="icon3"]{
+    position: absolute;
+    left: 2rem;    /* 左边距 */
+    bottom: 2rem;  /* 底边距 */
+    width: 8rem;
+}
+
+/* ---------- 非首页：装饰图 ---------- */
+
+/* 让内容列成为定位参照 */
+.content-panel {
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* 装饰图层 */
+.content-panel::after {
+  content: '';
+  position: absolute;
+  right: 1rem;
+  bottom: 0;
+  width: 126px;
+  height: 102px;
+  background: url('/images/大头3.png') no-repeat right bottom / cover;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 强制隐藏首页的装饰图 */
+body:has(.hero) .content-panel::after {
+  display: none !important;
+}
+
+/* 暗色模式：关灯 */
+[data-theme='dark'] .content-panel::after {
+  opacity: 0.7;
+}
+
+/* 分页卡片不透明 */
+.pagination a,
+.pagination-links a {
+  /* 完全不透明背景 */
+  background: #ffffff;
+}
+
+[data-theme="dark"] .pagination a,
+[data-theme="dark"] .pagination-links a {
+  background: rgba(41, 43, 58, 0.7);
+}
+
+html body .sl-container .sl-markdown-content iframe[title="JLVDB"] {
+    min-height: 660px !important;
+    height: 660px !important;
+  }
+
+  @media (min-width: 1151px) and (max-width: 1415px) {
+html body .sl-container .sl-markdown-content iframe[title="JLVDB"] {
+    min-height: 1200px !important;
+    height: 1200px !important;
+    }
+  }
+
+  @media (min-width: 1051.5px) and (max-width: 1151px)  {
+html body .sl-container .sl-markdown-content iframe[title="JLVDB"] {
+    min-height: 660px !important;
+    height: 660px !important;
+    }
+  }
+
+  @media (min-width: 799.5px) and (max-width: 1051.5px) {
+html body .sl-container .sl-markdown-content iframe[title="JLVDB"] {
+    min-height: 1200px !important;
+    height: 1200px !important;
+    }
+  }
+
+  @media (min-width: 751.5px) and (max-width: 799.5px)  {
+html body .sl-container .sl-markdown-content iframe[title="JLVDB"] {
+    min-height: 660px !important;
+    height: 660px !important;
+    }
+  }
+
+  @media (max-width: 751.5px)  {
+html body .sl-container .sl-markdown-content iframe[title="JLVDB"] {
+    min-height: 1200px !important;
+    height: 1200px !important;
+    }
+  }
+
+@media (max-width: 768px) {
+
+    .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+    text-align: center; 
+    padding: 2rem 1rem; 
+    min-height: 70vh;
+    position: relative; /* 为按钮绝对定位做准备 */
+    }
+
+    .hero h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    margin-bottom: -0.5rem;
+    text-shadow: /* 标题发光 */
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(255, 255, 255, 0.6),
+    0 0 40px rgba(255, 255, 255, 0.4);
+    line-height: 1.1;
+    text-align: center;
+}
+
+/* 副标题 */
+.hero .tagline {
+  font-size: 1rem;
+  font-weight: 600;
+  text-shadow: 
+    0 0 8px rgba(255, 255, 255, 0.7),
+    0 0 16px rgba(255, 255, 255, 0.5);
+  max-width: 600px;
+  text-align: center;
+}
+
+/* 按钮固定 */
+.hero .actions {
+    position: absolute; /* 绝对定位 */
+    bottom: 2rem; /* 贴在底部 */
+    left: 50%; /* 水平居中 */
+    transform: translateX(-50%); /* 修正水平居中 */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 80%; /* 占满宽度 */
+    padding: 0 1rem; /* 左右内边距 */
+    box-sizing: border-box;
+}
+
+/* 按钮发光 */
+.hero .actions a {
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px); /* 毛玻璃质感，更高级 */
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* 悬停效果：光晕增强 */
+.hero .actions a:hover {
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(255, 255, 255, 0.4),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.hero img[src*="icon3"]{
+    visibility: hidden;
+}
+
+a[aria-current="page"] {
+  border: 2px solid red !important;
+}
+
+
+
+}
