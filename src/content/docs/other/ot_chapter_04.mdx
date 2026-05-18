@@ -31,13 +31,6 @@ import { LinkCard } from '@astrojs/starlight/components';
    - 结束锚点（$）匹配字符串结尾。
 
 <iframe
-  class="jlvdb-iframe"
-  src="/html/JLVDB.html"
-  title="JLVDB"
-
-/>
-
-<iframe
   src={`${import.meta.env.BASE_URL}html/JLVDB.html`}
   title="JLVDB"
 />
@@ -45,7 +38,5 @@ import { LinkCard } from '@astrojs/starlight/components';
 <Aside>为便于快速进行音系上的对比，采用了较宽的音位表记，不宜视为严谨的语音记录；有做精密比较需求的，请查阅相关第一手严格记音资料。</Aside>
 
 <Aside type="tip">也可通过下方链接卡片访问宽屏版。</Aside>
-
-<LinkCard title="JPRoots JLVDB" href="/html/JLVDB.html" target="_blank"/>
 
 <LinkCard title="JPRoots JLVDB" href={`${import.meta.env.BASE_URL}html/JLVDB.html`} target="_blank"/>

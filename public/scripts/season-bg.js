@@ -1,18 +1,27 @@
 (function() {
+  // 自动从当前 URL 中提取 base 路径
+  var pathParts = window.location.pathname.split('/');
+  var base = '/' + pathParts[1] + '/';  // 提取 /JPRoots/
+  
+  // 如果是根路径，则 base 为 /
+  if (pathParts.length < 2 || !pathParts[1]) {
+    base = '/';
+  }
+
   var month = new Date().getMonth() + 1;
-  var bg = '../images/default.jpg';
+  var bg = base + 'images/default.jpg';
   var isMobile = window.innerWidth <= 768; // 检测是否为窄屏
 
   if (month >= 1 && month <= 2) {
-    bg = isMobile ? '../images/SprFesV.jpg' : '../images/SprFes.jpg';
+    bg = isMobile ? base + 'images/SprFesV.jpg' : base + 'images/SprFes.jpg';
   } else if (month >= 3 && month <= 5) {
-    bg = isMobile ? '../images/SpringV.jpg' : '../images/Spring.jpg';
+    bg = isMobile ? base + 'images/SpringV.jpg' : base + 'images/Spring.jpg';
   } else if (month >= 6 && month <= 7) {
-    bg = isMobile ? '../images/SummerV.jpg' : '../images/Summer.jpg';
+    bg = isMobile ? base + 'images/SummerV.jpg' : base + 'images/Summer.jpg';
   } else if (month >= 8 && month <= 10) {
-    bg = isMobile ? '../images/SunsetV.jpg' : '../images/Sunset.jpg';
+    bg = isMobile ? base + 'images/SunsetV.jpg' : base + 'images/Sunset.jpg';
   } else {
-    bg = isMobile ? '../images/XmasV.jpg' : '../images/Xmas.jpg';
+    bg = isMobile ? base + 'images/XmasV.jpg' : base + 'images/Xmas.jpg';
   }
 
   var hero = document.querySelector('.hero');
@@ -50,15 +59,15 @@
       isMobile = newIsMobile;
       // 重新选择图片
       if (month >= 1 && month <= 2) {
-        bg = isMobile ? '../images/SprFesV.jpg' : '../images/SprFes.jpg';
+        bg = isMobile ? base + 'images/SprFesV.jpg' : base + 'images/SprFes.jpg';
       } else if (month >= 3 && month <= 5) {
-        bg = isMobile ? '../images/SpringV.jpg' : '../images/Spring.jpg';
+        bg = isMobile ? base + 'images/SpringV.jpg' : base + 'images/Spring.jpg';
       } else if (month >= 6 && month <= 7) {
-        bg = isMobile ? '../images/SummerV.jpg' : '../images/Summer.jpg';
+        bg = isMobile ? base + 'images/SummerV.jpg' : base + 'images/Summer.jpg';
       } else if (month >= 8 && month <= 10) {
-        bg = isMobile ? '../images/SunsetV.jpg' : '../images/Sunset.jpg';
+        bg = isMobile ? base + 'images/SunsetV.jpg' : base + 'images/Sunset.jpg';
       } else {
-        bg = isMobile ? '../images/XmasV.jpg' : '../images/Xmas.jpg';
+        bg = isMobile ? base + 'images/XmasV.jpg' : base + 'images/Xmas.jpg';
       }
       
       // 更新背景层

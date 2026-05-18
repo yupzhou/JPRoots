@@ -4,14 +4,14 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://yupzhou.github.io',
-	base: '/JPRoots/',
+//	site: 'https://yupzhou.github.io',
+//	base: '/JPRoots/',
 	integrations: [
 		starlight({
 			title: 'JPRoots',
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/yupzhou/JPRoots' }],
 			description: '日琉语综合知识站',
-      		favicon: '/src/assets/logo.png',
+      		favicon: `${import.meta.env.BASE_URL}images/logo.png`,
 			logo: {
 					src: '/src/assets/logo.png', // 指向 src/assets
 					replacesTitle: false,        // 图文共存
