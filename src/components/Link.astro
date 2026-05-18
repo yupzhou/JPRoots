@@ -1,7 +1,0 @@
----
-// src/components/PublicLink.astro
-const { href, ...rest } = Astro.props;
-const realHref = import.meta.env.BASE_URL + href;
----
-
-<a href={realHref} {...rest}><slot /></a>
