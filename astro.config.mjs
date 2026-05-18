@@ -4,8 +4,8 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://yupzhou.github.io',
-	base: '/JPRoots',
+	site: 'https://yupzhou.github.io/JPRoots',
+	base: '',
 	integrations: [
 		starlight({
 			title: 'JPRoots',
