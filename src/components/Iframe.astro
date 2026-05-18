@@ -1,7 +1,0 @@
----
-// src/components/Iframe.astro
-const { src, title } = Astro.props;
-const realSrc = import.meta.env.BASE_URL + src;
----
-
-<iframe src={realSrc} title={title}></iframe>
