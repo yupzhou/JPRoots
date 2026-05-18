@@ -1,0 +1,586 @@
+#searchResultsContainer {
+    position: absolute;
+    z-index: 1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    background-color: white;
+    width: 160px;
+    overflow-y: auto;
+    /* 添加纵向滚动条，当内容超过容器高度时显示滚动条 */
+    display: none;
+    height: 100px;
+}
+
+#wordList {
+    list-style-type: none;
+    /* 去掉圆点 */
+    padding: 0;
+    /* 移除默认的列表项内边距 */
+    font-size: 15px;
+}
+
+#wordList li::before {
+    content: "»";
+    /* 添加自定义的符号作为列表项的标记 */
+    margin-right: 5px;
+    /* 可选：增加一些空间，使汉字与列表项内容之间有一定距离 */
+    padding: 3px;
+}
+
+#wordList li {
+    border-bottom: 1px solid #ccc;
+    /* 使用边框分隔词汇 */
+    padding: 3px;
+    margin: 0px 10px 0px 0px;
+}
+
+.separator {
+    border-top: 1px solid #007bff;
+    /* 添加上边框作为分割线，可以根据需要调整颜色和粗细 */
+    margin: 5px 10px 12px 0px;
+    /* 调整分割线与其他内容的间距，根据需要调整值 */
+}
+
+/* 词汇文本的样式 */
+div#searchResults {
+    font-size: 14px;
+    padding: 3px;
+    margin: 0px 10px 0px 10px;
+}
+
+/* 分割线样式 */
+.separator2 {
+    border-top: 1px solid #ccc;
+    /* 添加上边框作为分割线，可以根据需要调整颜色和粗细 */
+    margin: 2px 0;
+}
+
+.header-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+/* 自定义下拉样式 */
+.filter-container {
+    position: relative;
+    width: 97%;
+}
+
+.custom-select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    margin-top: 5px;
+}
+
+.custom-options {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    background: white;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-option {
+    padding: 4px 6px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    font-size: 14px;
+    border-top: 1px solid #ccc;
+    /* 添加上边框作为分割线，可以根据需要调整颜色和粗细 */
+    margin: 0px 5px;
+}
+
+.custom-option:hover {
+    background: #f8f9fa;
+}
+
+.arrow {
+    transition: transform 0.2s;
+    font-size: 12px;
+    color: #007bff;
+}
+
+.dropdown-open .arrow {
+    transform: rotate(180deg);
+}
+
+strong.bordered-text {
+    border: 3px solid #007bff;
+    border-radius: 10px;
+    padding: 1px 4px 2px 4px;
+    margin: 0 5px 0 0;
+    font-size: 14px;
+    color: #007bff;
+}
+
+strong.underlined-text {
+    color: #007bff;
+    line-height: 1.5;
+    margin: 0px 0 10px;
+    padding-bottom: 3px;
+    font-size: 18px;
+    border-bottom: 3px solid #ff67c0;
+}
+
+/* 250609 新增词根弹窗 */
+
+/* 词根弹窗样式 */
+.root-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.root-modal-content {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    width: 75%;
+    max-width: 300px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    position: relative;
+    border: 1px solid #007bff;
+    animation: popIn 0.3s;
+    background-color: rgba(255, 255, 255, 0.5);
+    /* 半透明 */
+    backdrop-filter: blur(15px);
+    /* 模糊 */
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.root-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #777;
+}
+
+.root-close-btn:hover {
+    color: #007bff;
+}
+
+#root-name {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 24px;
+    border-bottom: 1px solid #007bff;
+    padding-bottom: 10px;
+}
+
+.root-detail {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.root-detail strong {
+    border: 3px solid #007bff;
+    border-radius: 10px;
+    padding: 1px 4px 2px 4px;
+    margin: 0 5px 0 0;
+    font-size: 14px;
+    color: #007bff;
+}
+
+/* 词根链接样式 */
+.root-link {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.root-link:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    text-decoration: none;
+}
+
+
+/* 250609 新增词根弹窗 */
+
+/* 两个框响应式设计 */
+
+input#searchInput.search-field {
+    height: 35px;
+    margin-bottom: 10px;
+    border-width: 1px;
+    border-style: none;
+    border-bottom-style: solid;
+    color: rgb(150, 150, 150);
+    font-size: 14px;
+    padding-left: 12px;
+}
+
+button#searchBtn.btn {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+button#randomBtn.btn.btn-primary,
+button#advancedSearchBtn.btn.btn-primary {
+    height: 37px;
+    width: 40px;
+    margin-right: 3%;
+    font-size: 14px;
+    margin-bottom: 6px;
+    padding-bottom: 30px;
+}
+
+@media screen and (max-width: 720px) {
+    button#searchBtn.btn {
+        width: 10%;
+        margin-right: 1%;
+    }
+
+    button#randomBtn.btn.btn-primary,
+    button#advancedSearchBtn.btn.btn-primary {
+        margin-left: -1.5%;
+    }
+
+    .advanced-search-panel {
+        width: 97%;
+    }
+
+}
+
+@media screen and (min-width: 720px) and (max-width: 1200px) {
+    button#searchBtn.btn {
+        width: 10%;
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
+    button#randomBtn.btn.btn-primary,
+    button#advancedSearchBtn.btn.btn-primary {
+        margin-left: 0%;
+    }
+
+
+}
+
+@media screen and (min-width: 1200px) {
+    button#searchBtn.btn {
+        width: 15%;
+        margin-right: 1%;
+    }
+
+    button#randomBtn.btn.btn-primary,
+    button#advancedSearchBtn.btn.btn-primary {
+        margin-left: -1%;
+    }
+
+    .advanced-search-panel {
+        width: 248px;
+    }
+
+}
+
+#randomBtn,
+#searchBtn,
+#advancedSearchBtn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+#randomBtn .fa-random,
+#searchBtn .fa-search,
+#advancedSearchBtn .fa-list {
+    margin: 0 !important;
+    /* 移除图标边距 */
+    font-size: 16px;
+    /* 调整图标大小 */
+    display: block !important;
+    /* 确保图标是块级元素 */
+    line-height: 1;
+}
+
+
+
+/* 新增词族搜索框 */
+.filter-input-container {
+    display: flex;
+    gap: 5px;
+    margin-bottom: -5px;
+}
+
+@media screen and (min-width: 1200px) {
+    #wd_fSearchInput {
+        flex-grow: 1;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 12px;
+        outline: none;
+        font-size: 14px;
+    }
+}
+
+@media screen and (min-width: 720px) and (max-width: 1200px) {
+    #wd_fSearchInput {
+        width: 70px;
+        flex-grow: 1;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 12px;
+        outline: none;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 720px) {
+    #wd_fSearchInput {
+        width: 30%;
+        flex-grow: 1;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 12px;
+        outline: none;
+        font-size: 14px;
+    }
+}
+
+
+.dropdown-button {
+    width: 40px;
+    padding: 0 12px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.dropdown-button:hover {
+    background: #e9ecef;
+}
+
+.dropdown-button.open .arrow {
+    transform: rotate(180deg);
+}
+
+.arrow {
+    font-size: 12px;
+    color: #007BFF;
+    transition: transform 0.3s ease;
+}
+
+/* 两个搜索框对齐 */
+
+.search-combo-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-field-combo {
+    margin-top: -10px;
+    display: flex;
+    width: 100%;
+}
+
+.search-field {
+    flex-grow: 1;
+    /* 填充剩余空间 */
+    min-width: 0;
+    /* 防止内容溢出 */
+}
+
+.search-field:focus {
+    outline: none;
+    /* 移除默认轮廓 */
+    border-color: #007BFF;
+    /* 设置新的边框颜色 */
+}
+
+#wd_fSearchInput:focus {
+    outline: none;
+    /* 移除默认轮廓 */
+    border-color: #007BFF;
+    /* 设置新的边框颜色 */
+}
+
+.btn,
+.btn-primary {
+    width: 100px;
+    /* 固定宽度 */
+    flex-shrink: 0;
+    /* 禁止收缩 */
+}
+
+.filter-combo {
+    width: 100%;
+}
+
+#searchInput::placeholder {
+    font-style: italic;
+    font-size: 14px;
+}
+
+.justify-text {
+    display: inline-block;
+    width: 5em;
+    text-align: justify;
+    /* 普通对齐 */
+    text-align-last: justify;
+    /* 最后一行对齐 */
+    -moz-text-align-last: justify;
+    /* Firefox 支持 */
+    overflow: hidden;
+    vertical-align: middle;
+    font-size: calc(5em / var(--char-count, 4));
+    word-break: break-all;
+    /* 强制所有字符都参与分散对齐 */
+    letter-spacing: 0;
+    /* 重置字母间距 */
+    word-spacing: 0;
+    /* 重置单词间距 */
+    text-justify: inter-character;
+    /* 使用字符间距调整 */
+}
+
+.justify-text-2 {
+    display: inline-block;
+    width: 5.5em;
+    text-align: justify;
+    /* 普通对齐 */
+    text-align-last: justify;
+    /* 最后一行对齐 */
+    -moz-text-align-last: justify;
+    /* Firefox 支持 */
+    overflow: hidden;
+    vertical-align: middle;
+    font-size: calc(5.5em / var(--char-count, 5));
+    word-break: break-all;
+    /* 强制所有字符都参与分散对齐 */
+    letter-spacing: 0;
+    /* 重置字母间距 */
+    word-spacing: 0;
+    /* 重置单词间距 */
+    text-justify: inter-character;
+    /* 使用字符间距调整 */
+}
+
+/* 251031高级搜索面板样式 */
+.advanced-search-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    padding: 15px;
+    margin-top: 0px;
+}
+
+#advancedSearchBtn .fa-list {
+    pointer-events: none;
+    /* 关键代码：让点击事件穿透图标 */
+}
+
+.advanced-search-panel h4 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.field-checkboxes {
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 10px 0;
+}
+
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.field-checkbox input {
+    margin-right: 8px;
+}
+
+.field-checkbox label {
+    margin: 0;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.advanced-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.advanced-actions button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+#applyAdvancedSearch {
+    background: #007bff;
+    color: white;
+}
+
+#applyAdvancedSearch:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+#resetAdvancedFields {
+    background: #858585;
+    color: white;
+}
+
+/* 确保搜索按钮容器有相对定位 */
+.search-field-combo {
+    position: relative;
+}
+
+.card {
+    border: none;
+}
