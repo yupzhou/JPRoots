@@ -1,0 +1,51 @@
+---
+title: JLVDB
+description: N/A
+layout: ../../../layouts/FullWidthLayout.astro
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { LinkCard } from '@astrojs/starlight/components';
+
+「**东瀛球阳语林（日琉语词汇参考数据库，JLVDB）**」是收录了丰富的日琉语词汇的辞典。
+
+## 东瀛球阳语林 JLVDB
+
+本词典支持：
+
+1. 词典查询
+   处于：宽屏左侧/窄屏上侧
+2. 单词模糊查询
+   处于：宽屏左上角/窄屏上侧第一搜索框
+3. 单词条件查询
+   处于：宽屏左上角/窄屏上侧第一搜索框右侧第一蓝色按钮（勾选）
+4. 单词随机查询
+   处于：宽屏左上角/窄屏上侧第一搜索框右侧第二蓝色按钮
+5. 词族查询
+   处于：宽屏左上角/窄屏上侧第二搜索框
+
+
+前三个功能共用同一个单词表位置，功能上互斥。查询过程是实时的。查询空内容时返回默认词表。
+
+如需精确搜索，请使用正则表达式：
+
+1. 普通模式（默认）：可通过星号（*）匹配任意字符。
+2. 正则模式：通过双斜杠包裹内容（/.../）触发，支持正则表达式规则：
+   - 点号（.）匹配任意单个字符。
+   - 星号（*）匹配任意字符。
+   - 问号（?）匹配前一个字符 0 次或 1 次。
+   - 加号（+）匹配前一个字符 1 次或多次。
+   - 字符集（[...]）匹配方括号内任意一个字符。
+   - 起始锚点（^）匹配字符串开头。
+   - 结束锚点（$）匹配字符串结尾。
+
+<iframe
+  src={`${import.meta.env.BASE_URL}html/JLVDB.html`}
+  title="JLVDB"
+/>
+
+<Aside>为便于快速进行音系上的对比，采用了较宽的音位表记，不宜视为严谨的语音记录；有做精密比较需求的，请查阅相关第一手严格记音资料。</Aside>
+
+<Aside type="tip">也可通过下方链接卡片访问。</Aside>
+
+<LinkCard title="JPRoots JLVDB" href={`${import.meta.env.BASE_URL}html/JLVDB.html`} target="_blank"/>

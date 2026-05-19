@@ -1,0 +1,76 @@
+---
+title: 附录
+description: N/A
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+本部分提供本网站所用的表记方式、地图等信息。
+
+## 罗马字表记
+
+<Aside type="tip" title="探索 TABLE 中的内容">
+本体系的标准语罗马字表记  
+本体系的方言罗马字表记
+</Aside>
+
+## 地图集
+
+<Aside type="tip" title="探索 TABLE 中的内容">行政区划</Aside>
+
+<Tabs>
+  <TabItem label="国造">
+    > <Image src={`${import.meta.env.BASE_URL}images/国造.jpg`} alt="国造" width={800} height={400} />
+    > 東伍吉田 et al (1935) 上古日本の国造配置図（原文：國郡制定（一）國造配置）
+  </TabItem>
+  <TabItem label="国县对照">
+    > <Image src={`${import.meta.env.BASE_URL}images/国县对照.png`} alt="国县对照" width={800} height={400} />
+    > 世界の歴史まっぷ (2019) 国県対照表日本地図
+  </TabItem>
+  <TabItem label="日本地形">
+    > <Image src={`${import.meta.env.BASE_URL}images/日本地形.png`} alt="日本地形" width={800} height={400} />
+    > Bourrichon and Peka (2017) 日本全域の主要地形名（山地、平野、海域など）を示した地形図 [有修改]
+  </TabItem>
+  <TabItem label="萨南群岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/萨南群岛.png`} alt="萨南群岛" width={800} height={400} />
+    > DEMIS World Map Server, Artanisen (2019) 薩南諸島の地図。 鹿児島、日本。
+  </TabItem>
+</Tabs>
+<Tabs>  
+  <TabItem label="琉球群岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/琉球群岛.jpg`} alt="琉球群岛" width={800} height={400} />
+    > Kenan Celik (2020) 南琉球宮古語史
+  </TabItem>
+  <TabItem label="北琉球群岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/北琉球群岛.jpg`} alt="北琉球群岛" width={800} height={400} />
+    > Kenan Celik (2020) 南琉球宮古語史
+  </TabItem>
+  <TabItem label="奄美群岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/奄美群岛.png`} alt="奄美群岛" width={800} height={400} />
+    > Bamse (2007) Topographic map of the Amami Islands (Japanese version)
+  </TabItem>
+  <TabItem label="冲绳群岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/冲绳群岛.png`} alt="冲绳群岛" width={800} height={400} />
+    > Own work (2017) 沖縄諸島の地図、ただし硫黄鳥島は欄外。点線は当諸島における市町村の境界を示す。
+  </TabItem>
+  <TabItem label="冲绳本岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/冲绳本岛.png`} alt="冲绳本岛" width={800} height={400} />
+    > Own work (2017) 沖縄本島の地図。点線は市町村の境界線。
+  </TabItem>
+  </Tabs>
+<Tabs> 
+  <TabItem label="南琉球群岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/南琉球群岛.jpg`} alt="南琉球群岛" width={800} height={400} />
+    > Kenan Celik (2020) 南琉球宮古語史
+  </TabItem>
+  <TabItem label="宫古群岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/宫古群岛.jpg`} alt="宫古群岛" width={800} height={400} />
+    > Kenan Celik (2020) 南琉球宮古語史
+  </TabItem>
+  <TabItem label="八重山群岛">
+    > <Image src={`${import.meta.env.BASE_URL}images/八重山群岛.jpg`} alt="八重山群岛" width={800} height={400} />
+    > Kenan Celik (2020) 南琉球宮古語史
+  </TabItem>
+</Tabs>
