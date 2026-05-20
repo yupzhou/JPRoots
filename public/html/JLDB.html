@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>东瀛球阳语林 JPRoots JLVDB</title>
-    <meta name="description" content="日琉语综合知识站：东瀛球阳语林">
+    <title>东瀛球阳辞林 JLDB</title>
+    <meta name="description" content="日琉语综合知识站：东瀛球阳辞林">
     <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="../images/logo.png">
@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="col-md-8 col-lg-9 col-xl-8 header-container" style="margin: 0px 15px 0px 10px; padding: 10px;">
-                            <h3 class="text-primary" style="font-weight:bold;">東 瀛 球 陽 語 林</h3><h5 class="text-primary" style="font-weight:bold; text-decoration:overline;"><em>Japonic Languages Vocabulary DataBase</em></h5>
+                            <h3 class="text-primary" style="font-weight:bold;">東 瀛 球 陽 辭 林</h3><h5 class="text-primary" style="font-weight:bold; text-decoration:overline;"><em>Japonic Lexical DataBase</em></h5>
                         </div>
 
         				<!-- 将获取词汇列表的 JavaScript 代码中的 ID 修改为 "wordList" -->
@@ -73,7 +73,7 @@
         								
                         <div class="col-md-8 col-lg-9 col-xl-8" style="border-radius: 20px;border: 1px solid rgb(0,128,255);margin: 0px 15px 0px 10px; padding-top: 7px; line-height: 1; background-color: white;">
         					<div id="wordInfo" style="height: 420px; overflow-y: scroll; ">
-								<p style="font-size: 14px; text-align: center; color: #999999; padding-top: 10px;">欢迎使用「东瀛球阳语林」！</p>
+								<p style="font-size: 14px; text-align: center; color: #999999; padding-top: 10px;">欢迎使用「东瀛球阳辞林」！</p>
 								<p style="font-size: 14px; text-align: center; color: #999999;">点击任意词汇以显示信息</p>
 							</div>
         				</div>
@@ -177,8 +177,8 @@ function closeIfOutside(e) {
   }
 }
 
-// 使用 Fetch API 加载 JLVDB.csv 文件
-fetch("JLVDB.csv")
+// 使用 Fetch API 加载 JLDB.csv 文件
+fetch("JLDB.csv")
   .then(response => response.text())
   .then(csvText => {
     const lines = csvText.trim().split('\n');
@@ -193,7 +193,7 @@ fetch("JLVDB.csv")
       return obj;
     });
     
-    console.log("Loaded JLVDB.csv:", wordData);
+    console.log("Loaded JLDB.csv:", wordData);
     
     // 初始化自定义下拉
     initCustomDropdown();
@@ -966,7 +966,7 @@ fetch("JLVDB.csv")
       searchResultsContainer.style.display = "block"; // 确保词语列表显示
     });
   })
-  .catch(error => console.error("Failed to load JLVDB.csv:", error));
+  .catch(error => console.error("Failed to load JLDB.csv:", error));
 
 // 移除内联样式中的 margin-top: 50px
 document.addEventListener('DOMContentLoaded', function() {
