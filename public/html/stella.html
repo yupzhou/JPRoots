@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <title>JPRoots STELLA 词族星球</title>
+  <meta name="description" content="日琉语综合知识站：词族星球">
+  <link rel="icon" type="image/x-icon" href="../images/logo.png">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(ellipse at center, #0a0e2a 0%, #050510 70%, #020208 100%);
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      overflow: hidden;
+      color: #e0e0e0;
+    }
+
+    #searchBox {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 20, 40, 0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 12px 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 30px rgba(77, 171, 247, 0.1);
+      border: 1px solid rgba(100, 150, 255, 0.2);
+      z-index: 1000;
+      cursor: move;
+      min-width: 320px;
+      user-select: none;
+    }
+
+    .search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #8bb9fe;
+      font-weight: 500;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      position: relative;
+    }
+
+    select,
+    input,
+    button {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(100, 150, 255, 0.3);
+      background: rgba(40, 50, 70, 0.6);
+      color: #e0e0e0;
+      font-size: 14px;
+      outline: none;
+    }
+
+    select {
+      width: 90px;
+      cursor: pointer;
+    }
+
+    input {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    input:focus {
+      border-color: #4dabf7;
+      box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+    }
+
+    button {
+      background: linear-gradient(135deg, #4dabf7, #3b82f6);
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      border: none;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+    }
+
+    svg {
+      display: block;
+      cursor: grab;
+    }
+
+    svg:active {
+      cursor: grabbing;
+    }
+
+    /* 球体样式 */
+    .node-root {
+      fill: #ff4757;
+      stroke: #ff6b81;
+      stroke-width: 2px;
+      cursor: pointer;
+      filter: drop-shadow(0 0 8px rgba(255, 71, 87, 0.7));
+      transition: r 0.3s ease-out;
+    }
+
+    .node-root:hover {
+      r: 38;
+      filter: drop-shadow(0 0 15px rgba(255, 71, 87, 1));
+    }
+
+    .node-word {
+      fill: #1dd1a1;
+      stroke: #10ac84;
+      stroke-width: 1.5px;
+      cursor: pointer;
+      filter: drop-shadow(0 0 6px rgba(29, 209, 161, 0.6));
+      transition: r 0.3s ease-out;
+    }
+
+    .node-word:hover {
+      r: 28;
+      filter: drop-shadow(0 0 12px rgba(29, 209, 161, 1));
+    }
+
+    .link {
+      stroke: rgba(100, 150, 255, 0.3);
+      stroke-opacity: 0.4;
+      stroke-width: 1.5px;
+    }
+
+    .label {
+      fill: #ffffff;
+      font-weight: bold;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+    }
+
+    .label-root {
+      font-size: 14px;
+    }
+
+    .label-word {
+      font-size: 11px;
+    }
+
+    #queryTip {
+      position: absolute;
+      display: none;
+      z-index: 1001;
+      max-width: 220px;
+      background: rgba(15, 20, 35, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 200, 255, 0.3);
+      box-shadow: 0 0 25px rgba(0, 200, 255, 0.15);
+      padding: 12px 20px;
+      border-radius: 16px;
+    }
+
+    #queryTip button {
+      width: 100%;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(0, 114, 255, 0.5);
+    }
+
+    #queryTip button:hover {
+      background: linear-gradient(135deg, #0072ff, #0052cc);
+    }
+
+    .highlight {
+      fill: #ffd43b !important;
+      stroke: #ffd43b !important;
+      filter: drop-shadow(0 0 15px #ffd43b);
+    }
+
+    #loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: #8bb9fe;
+      text-shadow: 0 0 10px rgba(139, 185, 254, 0.5);
+    }
+
+    #zoom-controls {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: rgba(15, 20, 40, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 50px;
+      padding: 10px 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(100, 150, 255, 0.2);
+      z-index: 1000;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #zoom-controls button {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+      transition: all 0.2s;
+    }
+
+    #zoom-controls button:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+    }
+
+    #zoom-level {
+      color: #8bb9fe;
+      font-size: 13px;
+      text-align: center;
+      min-width: 45px;
+      font-weight: bold;
+    }
+
+    #searchResults {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(15, 20, 40, 0.95);
+      border-radius: 0 0 12px 12px;
+      border: 1px solid rgba(100, 150, 255, 0.2);
+      border-top: none;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1002;
+      display: none;
+      backdrop-filter: blur(10px);
+    }
+
+    .search-result-item {
+      padding: 12px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(100, 150, 255, 0.1);
+      transition: background 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-result-item:hover {
+      background: rgba(59, 130, 246, 0.2);
+    }
+
+    .search-result-item.selected {
+      background: rgba(59, 130, 246, 0.3);
+    }
+
+    .result-label {
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .result-type {
+      font-size: 12px;
+      color: #8bb9fe;
+      background: rgba(139, 185, 254, 0.1);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .no-results {
+      padding: 15px;
+      text-align: center;
+      color: #888;
+      font-style: italic;
+    }
+
+    #searchResults::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #searchResults::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    #searchResults::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.5);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading">正在加载数据...</div>
+
+  <div id="searchBox">
+    <div class="search-header">
+      <span>🪐 JPRoots STELLA</span>
+    </div>
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="寻觅...">
+      <select id="searchType">
+        <option value="word">词汇</option>
+        <option value="root">词族</option>
+      </select>
+      <button id="searchBtn">🔍</button>
+      <div id="searchResults"></div>
+    </div>
+  </div>
+
+  <div id="zoom-controls">
+    <button id="zoom-in">+</button>
+    <div id="zoom-level">100%</div>
+    <button id="zoom-out">−</button>
+    <button id="zoom-reset">↻</button>
+  </div>
+
+  <div id="queryTip">
+    <div id="tipText"></div>
+    <button onclick="jumpToJLDB()">探索 JLDB</button>
+  </div>
+
+  <svg></svg>
+
+  <script>
+    const CSV_FILE = "JLDB.csv";
+    const JLDB_URL = "JLDB.html";
+
+    let allRoots = [];
+    let rootToWords = {};
+    let nodes = [];
+    let links = [];
+    let expandedRoots = new Set();
+    let currentWord = "";
+    let isDragging = false;
+    let dragOffset = { x: 0, y: 0 };
+    let zoomBehavior;
+    let searchResultsVisible = false;
+
+    // 加载 CSV 数据
+    d3.csv(CSV_FILE).then(data => {
+      console.log("CSV 数据加载成功，共", data.length, "行");
+      const firstRow = data[0];
+      let rootCol = 'wd_f';
+      let wordCol = 'word';
+
+      if (!firstRow.hasOwnProperty('wd_f')) {
+        const keys = Object.keys(firstRow);
+        rootCol = keys.find(k => k.toLowerCase().includes('root')) || keys[0];
+      }
+
+      if (!firstRow.hasOwnProperty('word')) {
+        const keys = Object.keys(firstRow);
+        wordCol = keys.find(k => k.toLowerCase().includes('word')) || keys[1] || keys[0];
+      }
+
+      console.log("使用字段：", rootCol, "=", wordCol);
+
+      data.forEach(d => {
+        const root = d[rootCol]?.trim();
+        const word = d[wordCol]?.trim();
+        if (root && word) {
+          if (!rootToWords[root]) {
+            rootToWords[root] = [];
+            allRoots.push(root);
+          }
+          if (!rootToWords[root].includes(word)) {
+            rootToWords[root].push(word);
+          }
+        }
+      });
+
+      console.log("加载完成：", allRoots.length, "个词族");
+      document.getElementById("loading").style.display = "none";
+      initGraph();
+    }).catch(error => {
+      console.error("加载 CSV 失败：", error);
+      document.getElementById("loading").innerHTML = `加载失败！<button onclick="location.reload()">重试</button>`;
+    });
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const svg = d3.select("svg").attr("width", width).attr("height", height);
+    const g = svg.append("g");
+
+    const simulation = d3.forceSimulation()
+      .force("link", d3.forceLink().id(d => d.id).distance(100).strength(0.6))
+      .force("charge", d3.forceManyBody().strength(-350).distanceMin(100).distanceMax(900))
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("collision", d3.forceCollide().radius(d => d.radius + 12));
+
+    function initGraph() {
+      nodes = allRoots.map(root => ({
+        id: `root_${root}`,
+        label: root,
+        type: "root",
+        radius: 32
+      }));
+
+      updateGraph();
+
+      // 立即显示词族文字
+      setTimeout(() => {
+        g.selectAll(".label")
+          .filter(d => d.type === "root")
+          .transition()
+          .duration(400)
+          .style("opacity", 1);
+      }, 100);
+
+      initZoom();
+    }
+
+    function updateGraph() {
+      // 链接
+      const link = g.selectAll(".link")
+        .data(links, d => `${d.source.id}-${d.target.id}`);
+
+      link.exit().remove();
+      link.enter().append("line").attr("class", "link").merge(link);
+
+      // 节点
+      const node = g.selectAll(".node")
+        .data(nodes, d => d.id);
+
+      node.exit().remove();
+      const nodeEnter = node.enter()
+        .append("circle")
+        .attr("class", d => `node ${d.type === "root" ? "node-root" : "node-word"}`)
+        .attr("r", d => d.radius)
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .on("click", handleNodeClick)
+        .on("mouseover", showLabel)
+        .on("mouseout", hideLabel);
+
+      node.merge(nodeEnter);
+
+      // 标签
+      const label = g.selectAll(".label")
+        .data(nodes, d => d.id);
+
+      label.exit().remove();
+      label.enter()
+        .append("text")
+        .attr("class", d => `label ${d.type === "root" ? "label-root" : "label-word"}`)
+        .merge(label)
+        .each(function (d) {
+          const self = d3.select(this);
+          self.selectAll("*").remove();
+          let displayLabel = d.label;
+          if (displayLabel.length > 8) displayLabel = displayLabel.substring(0, 8) + "...";
+          if (d.type === "word" && displayLabel.length > 4) {
+            const words = [];
+            for (let i = 0; i < displayLabel.length; i += 4) words.push(displayLabel.substring(i, i + 4));
+            const totalLines = words.length;
+            const startY = -(totalLines - 1) * 1.2 / 2;
+            words.forEach((word, i) => {
+              self.append("tspan").attr("x", 0).attr("dy", i === 0 ? startY + "em" : "1.2em").text(word);
+            });
+          } else {
+            self.text(displayLabel);
+          }
+        });
+
+      simulation.nodes(nodes);
+      simulation.force("link").links(links);
+      simulation.alpha(0.3).restart();
+
+      simulation.on("tick", () => {
+        g.selectAll(".link").attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+        g.selectAll(".node").attr("cx", d => d.x = Math.max(d.radius, Math.min(width - d.radius, d.x))).attr("cy", d => d.y = Math.max(d.radius, Math.min(height - d.radius, d.y)));
+        g.selectAll(".label").attr("transform", d => `translate(${d.x}, ${d.y})`);
+      });
+    }
+
+    function handleNodeClick(event, d) {
+      event.stopPropagation();
+      if (d.type === "root") toggleRoot(d);
+      else showQueryTip(event, d);
+    }
+
+    function toggleRoot(rootNode) {
+      const root = rootNode.label;
+      const rootId = rootNode.id;
+
+      if (expandedRoots.has(root)) {
+        // 收起：先动画缩小，再移除
+        const wordNodes = g.selectAll(".node-word").filter(d => d.root === root);
+        const wordLabels = g.selectAll(".label-word").filter(d => d.root === root);
+
+        wordLabels.transition().duration(300).style("opacity", 0);
+        wordNodes.transition().duration(300).attr("r", 0).on("end", () => {
+          links = links.filter(l => l.source.id !== rootId && l.target.id !== rootId);
+          nodes = nodes.filter(n => n.type !== "word" || n.root !== root);
+          expandedRoots.delete(root);
+          updateGraph();
+        });
+      } else {
+        // 展开：新节点从中心出现
+        const words = rootToWords[root] || [];
+        words.forEach(word => {
+          const wordId = `word_${word}`;
+          if (!nodes.find(n => n.id === wordId)) {
+            nodes.push({
+              id: wordId,
+              label: word,
+              type: "word",
+              root: root,
+              radius: 0, // 初始不可见
+              x: rootNode.x,
+              y: rootNode.y
+            });
+          }
+          links.push({ source: rootId, target: wordId });
+        });
+        expandedRoots.add(root);
+        updateGraph();
+
+        // 延迟执行放大动画
+        setTimeout(() => {
+          const newWordNodes = g.selectAll(".node-word").filter(d => d.root === root && d.radius === 0);
+          newWordNodes.transition().duration(600).attr("r", 22).on("end", function () {
+            const wordLabels = g.selectAll(".label-word").filter(d => d.root === root);
+            wordLabels.transition().duration(300).style("opacity", 1);
+          });
+        }, 100);
+      }
+    }
+
+    function initZoom() {
+      zoomBehavior = d3.zoom().scaleExtent([0.1, 5]).on("zoom", (event) => {
+        g.attr("transform", event.transform);
+        document.getElementById("zoom-level").textContent = `${Math.round(event.transform.k * 100)}%`;
+      });
+      svg.call(zoomBehavior);
+      setTimeout(() => fitToScreen(), 500);
+    }
+
+    function fitToScreen() {
+      if (nodes.length === 0) return;
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      nodes.forEach(node => {
+        if (node.x < minX) minX = node.x;
+        if (node.x > maxX) maxX = node.x;
+        if (node.y < minY) minY = node.y;
+        if (node.y > maxY) maxY = node.y;
+      });
+      const padding = 80;
+      minX -= padding; maxX += padding; minY -= padding; maxY += padding;
+      const graphWidth = maxX - minX;
+      const graphHeight = maxY - minY;
+      const scale = Math.min(width / graphWidth, height / graphHeight, 1);
+      const translateX = (width - graphWidth * scale) / 2 - minX * scale;
+      const translateY = (height - graphHeight * scale) / 2 - minY * scale;
+      svg.transition().duration(1000).call(zoomBehavior.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
+    }
+
+    document.getElementById("zoom-in").addEventListener("click", () => svg.transition().duration(300).call(zoomBehavior.scaleBy, 1.2));
+    document.getElementById("zoom-out").addEventListener("click", () => svg.transition().duration(300).call(zoomBehavior.scaleBy, 0.8));
+    document.getElementById("zoom-reset").addEventListener("click", () => svg.transition().duration(300).call(zoomBehavior.transform, d3.zoomIdentity));
+
+    document.getElementById("searchBtn").addEventListener("click", performSearch);
+    document.getElementById("searchInput").addEventListener("keypress", e => e.key === "Enter" && performSearch());
+    document.addEventListener("click", e => !e.target.closest('#searchBox') && hideSearchResults());
+
+    function performSearch() {
+      const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+      const type = document.getElementById("searchType").value;
+      if (!keyword) { hideSearchResults(); return; }
+
+      let matches = [];
+      if (type === "root" || type === "all") {
+        allRoots.forEach(root => {
+          if (root.toLowerCase().includes(keyword)) {
+            const node = nodes.find(n => n.type === "root" && n.label === root);
+            if (node) matches.push({ node: node, label: root, type: "词族" });
+          }
+        });
+      }
+      if (type === "word" || type === "all") {
+        for (const [root, words] of Object.entries(rootToWords)) {
+          words.forEach(word => {
+            if (word.toLowerCase().includes(keyword)) {
+              const existingNode = nodes.find(n => n.type === "word" && n.label === word);
+              if (existingNode) {
+                matches.push({ node: existingNode, label: word, type: "词汇", root: root });
+              } else {
+                matches.push({ node: { label: word, root: root }, label: word, type: "词汇", root: root });
+              }
+            }
+          });
+        }
+      }
+
+      const uniqueMatches = [];
+      const seen = new Set();
+      matches.forEach(match => {
+        const key = match.node.id ? match.node.id : `${match.label}-${match.root}`;
+        if (!seen.has(key)) { seen.add(key); uniqueMatches.push(match); }
+      });
+
+      if (uniqueMatches.length === 0) showNoResults();
+      else if (uniqueMatches.length === 1) { selectAndCenter(uniqueMatches[0]); hideSearchResults(); }
+      else showSearchResults(uniqueMatches);
+    }
+
+    function showSearchResults(matches) {
+      const resultsContainer = document.getElementById("searchResults");
+      resultsContainer.innerHTML = '';
+      matches.forEach((match, index) => {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        item.dataset.index = index;
+        item.innerHTML = `<span class="result-label">${match.label}</span><span class="result-type">${match.type}</span>`;
+        item.addEventListener('click', () => { selectAndCenter(match); hideSearchResults(); });
+        item.addEventListener('mouseenter', () => {
+          document.querySelectorAll('.search-result-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+        });
+        resultsContainer.appendChild(item);
+      });
+      resultsContainer.style.display = 'block';
+      searchResultsVisible = true;
+      if (resultsContainer.firstChild) resultsContainer.firstChild.classList.add('selected');
+    }
+
+    function showNoResults() {
+      const resultsContainer = document.getElementById("searchResults");
+      resultsContainer.innerHTML = '<div class="no-results">未找到匹配项</div>';
+      resultsContainer.style.display = 'block';
+      searchResultsVisible = true;
+    }
+
+    function hideSearchResults() {
+      document.getElementById("searchResults").style.display = 'none';
+      searchResultsVisible = false;
+    }
+
+    function centerOnNode(node) {
+      g.selectAll(".node").classed("highlight", d => d.id === node.id);
+      const scale = 1.5;
+      const translate = [width / 2 - node.x * scale, height / 2 - node.y * scale];
+      g.transition().duration(800).attr("transform", `translate(${translate}) scale(${scale})`);
+    }
+
+    function selectAndCenter(match) {
+      if (match.node.x !== undefined && match.node.y !== undefined) {
+        centerOnNode(match.node);
+      } else {
+        const root = match.root;
+        const rootNode = nodes.find(n => n.type === "root" && n.label === root);
+        if (rootNode) {
+          if (!expandedRoots.has(root)) {
+            toggleRoot(rootNode);
+            setTimeout(() => {
+              const wordNode = nodes.find(n => n.type === "word" && n.label === match.label);
+              if (wordNode) centerOnNode(wordNode);
+            }, 100);
+          } else {
+            const wordNode = nodes.find(n => n.type === "word" && n.label === match.label);
+            if (wordNode) centerOnNode(wordNode);
+          }
+        }
+      }
+    }
+
+    function showQueryTip(event, d) {
+      currentWord = d.label;
+      const tip = document.getElementById("queryTip");
+      document.getElementById("tipText").textContent = d.label;
+      tip.style.left = (event.pageX + 15) + "px";
+      tip.style.top = (event.pageY - 50) + "px";
+      tip.style.display = "block";
+      setTimeout(() => document.addEventListener("click", closeTipOnce), 10);
+    }
+
+    function closeTipOnce() {
+      document.getElementById("queryTip").style.display = "none";
+      document.removeEventListener("click", closeTipOnce);
+    }
+
+    function jumpToJLDB() {
+      const win = window.open(JLDB_URL, "_blank");
+      setTimeout(() => {
+        if (win && win.document) {
+          const searchInput = win.document.getElementById('searchInput');
+          if (searchInput) {
+            searchInput.value = currentWord;
+            win.document.getElementById('searchBtn')?.click();
+          }
+        }
+      }, 1000);
+    }
+
+    const searchBox = document.getElementById("searchBox");
+    searchBox.addEventListener("mousedown", startDrag);
+    document.addEventListener("mousemove", drag);
+    document.addEventListener("mouseup", endDrag);
+
+    function startDrag(e) {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "BUTTON") return;
+      isDragging = true;
+      searchBox.classList.add("dragging");
+      const rect = searchBox.getBoundingClientRect();
+      dragOffset.x = e.clientX - rect.left;
+      dragOffset.y = e.clientY - rect.top;
+      e.preventDefault();
+
+      // 修复拖动左偏
+      searchBox.style.transform = 'none';
+      searchBox.style.left = rect.left + 'px';
+      searchBox.style.top = rect.top + 'px';
+    }
+
+    function drag(e) {
+      if (!isDragging) return;
+      let x = e.clientX - dragOffset.x;
+      let y = e.clientY - dragOffset.y;
+      const rect = searchBox.getBoundingClientRect();
+      x = Math.max(0, Math.min(window.innerWidth - rect.width, x));
+      y = Math.max(0, Math.min(window.innerHeight - rect.height, y));
+      searchBox.style.left = x + "px";
+      searchBox.style.top = y + "px";
+    }
+
+    function endDrag() { isDragging = false; searchBox.classList.remove("dragging"); }
+
+    function showLabel(event, d) {
+      // 只显示文字，不显示球
+      if (d.type === "root" || expandedRoots.has(d.root)) {
+        // 找到对应的文字元素并显示
+        const label = d3.select(event.currentTarget.parentNode).select("text");
+        label.transition().duration(200).style("opacity", 1);
+      }
+    }
+
+    function hideLabel(event, d) {
+      // 只隐藏文字，不隐藏球
+      if (d.type === "root") return;
+      // 找到对应的文字元素并隐藏
+      const label = d3.select(event.currentTarget.parentNode).select("text");
+      label.transition().duration(200).style("opacity", 0);
+    }
+
+    document.getElementById("searchInput").addEventListener("keydown", (e) => {
+      if (!searchResultsVisible) return;
+      const items = document.querySelectorAll('.search-result-item');
+      if (items.length === 0) return;
+      let selectedIndex = -1;
+      items.forEach((item, index) => { if (item.classList.contains('selected')) selectedIndex = index; });
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        selectedIndex = (selectedIndex + 1) % items.length;
+        updateSelection(items, selectedIndex);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+        updateSelection(items, selectedIndex);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (selectedIndex >= 0) items[selectedIndex].click();
+      } else if (e.key === "Escape") hideSearchResults();
+    });
+
+    function updateSelection(items, index) {
+      items.forEach(item => item.classList.remove('selected'));
+      if (items[index]) { items[index].classList.add('selected'); items[index].scrollIntoView({ block: 'nearest' }); }
+    }
+  </script>
+</body>
+
+</html>

@@ -378,12 +378,12 @@ fetch("JLDB.csv")
 
     function searchWord() {
       let searchTerm = searchInput.value.trim();
-      
+
       // 检查是否有选中的高级搜索字段
       const selectedFields = getSelectedFields();
       if (selectedFields.length > 0) {
-          performAdvancedSearch(searchTerm, selectedFields);
-          return;
+        performAdvancedSearch(searchTerm, selectedFields);
+        return;
       }
 
       if (searchTerm === '') {
@@ -391,36 +391,35 @@ fetch("JLDB.csv")
         wd_fFilter.value = ''; // 重置词族选择
         return;
       }
-      
+
       // 检查用户是否主动使用正则表达式（以/开头和结尾）
       let regex;
       if (searchTerm.startsWith('/') && searchTerm.endsWith('/')) {
-          try {
-              // 提取正则表达式内容（忽略首尾的/）
-              regex = new RegExp(searchTerm.slice(1, -1), 'i');
-          } catch (e) {
-              return;
-          }
+        try {
+          // 提取正则表达式内容（忽略首尾的/）
+          regex = new RegExp(searchTerm.slice(1, -1), 'i');
+        } catch (e) {
+          alert('正则表达式格式错误');
+          return;
+        }
       } else {
-          // 普通搜索模式：转义所有正则特殊字符，支持*和?作为通配符
-          const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          // 将输入的*替换为.*
-          const pattern = escapedTerm.replace(/\*/g, '.*');
-          regex = new RegExp(pattern, 'i');
+        // 字面量匹配：转义所有正则特殊字符
+        const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        regex = new RegExp(escapedTerm, 'i');
       }
-      
+
       const matchingWords = wordData.filter(item => {
-          for (const key in item) {
-              if (item.hasOwnProperty(key)) {
-                  const value = String(item[key] || ''); // 确保值为字符串
-                  if (regex.test(value)) {
-                      return true;
-                  }
-              }
+        for (const key in item) {
+          if (item.hasOwnProperty(key)) {
+            const value = String(item[key] || ''); // 确保值为字符串
+            if (regex.test(value)) {
+              return true;
+            }
           }
-          return false;
+        }
+        return false;
       });
-      
+
       // 直接更新词汇表
       generateWordList(matchingWords);
       wd_fFilter.value = ''; // 重置词族选择
@@ -712,33 +711,32 @@ fetch("JLDB.csv")
 
     // 执行高级搜索逻辑
     function performAdvancedSearch(searchTerm, fields) {
-        // 检查正则表达式模式
-        let regex;
-        if (searchTerm.startsWith('/') && searchTerm.endsWith('/')) {
-            try {
-                regex = new RegExp(searchTerm.slice(1, -1), 'i');
-            } catch (e) {
-                alert('正则表达式格式错误');
-                return;
-            }
-        } else {
-            // 普通搜索模式
-            const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const pattern = escapedTerm.replace(/\*/g, '.*');
-            regex = new RegExp(pattern, 'i');
+      // 检查正则表达式模式
+      let regex;
+      if (searchTerm.startsWith('/') && searchTerm.endsWith('/')) {
+        try {
+          regex = new RegExp(searchTerm.slice(1, -1), 'i');
+        } catch (e) {
+          alert('正则表达式格式错误');
+          return;
         }
-        
-        // 过滤数据
-        const matchingWords = wordData.filter(item => {
-            return fields.some(field => {
-                const value = String(item[field] || '');
-                return regex.test(value);
-            });
+      } else {
+        // 字面量匹配：转义所有正则特殊字符
+        const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        regex = new RegExp(escapedTerm, 'i');
+      }
+
+      // 过滤数据
+      const matchingWords = wordData.filter(item => {
+        return fields.some(field => {
+          const value = String(item[field] || '');
+          return regex.test(value);
         });
-        
-        // 更新词汇表显示
-        generateWordList(matchingWords);
-        document.getElementById("wd_fFilter").value = ''; // 重置词族选择
+      });
+
+      // 更新词汇表显示
+      generateWordList(matchingWords);
+      document.getElementById("wd_fFilter").value = ''; // 重置词族选择
     }
 
     // 重置字段选择

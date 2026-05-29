@@ -1,11 +1,16 @@
 ---
-title: 词根
+title: 词根 / STELLA
 description: N/A
+layout: ../../../layouts/FullWidthLayout.astro
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import { LinkCard } from '@astrojs/starlight/components';
 
-<Aside type="tip">此页面尚在制作中。</Aside>
+<Aside type="tip">
+此页面尚在制作中。  
+「词族星球 STELLA」处于本页面。
+</Aside>
 
 本章分析广泛存在于大部分日琉语方言的经典固有词根、词缀，同时也关注拟声拟态词根，揭示日语和琉球语在词汇层面的共性和独特性。
 
@@ -34,6 +39,8 @@ Kenan Celik (2023) 提出了包含相同词根的词族的识别标准：
 
 ## 词族词根全书
 
+由于许多词干形式可能存在关联，本系统采取较保守的方式：先划分「词族」，再归纳「词根」。
+
 ### \*a
 ### \*e
 ### \*i
@@ -49,3 +56,13 @@ Kenan Celik (2023) 提出了包含相同词根的词族的识别标准：
 ### \*w
 ### \*y
 ### 类别词根汇总
+
+## 词族星球 STELLA
+<iframe
+  src={`${import.meta.env.BASE_URL}html/stella.html`}
+  title="STELLA"
+/>
+
+<Aside type="tip">也可通过下方链接卡片访问。</Aside>
+
+<LinkCard title="JPRoots STELLA" href={`${import.meta.env.BASE_URL}html/stella.html`} target="_blank"/>
