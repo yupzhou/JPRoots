@@ -1,13 +1,66 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8">
-  <title>JPRoots STELLA 词族星球</title>
-  <meta name="description" content="日琉语综合知识站：词族星球">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JPRoots STELLA 词族星系</title>
+  <meta name="description" content="日琉语综合知识站：词族星系">
   <link rel="icon" type="image/x-icon" href="../images/logo.png">
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
+    /* ================= CSS变量定义 ================= */
+    :root {
+      /* 背景色 */
+      --bg-primary: #e8f4f8;
+      --bg-secondary: rgba(15, 20, 40, 0.85);
+      --bg-tertiary: rgba(10, 15, 30, 0.8);
+
+      /* 词族球颜色 - 5档 */
+      --node-size1: #74b9ff;
+      --node-size2: #81ecec;
+      --node-size3: #55efc4;
+      --node-size4: #ffeaa7;
+      --node-size5: #fab1a0;
+
+      /* 单词球颜色 */
+      --node-word: #3498db;
+
+      /* 高亮颜色 */
+      --highlight-root: #e17055;
+      --highlight-word: #2d3436;
+
+      /* 外发光颜色 */
+      --glow-color: rgba(255, 255, 255, 0.6);
+      --glow-top100: rgba(255, 255, 255, 0.9);
+      --glow-highlight: rgba(255, 255, 255, 1);
+
+      /* 文字颜色 */
+      --text-primary: #2d3436;
+      --text-secondary: #636e72;
+      --text-light: #ffffff;
+      --text-outline: rgba(255, 255, 255, 0.8);
+
+      /* UI颜色 */
+      --ui-border: rgba(255, 255, 255, 0.2);
+      --ui-shadow: rgba(0, 0, 0, 0.6);
+      --ui-accent: #4dabf7;
+      --ui-accent-hover: #3b82f6;
+
+      /* 悬停背景色 - 动态设置 */
+      --ui-hover-bg: rgba(255, 255, 255, 0.2);
+      /* 默认深色背景用 */
+
+      /* 液态玻璃参数 */
+      --glass-blur: 20px;
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      --glass-outer-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --glass-highlight: inset 0 0 20px rgba(255, 255, 255, 0.1);
+      --glass-reflection: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    }
+
+    /* ================= 基础样式 ================= */
     * {
       margin: 0;
       padding: 0;
@@ -15,23 +68,192 @@
     }
 
     body {
-      background: radial-gradient(ellipse at center, #0a0e2a 0%, #050510 70%, #020208 100%);
+      background: var(--bg-primary);
       font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
       overflow: hidden;
-      color: #e0e0e0;
+      color: var(--text-primary);
+      height: 100vh;
+      width: 100vw;
+      transition: background 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    #main-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      display: block;
+    }
+
+    svg:active {
+      cursor: grabbing;
+    }
+
+    /* ================= 球体样式 - 液态玻璃效果 ================= */
+    .node-root {
+      cursor: pointer;
+      filter: drop-shadow(0 0 8px var(--glow-color));
+      transition: r 0.3s ease-out, filter 0.3s ease-out;
+      stroke-width: 2px;
+      paint-order: stroke fill;
+      /* 添加液态玻璃效果 */
+      fill: url(#glass-gradient);
+      stroke: rgba(255, 255, 255, 0.3);
+      stroke-width: 1.5px;
+    }
+
+    /* 修改1：词族球悬停放大效果 - 放大到30 */
+    .node-root:hover {
+      filter: drop-shadow(0 0 12px var(--glow-color));
+      r: 30;
+    }
+
+    .node-root.size-1 {
+      fill: var(--node-size1);
+      stroke: color-mix(in srgb, var(--node-size1) 70%, white);
+      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
+    }
+
+    .node-root.size-2 {
+      fill: var(--node-size2);
+      stroke: color-mix(in srgb, var(--node-size2) 70%, white);
+      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
+    }
+
+    .node-root.size-3 {
+      fill: var(--node-size3);
+      stroke: color-mix(in srgb, var(--node-size3) 70%, white);
+      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
+    }
+
+    .node-root.size-4 {
+      fill: var(--node-size4);
+      stroke: color-mix(in srgb, var(--node-size4) 70%, white);
+      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
+    }
+
+    .node-root.size-5 {
+      fill: var(--node-size5);
+      stroke: color-mix(in srgb, var(--node-size5) 70%, white);
+      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
+    }
+
+    .node-root.top100 {
+      stroke-width: 3px !important;
+      filter: drop-shadow(0 0 12px var(--glow-top100)) !important;
+    }
+
+    .node-word {
+      fill: var(--node-word) !important;
+      stroke: color-mix(in srgb, var(--node-word) 70%, white) !important;
+      stroke-width: 1.5px;
+      cursor: pointer;
+      filter: drop-shadow(0 0 6px var(--glow-color)) !important;
+      transition: r 0.3s ease-out;
+      paint-order: stroke fill;
+      /* 添加液态玻璃效果 */
+      fill: url(#glass-gradient-word);
+      stroke: rgba(255, 255, 255, 0.3);
+    }
+
+    /* 修改1：单词球悬停放大效果 - 减小到26，确保不超过词族球 */
+    .node-word:hover {
+      r: 26;
+      filter: drop-shadow(0 0 10px var(--glow-color)) !important;
+    }
+
+    .link {
+      stroke: rgba(100, 150, 255, 0.3);
+      stroke-opacity: 0.4;
+      stroke-width: 1.5px;
+    }
+
+    .label {
+      fill: var(--text-light);
+      font-weight: bold;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+      transition: opacity 0.3s ease-out;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+      paint-order: stroke fill;
+    }
+
+    .label-root {
+      font-size: 14px;
+    }
+
+    .label-word {
+      font-size: 11px;
+    }
+
+    /* 高亮样式 */
+    .node.highlight {
+      fill: var(--highlight-word) !important;
+      stroke: var(--highlight-word) !important;
+      filter: drop-shadow(0 0 20px var(--glow-highlight)) !important;
+      stroke-width: 4px !important;
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    .node-root.highlight {
+      fill: var(--highlight-root) !important;
+      stroke: #ffd700 !important;
+      filter: drop-shadow(0 0 25px var(--glow-highlight)) !important;
+      stroke-width: 4px !important;
+      animation: pulse-gold 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% {
+        filter: drop-shadow(0 0 15px var(--glow-highlight));
+      }
+
+      100% {
+        filter: drop-shadow(0 0 30px var(--glow-highlight));
+      }
+    }
+
+    @keyframes pulse-gold {
+      0% {
+        filter: drop-shadow(0 0 20px var(--glow-highlight));
+      }
+
+      100% {
+        filter: drop-shadow(0 0 40px var(--glow-highlight));
+      }
+    }
+
+    /* ================= 液态玻璃UI组件 ================= */
+    .liquid-glass {
+      background: rgba(0, 0, 0, 0.17);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ================= 搜索框 ================= */
     #searchBox {
       position: fixed;
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(15, 20, 40, 0.85);
-      backdrop-filter: blur(12px);
+      background: rgba(0, 0, 0, 0.17);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
       border-radius: 16px;
       padding: 12px 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 30px rgba(77, 171, 247, 0.1);
-      border: 1px solid rgba(100, 150, 255, 0.2);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
       z-index: 1000;
       cursor: move;
       min-width: 320px;
@@ -44,7 +266,7 @@
       align-items: center;
       margin-bottom: 10px;
       font-size: 14px;
-      color: #8bb9fe;
+      color: var(--text-light);
       font-weight: 500;
     }
 
@@ -60,11 +282,15 @@
     button {
       padding: 10px 14px;
       border-radius: 10px;
-      border: 1px solid rgba(100, 150, 255, 0.3);
-      background: rgba(40, 50, 70, 0.6);
-      color: #e0e0e0;
+      border: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.05);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      color: var(--text-light);
       font-size: 14px;
       outline: none;
+      box-shadow: var(--glass-inner-shadow), var(--glass-highlight);
+      transition: all 0.3s ease;
     }
 
     select {
@@ -78,145 +304,89 @@
     }
 
     input:focus {
-      border-color: #4dabf7;
-      box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+      border-color: var(--ui-accent);
+      box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2), var(--glass-inner-shadow);
     }
 
     button {
-      background: linear-gradient(135deg, #4dabf7, #3b82f6);
+      background: linear-gradient(135deg, var(--ui-accent), var(--ui-accent-hover));
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
       color: white;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
       white-space: nowrap;
-      border: none;
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-inner-shadow), var(--glass-highlight);
     }
 
     button:hover {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      background: linear-gradient(135deg, var(--ui-accent), var(--ui-accent-hover));
       transform: translateY(-1px);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), var(--glass-inner-shadow);
     }
 
-    svg {
-      display: block;
-      cursor: grab;
-    }
-
-    svg:active {
-      cursor: grabbing;
-    }
-
-    /* 球体样式 */
-    .node-root {
-      fill: #ff4757;
-      stroke: #ff6b81;
-      stroke-width: 2px;
-      cursor: pointer;
-      filter: drop-shadow(0 0 8px rgba(255, 71, 87, 0.7));
-      transition: r 0.3s ease-out;
-    }
-
-    .node-root:hover {
-      r: 38;
-      filter: drop-shadow(0 0 15px rgba(255, 71, 87, 1));
-    }
-
-    .node-word {
-      fill: #1dd1a1;
-      stroke: #10ac84;
-      stroke-width: 1.5px;
-      cursor: pointer;
-      filter: drop-shadow(0 0 6px rgba(29, 209, 161, 0.6));
-      transition: r 0.3s ease-out;
-    }
-
-    .node-word:hover {
-      r: 28;
-      filter: drop-shadow(0 0 12px rgba(29, 209, 161, 1));
-    }
-
-    .link {
-      stroke: rgba(100, 150, 255, 0.3);
-      stroke-opacity: 0.4;
-      stroke-width: 1.5px;
-    }
-
-    .label {
-      fill: #ffffff;
-      font-weight: bold;
-      text-anchor: middle;
-      dominant-baseline: middle;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease-in-out;
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-    }
-
-    .label-root {
-      font-size: 14px;
-    }
-
-    .label-word {
-      font-size: 11px;
-    }
-
-    #queryTip {
+    #searchResults {
       position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border-radius: 0 0 12px 12px;
+      border: 1px solid var(--glass-border);
+      border-top: none;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1002;
       display: none;
-      z-index: 1001;
-      max-width: 220px;
-      background: rgba(15, 20, 35, 0.9);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 200, 255, 0.3);
-      box-shadow: 0 0 25px rgba(0, 200, 255, 0.15);
-      padding: 12px 20px;
-      border-radius: 16px;
+      box-shadow: var(--glass-outer-shadow);
     }
 
-    #queryTip button {
-      width: 100%;
-      margin-top: 10px;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      border: none;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 10px;
+    .search-result-item {
+      padding: 12px 15px;
       cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+      transition: background 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-result-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .search-result-item.selected {
+      background: rgba(59, 130, 246, 0.3);
+    }
+
+    .result-label {
       font-weight: bold;
-      box-shadow: 0 0 15px rgba(0, 114, 255, 0.5);
+      color: var(--text-light);
     }
 
-    #queryTip button:hover {
-      background: linear-gradient(135deg, #0072ff, #0052cc);
-    }
-
-    .highlight {
-      fill: #ffd43b !important;
-      stroke: #ffd43b !important;
-      filter: drop-shadow(0 0 15px #ffd43b);
-    }
-
-    #loading {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 24px;
+    .result-type {
+      font-size: 12px;
       color: #8bb9fe;
-      text-shadow: 0 0 10px rgba(139, 185, 254, 0.5);
+      background: rgba(139, 185, 254, 0.1);
+      padding: 3px 10px;
+      border-radius: 20px;
     }
 
+    /* ================= 缩放控件 ================= */
     #zoom-controls {
       position: fixed;
       bottom: 30px;
       right: 30px;
-      background: rgba(15, 20, 40, 0.85);
-      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.17);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
       border-radius: 50px;
       padding: 10px 15px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.2);
-      border: 1px solid rgba(100, 150, 255, 0.2);
+      box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
+      border: 1px solid var(--glass-border);
       z-index: 1000;
       display: flex;
       flex-direction: row;
@@ -228,109 +398,375 @@
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      background: linear-gradient(135deg, var(--ui-accent), var(--ui-accent-hover));
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
       color: white;
-      border: none;
+      border: 1px solid var(--glass-border);
       cursor: pointer;
       font-size: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-      transition: all 0.2s;
+      box-shadow: var(--glass-inner-shadow), var(--glass-highlight);
+      transition: all 0.3s ease;
     }
 
     #zoom-controls button:hover {
-      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      background: linear-gradient(135deg, var(--ui-accent), var(--ui-accent-hover));
       transform: scale(1.1);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), var(--glass-inner-shadow);
     }
 
     #zoom-level {
-      color: #8bb9fe;
+      color: var(--text-light);
       font-size: 13px;
       text-align: center;
       min-width: 45px;
       font-weight: bold;
     }
 
-    #searchResults {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: rgba(15, 20, 40, 0.95);
-      border-radius: 0 0 12px 12px;
-      border: 1px solid rgba(100, 150, 255, 0.2);
-      border-top: none;
-      max-height: 300px;
-      overflow-y: auto;
-      z-index: 1002;
-      display: none;
-      backdrop-filter: blur(10px);
+    /* ================= 小星图 ================= */
+    #minimap-wrapper {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      pointer-events: none;
     }
 
-    .search-result-item {
-      padding: 12px 15px;
+    #minimap-container {
+      height: 40px;
+      background: rgba(0, 0, 0, 0.17);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
+      overflow: hidden;
       cursor: pointer;
-      border-bottom: 1px solid rgba(100, 150, 255, 0.1);
-      transition: background 0.2s;
+      transition: all 0.3s ease;
+      pointer-events: auto;
+    }
+
+    #minimap-container.expanded {
+      width: 200px;
+      height: 240px;
+    }
+
+    #minimap-header {
+      padding: 10px;
+      font-size: 12px;
+      color: var(--text-light);
+      text-align: center;
+      font-weight: 500;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #minimap-svg {
+      width: 100%;
+      height: calc(100% - 40px);
+      display: none;
+      background: rgba(10, 15, 30, 0.8);
+    }
+
+    #minimap-container.expanded #minimap-svg {
+      display: block;
+    }
+
+    #minimap-viewport {
+      position: absolute;
+      border: 2px solid #00ffff;
+      background: rgba(0, 255, 255, 0.1);
+      pointer-events: none;
+      box-sizing: border-box;
+      transition: all 0.1s ease-out;
+      display: none;
+    }
+
+    #minimap-container.expanded #minimap-viewport {
+      display: block;
+    }
+
+    /* ================= 性能信息面板 ================= */
+    #performance-panel {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      z-index: 1000;
+      min-width: 233px;
+      border: 1px solid var(--ui-border);
+    }
+
+    .perf-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 3px 0;
+      color: #8bb9fe;
+    }
+
+    .perf-value {
+      color: var(--ui-accent);
+      font-weight: bold;
+    }
+
+    /* ================= 配色选择器 ================= */
+    #color-picker-panel {
+      position: fixed;
+      bottom: 110px;
+      left: 10px;
+      z-index: 1000;
+      min-width: 233px;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .color-picker-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 12px 15px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-light);
+      background: rgba(0, 0, 0, 0.17);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
+      transition: all 0.3s ease;
     }
 
-    .search-result-item:hover {
-      background: rgba(59, 130, 246, 0.2);
+    /* 动态悬停背景色 - 通过JS设置，这里提供默认值 */
+    .color-picker-header:hover {
+      background: rgba(255, 255, 255, 0.15);
     }
 
-    .search-result-item.selected {
-      background: rgba(59, 130, 246, 0.3);
+    .color-picker-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      background: rgba(0, 0, 0, 0.17);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      box-shadow: var(--glass-outer-shadow);
     }
 
-    .result-label {
-      font-weight: bold;
-      color: #ffffff;
+    .color-picker-panel.expanded .color-picker-content {
+      max-height: 220px;
+      /* 固定高度，无需滚动条 */
     }
 
-    .result-type {
-      font-size: 12px;
-      color: #8bb9fe;
-      background: rgba(139, 185, 254, 0.1);
-      padding: 3px 10px;
-      border-radius: 20px;
+    .color-scheme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      /* 双列布局 */
+      gap: 8px;
+      padding: 12px;
     }
 
-    .no-results {
-      padding: 15px;
-      text-align: center;
-      color: #888;
-      font-style: italic;
-    }
-
-    #searchResults::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    #searchResults::-webkit-scrollbar-track {
+    .color-scheme-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
       background: rgba(255, 255, 255, 0.05);
-      border-radius: 4px;
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
     }
 
-    #searchResults::-webkit-scrollbar-thumb {
-      background: rgba(59, 130, 246, 0.5);
-      border-radius: 4px;
+    .color-scheme-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
     }
+
+    .color-scheme-btn.active {
+      border-color: var(--ui-accent);
+      box-shadow: 0 0 15px rgba(77, 171, 247, 0.3);
+    }
+
+    .color-preview {
+      width: 16px;
+      /* 与文字同高 */
+      height: 16px;
+      border-radius: 50%;
+      box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.4),
+        0 1px 4px rgba(0, 0, 0, 0.17);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--preview-color);
+    }
+
+    .color-preview::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+      border-radius: 50% 50% 40% 40%;
+    }
+
+    .color-name {
+      font-size: 13px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* ================= 加载进度条 ================= */
+    #loading-progress {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.17);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
+      border: 1px solid var(--glass-border);
+      z-index: 2000;
+      text-align: center;
+      min-width: 300px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(100, 150, 255, 0.2);
+      border-radius: 3px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ui-accent), var(--ui-accent-hover));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    #loading-text {
+      color: var(--text-light);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    /* ================= 提示框 ================= */
+    #queryTip {
+      position: absolute;
+      display: none;
+      z-index: 1001;
+      max-width: 220px;
+      background: rgba(0, 0, 0, 0.17);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid rgba(0, 200, 255, 0.3);
+      box-shadow: 0 0 25px rgba(0, 200, 255, 0.15);
+      padding: 12px 20px;
+      border-radius: 16px;
+    }
+
+    #queryTip button {
+      width: 100%;
+      margin-top: 10px;
+      background: linear-gradient(135deg, var(--ui-accent), var(--ui-accent-hover));
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: var(--glass-inner-shadow), var(--glass-highlight);
+    }
+
+    #queryTip button:hover {
+      background: linear-gradient(135deg, var(--ui-accent), var(--ui-accent-hover));
+    }
+
+    #minimapToggle {
+  font-size: 12px;
+  color: var(--text-light);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+#minimap-header:hover #minimapToggle {
+  color: #fff;
+}
   </style>
 </head>
 
 <body>
-  <div id="loading">正在加载数据...</div>
+  <!-- SVG滤镜定义 - 用于液态玻璃效果 -->
+  <svg style="position: absolute; width: 0; height: 0;">
+    <defs>
+      <!-- 词族球玻璃渐变 -->
+      <radialGradient id="glass-gradient" cx="30%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
+        <stop offset="50%" stop-color="rgba(255,255,255,0.1)" />
+        <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+      </radialGradient>
 
-  <div id="searchBox">
-    <div class="search-header">
-      <span>🪐 JPRoots STELLA</span>
+      <!-- 单词球玻璃渐变 -->
+      <radialGradient id="glass-gradient-word" cx="30%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.5)" />
+        <stop offset="50%" stop-color="rgba(255,255,255,0.2)" />
+        <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+      </radialGradient>
+
+      <!-- 玻璃高光滤镜 -->
+      <filter id="glass-highlight-filter" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
+        <feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.8" specularExponent="20"
+          lighting-color="#ffffff" result="spec">
+          <fePointLight x="-100" y="-100" z="200" />
+        </feSpecularLighting>
+        <feComposite in="spec" in2="SourceGraphic" operator="in" result="specHighlight" />
+        <feMerge>
+          <feMergeNode in="SourceGraphic" />
+          <feMergeNode in="specHighlight" />
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- 加载进度条 -->
+  <div id="loading-progress">
+    <div style="color: var(--text-light); font-size: 18px; margin-bottom: 10px;">🪐 正在加载词族数据</div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
     </div>
+    <div id="loading-text">准备中...</div>
+  </div>
+
+  <!-- 搜索框 -->
+  <div id="searchBox">
+    <div class="search-header"><span>🪐 JPRoots STELLA 词族星系</span></div>
     <div class="search-row">
       <input type="text" id="searchInput" placeholder="寻觅...">
       <select id="searchType">
@@ -342,6 +778,7 @@
     </div>
   </div>
 
+  <!-- 缩放控件 -->
   <div id="zoom-controls">
     <button id="zoom-in">+</button>
     <div id="zoom-level">100%</div>
@@ -349,19 +786,290 @@
     <button id="zoom-reset">↻</button>
   </div>
 
+  <!-- 性能信息面板 -->
+  <div id="performance-panel">
+    <div class="perf-row"><span>节点总数:</span><span class="perf-value" id="perf-nodes">0</span></div>
+    <div class="perf-row"><span>FPS:</span><span class="perf-value" id="perf-fps">60</span></div>
+    <div class="perf-row"><span>性能模式:</span><span class="perf-value" id="perf-mode">关闭</span></div>
+    <div class="perf-row"><span>标签显示:</span><span class="perf-value" id="perf-labels">开启</span></div>
+  </div>
+
+  <!-- 配色选择器 -->
+  <div id="color-picker-panel" class="color-picker-panel liquid-glass">
+    <div class="color-picker-header" id="colorPickerHeader">
+      <span>🎨 配色方案</span>
+      <span id="colorPickerToggle">▼</span>
+    </div>
+    <div class="color-picker-content" id="colorPickerContent">
+      <div class="color-scheme-grid" id="colorSchemeGrid"></div>
+    </div>
+  </div>
+
+  <!-- 提示框 -->
   <div id="queryTip">
     <div id="tipText"></div>
     <button onclick="jumpToJLDB()">探索 JLDB</button>
   </div>
 
-  <svg></svg>
+  <!-- 小星图 -->
+  <div id="minimap-wrapper">
+    <div id="minimap-container">
+      <div id="minimap-header">
+        <span>🔭 小星图</span>
+        <span id="minimapToggle">▼</span> <!-- 新增：小三角 -->
+      </div>
+      <svg id="minimap-svg"></svg>
+      <div id="minimap-viewport"></div>
+    </div>
+  </div>
+
+  <!-- 主画布 -->
+  <div id="main-container">
+    <svg id="graph-svg"></svg>
+  </div>
 
   <script>
+    // ================= 新增：CSV解析函数（来自JLDB.html，修复引号问题） =================
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+    // ================= 配色方案定义 - 优化版 =================
+    const COLOR_SCHEMES = {
+      "泡沫之夏": {
+        background: "#caf0f8ff",
+        node_size1: "#48cae4ff",
+        node_size2: "#00b4d8ff",
+        node_size3: "#0096c7ff",
+        node_size4: "#0077b6ff",
+        node_size5: "#023e8aff",
+        node_word: "#90e0efff",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#48cae4ff", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "贝海初曦": {
+        background: "#94d2bdff",
+        node_size1: "#e9d8a6ff",
+        node_size2: "#ee9b00ff",
+        node_size3: "#ca6702ff",
+        node_size4: "#bb3e03ff",
+        node_size5: "#ae2012ff",
+        node_word: "#0a9396ff",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#e9d8a6ff", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "浮生缱绻": {
+        background: "#f0efebff",
+        node_size1: "#fad2e1ff",
+        node_size2: "#e2ece9ff",
+        node_size3: "#bee1e6ff",
+        node_size4: "#fde2e4ff",
+        node_size5: "#dfe7fdff",
+        node_word: "#cddafdff",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#fad2e1ff", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "牧原晓梦": {
+        background: "#eefcbc",
+        node_size1: "#99d98cff",
+        node_size2: "#52b69aff",
+        node_size3: "#34a0a4ff",
+        node_size4: "#1a759fff",
+        node_size5: "#1e6091ff",
+        node_word: "#b5e48cff",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#99d98cff", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "玉卵流光": {
+        background: "#fff8ab",
+        node_size1: "#ffc300ff",
+        node_size2: "#ffb700ff",
+        node_size3: "#ffa200ff",
+        node_size4: "#ff8800ff",
+        node_size5: "#ff7b00ff",
+        node_word: "#ffaa00ff",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#ffc300ff", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "莓霜浅印": {
+        background: "#fff0f3ff",
+        node_size1: "#ffb3c1ff",
+        node_size2: "#ff8fa3ff",
+        node_size3: "#ff4d6dff",
+        node_size4: "#c9184aff",
+        node_size5: "#800f2fff",
+        node_word: "#ff758fff",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#ffb3c1ff", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      }
+    };
+
+    // ================= 配色选择器功能 =================
+    let currentColorScheme = "泡沫之夏";
+
+    function initColorPicker() {
+      const grid = document.getElementById('colorSchemeGrid');
+      const header = document.getElementById('colorPickerHeader');
+      const content = document.getElementById('colorPickerContent');
+      const toggle = document.getElementById('colorPickerToggle');
+      const panel = document.getElementById('color-picker-panel');
+
+      // 生成配色方案按钮
+      Object.keys(COLOR_SCHEMES).forEach(schemeName => {
+        const scheme = COLOR_SCHEMES[schemeName];
+        const btn = document.createElement('div');
+        btn.className = 'color-scheme-btn';
+        if (schemeName === currentColorScheme) btn.classList.add('active');
+
+        btn.innerHTML = `
+          <div class="color-preview" style="background: ${scheme.preview_color};"></div>
+          <div class="color-name">${schemeName}</div>
+        `;
+
+        btn.addEventListener('click', () => {
+          applyColorScheme(schemeName);
+          document.querySelectorAll('.color-scheme-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+
+        grid.appendChild(btn);
+      });
+
+      // 折叠/展开功能
+      header.addEventListener('click', () => {
+        panel.classList.toggle('expanded');
+        toggle.textContent = panel.classList.contains('expanded') ? '▲' : '▼';
+      });
+
+      // 默认折叠
+      panel.classList.remove('expanded');
+      toggle.textContent = '▼';
+    }
+
+    function applyColorScheme(schemeName) {
+      const scheme = COLOR_SCHEMES[schemeName];
+      const root = document.documentElement;
+
+      // 设置CSS变量
+      root.style.setProperty('--bg-primary', scheme.background);
+      root.style.setProperty('--node-size1', scheme.node_size1);
+      root.style.setProperty('--node-size2', scheme.node_size2);
+      root.style.setProperty('--node-size3', scheme.node_size3);
+      root.style.setProperty('--node-size4', scheme.node_size4);
+      root.style.setProperty('--node-size5', scheme.node_size5);
+      root.style.setProperty('--node-word', scheme.node_word);
+      root.style.setProperty('--highlight-root', scheme.highlight_root);
+      root.style.setProperty('--highlight-word', scheme.highlight_word);
+      root.style.setProperty('--text-primary', scheme.text_primary);
+      root.style.setProperty('--text-secondary', scheme.text_secondary);
+      root.style.setProperty('--text-light', scheme.text_light);
+      root.style.setProperty('--text-outline', scheme.text_outline);
+      root.style.setProperty('--glow-color', scheme.glow_color);
+      root.style.setProperty('--glow-top100', scheme.glow_top100);
+      root.style.setProperty('--glow-highlight', scheme.glow_highlight);
+
+      // 设置悬停背景色
+      root.style.setProperty('--ui-hover-bg', scheme.hover_bg);
+
+      currentColorScheme = schemeName;
+      updateMinimapColors();
+    }
+
+    function updateMinimapColors() {
+      if (!minimapG) return;
+      const scheme = COLOR_SCHEMES[currentColorScheme];
+      minimapG.selectAll(".mini-node")
+        .attr("fill", d => {
+          if (d.type === "root") {
+            switch (d.sizeLevel) {
+              case 1: return scheme.node_size1;
+              case 2: return scheme.node_size2;
+              case 3: return scheme.node_size3;
+              case 4: return scheme.node_size4;
+              case 5: return scheme.node_size5;
+              default: return scheme.node_size1;
+            }
+          } else { return scheme.node_word; }
+        });
+    }
+
+    // ================= 原有代码（保持不变） =================
     const CSV_FILE = "JLDB.csv";
     const JLDB_URL = "JLDB.html";
+    const BASE_SIZE = 4000;
+    const MINIMAP_SCALE = 0.05;
+    const PERFORMANCE_THRESHOLD = 300;
+    const LOD_THRESHOLD = 0.6;
+
+    const SIZE_LEVELS = [
+      { min: 0, max: 10, size: 1, radius: 24, brightness: 0.8 },
+      { min: 10, max: 20, size: 2, radius: 28, brightness: 1.0 },
+      { min: 20, max: 30, size: 3, radius: 32, brightness: 1.2 },
+      { min: 30, max: 50, size: 4, radius: 36, brightness: 1.4 },
+      { min: 50, max: Infinity, size: 5, radius: 42, brightness: 1.6 }
+    ];
 
     let allRoots = [];
     let rootToWords = {};
+    let rootWordCount = {};
     let nodes = [];
     let links = [];
     let expandedRoots = new Set();
@@ -370,10 +1078,107 @@
     let dragOffset = { x: 0, y: 0 };
     let zoomBehavior;
     let searchResultsVisible = false;
+    let top100Roots = new Set();
 
-    // 加载 CSV 数据
-    d3.csv(CSV_FILE).then(data => {
-      console.log("CSV 数据加载成功，共", data.length, "行");
+    let minimapSvg, minimapG, minimapViewport;
+    let mainSvg, mainG, mainSimulation;
+    let minimapContainer;
+    let performanceMode = false;
+    let frameCount = 0;
+    let lastTime = performance.now();
+    let fps = 60;
+    let currentScale = 1;
+    let labelsVisible = true;
+
+    function createCSVWorker() {
+      const workerCode = `
+  self.onmessage = function(e) {
+    const csvText = e.data;
+    const lines = csvText.split('\\n');
+    const headers = parseCSVLine(lines[0]); // ✅ 正确解析表头
+    const data = [];
+    for (let i = 1; i < lines.length; i++) {
+      if (lines[i].trim()) {
+        const values = parseCSVLine(lines[i]); // ✅ 正确解析行（处理引号）
+        const row = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index] ? values[index].trim() : '';
+        });
+        data.push(row);
+      }
+    }
+    postMessage(data);
+  };
+
+  // 注入parseCSVLine到Worker
+  function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+`;
+      const blob = new Blob([workerCode], { type: 'application/javascript' });
+      return new Worker(URL.createObjectURL(blob));
+    }
+
+    async function loadDataWithWorker() {
+      try {
+        updateLoadingProgress(10, "下载 CSV 文件...");
+        const response = await fetch(CSV_FILE);
+        const csvText = await response.text();
+        updateLoadingProgress(30, "Web Worker 解析中...");
+        const worker = createCSVWorker();
+        worker.onmessage = function (e) {
+          updateLoadingProgress(70, "处理词族数据...");
+          processData(e.data);
+          worker.terminate();
+        };
+        worker.postMessage(csvText);
+      } catch (error) {
+        console.error("Web Worker 解析失败，使用主线程解析：", error);
+        updateLoadingProgress(30, "使用主线程解析...");
+        loadDataTraditional();
+      }
+    }
+
+    function loadDataTraditional() {
+      fetch(CSV_FILE)
+        .then(response => response.text())
+        .then(csvText => {
+          const lines = csvText.trim().split('\n');
+          const headers = parseCSVLine(lines[0]);
+          const data = lines.slice(1).map(line => {
+            const values = parseCSVLine(line);
+            const obj = {};
+            headers.forEach((header, i) => {
+              obj[header] = values[i] || '';
+            });
+            return obj;
+          });
+          updateLoadingProgress(70, "处理词族数据...");
+          processData(data);
+        })
+        .catch(error => {
+          console.error("加载 CSV 失败，使用模拟数据：", error);
+          updateLoadingProgress(50, "使用模拟数据...");
+          useMockData();
+        });
+    }
+
+    function processData(data) {
       const firstRow = data[0];
       let rootCol = 'wd_f';
       let wordCol = 'word';
@@ -388,8 +1193,6 @@
         wordCol = keys.find(k => k.toLowerCase().includes('word')) || keys[1] || keys[0];
       }
 
-      console.log("使用字段：", rootCol, "=", wordCol);
-
       data.forEach(d => {
         const root = d[rootCol]?.trim();
         const word = d[wordCol]?.trim();
@@ -397,115 +1200,232 @@
           if (!rootToWords[root]) {
             rootToWords[root] = [];
             allRoots.push(root);
+            rootWordCount[root] = 0;
           }
           if (!rootToWords[root].includes(word)) {
             rootToWords[root].push(word);
+            rootWordCount[root]++;
           }
         }
       });
 
-      console.log("加载完成：", allRoots.length, "个词族");
-      document.getElementById("loading").style.display = "none";
+      const sortedRoots = allRoots.sort((a, b) => rootWordCount[b] - rootWordCount[a]);
+      top100Roots = new Set(sortedRoots.slice(0, 100));
+
+      updateLoadingProgress(90, "初始化可视化...");
+      setTimeout(() => {
+        document.getElementById("loading-progress").style.display = "none";
+        initGraph();
+        initColorPicker();
+        applyColorScheme("泡沫之夏");
+      }, 300);
+    }
+
+    function useMockData() {
+      allRoots = [];
+      rootToWords = {};
+      rootWordCount = {};
+
+      for (let i = 1; i <= 200; i++) {
+        const root = `词族${i}`;
+        allRoots.push(root);
+        rootToWords[root] = [];
+        const wordCount = Math.floor(Math.random() * 80) + 1;
+        rootWordCount[root] = wordCount;
+        for (let j = 1; j <= wordCount; j++) {
+          rootToWords[root].push(`单词${j}`);
+        }
+      }
+
+      const sortedRoots = allRoots.sort((a, b) => rootWordCount[b] - rootWordCount[a]);
+      top100Roots = new Set(sortedRoots.slice(0, 100));
+      document.getElementById("loading-progress").style.display = "none";
       initGraph();
-    }).catch(error => {
-      console.error("加载 CSV 失败：", error);
-      document.getElementById("loading").innerHTML = `加载失败！<button onclick="location.reload()">重试</button>`;
-    });
+      initColorPicker();
+      applyColorScheme("泡沫之夏");
+    }
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const svg = d3.select("svg").attr("width", width).attr("height", height);
-    const g = svg.append("g");
-
-    const simulation = d3.forceSimulation()
-      .force("link", d3.forceLink().id(d => d.id).distance(100).strength(0.6))
-      .force("charge", d3.forceManyBody().strength(-350).distanceMin(100).distanceMax(900))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(d => d.radius + 12));
+    function updateLoadingProgress(percent, text) {
+      document.getElementById("progress-fill").style.width = percent + "%";
+      document.getElementById("loading-text").textContent = text;
+    }
 
     function initGraph() {
-      nodes = allRoots.map(root => ({
-        id: `root_${root}`,
-        label: root,
-        type: "root",
-        radius: 32
-      }));
+        mainSvg = d3.select("#graph-svg");
+        mainG = mainSvg.append("g");
+        minimapContainer = document.getElementById("minimap-container");
+        minimapSvg = d3.select("#minimap-svg");
+        minimapG = minimapSvg.append("g");
+        minimapViewport = d3.select("#minimap-viewport");
+        performanceMode = allRoots.length > PERFORMANCE_THRESHOLD;
+        updatePerformancePanel();
+        initMinimap();
+        initForceSimulation();
+        updateGraph();
+        initZoom();
+        requestAnimationFrame(updatePerformance);
 
-      updateGraph();
+        // 修改点：立即居中，无动画
+        immediateCenterView();
 
-      // 立即显示词族文字
-      setTimeout(() => {
-        g.selectAll(".label")
-          .filter(d => d.type === "root")
-          .transition()
-          .duration(400)
-          .style("opacity", 1);
-      }, 100);
+        // 性能模式下停止模拟
+        if (performanceMode) {
+          setTimeout(() => mainSimulation.stop(), 2000);
+        }
+      }
 
-      initZoom();
+      // 新的立即居中函数（无动画）
+        function immediateCenterView() {
+          const top100Nodes = nodes.filter(d => d.isTop100);
+          if (top100Nodes.length === 0) return;
+
+          let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+          top100Nodes.forEach(node => {
+            if (node.x < minX) minX = node.x;
+            if (node.x > maxX) maxX = node.x;
+            if (node.y < minY) minY = node.y;
+            if (node.y > maxY) maxY = node.y;
+          });
+
+          const padding = 100;
+          minX -= padding; maxX += padding; minY -= padding; maxY += padding;
+          const graphWidth = maxX - minX;
+          const graphHeight = maxY - minY;
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+          const scale = Math.min(viewportWidth / graphWidth, viewportHeight / graphHeight, 1);
+          const translateX = (viewportWidth - graphWidth * scale) / 2 - minX * scale;
+          const translateY = (viewportHeight - graphHeight * scale) / 2 - minY * scale;
+
+          mainSvg.call(zoomBehavior.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
+        }
+
+    function getSizeLevel(wordCount) {
+      for (const level of SIZE_LEVELS) {
+        if (wordCount >= level.min && wordCount < level.max) { return level; }
+      }
+      return SIZE_LEVELS[SIZE_LEVELS.length - 1];
+    }
+
+    function initForceSimulation() {
+      const centerX = BASE_SIZE / 2;
+      const centerY = BASE_SIZE / 2;
+      const innerRadius = 350; // 修改2：从450减小到350
+      const outerRadius = 600; // 修改2：从750减小到600
+
+      nodes = allRoots.map((root, i) => {
+        const wordCount = rootWordCount[root] || 0;
+        const sizeLevel = getSizeLevel(wordCount);
+        const isTop100 = top100Roots.has(root);
+        let radius, x, y;
+
+        if (isTop100) {
+          radius = sizeLevel.radius;
+          const angle = (i / 100) * 2 * Math.PI;
+          const distance = Math.random() * innerRadius;
+          x = centerX + Math.cos(angle) * distance;
+          y = centerY + Math.sin(angle) * distance;
+        } else {
+          radius = sizeLevel.radius * 0.9;
+          const angle = Math.random() * 2 * Math.PI;
+          const distance = outerRadius + Math.random() * 150; // 修改2：从400减小到150
+          x = centerX + Math.cos(angle) * distance;
+          y = centerY + Math.sin(angle) * distance;
+        }
+
+        return {
+          id: `root_${root}`,
+          label: root,
+          type: "root",
+          radius: radius,
+          isTop100: isTop100,
+          wordCount: wordCount,
+          sizeLevel: sizeLevel.size,
+          brightness: sizeLevel.brightness,
+          x: x,
+          y: y
+        };
+      });
+
+      // 修改2：调整斥力参数，减少移动距离
+      const chargeStrength = performanceMode ? -40 : -80; // 从-60/-120调整为-40/-80
+      const linkDistance = performanceMode ? 25 : 40; // 从30/50调整为25/40
+      const alphaDecay = performanceMode ? 0.12 : 0.04; // 从0.15/0.05调整为0.12/0.04
+
+      mainSimulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(linkDistance).strength(0.8))
+        .force("charge", d3.forceManyBody().strength(chargeStrength).distanceMin(40).distanceMax(400)) // 调整距离范围
+        .force("center", d3.forceCenter(centerX, centerY).strength(0.08)) // 增加中心引力
+        .force("collision", d3.forceCollide().radius(d => d.radius + 6)) // 从8减小到6
+        .alphaDecay(alphaDecay)
+        .velocityDecay(0.5) // 增加速度衰减
+        .on("tick", updatePositions);
     }
 
     function updateGraph() {
-      // 链接
-      const link = g.selectAll(".link")
-        .data(links, d => `${d.source.id}-${d.target.id}`);
-
+      const link = mainG.selectAll(".link").data(links, d => `${d.source.id}-${d.target.id}`);
       link.exit().remove();
-      link.enter().append("line").attr("class", "link").merge(link);
+      link.enter().append("line")
+        .attr("class", "link")
+        .attr("stroke-width", performanceMode ? 0.5 : 1.5)
+        .merge(link);
 
-      // 节点
-      const node = g.selectAll(".node")
-        .data(nodes, d => d.id);
-
+      const node = mainG.selectAll(".node").data(nodes, d => d.id);
       node.exit().remove();
-      const nodeEnter = node.enter()
-        .append("circle")
-        .attr("class", d => `node ${d.type === "root" ? "node-root" : "node-word"}`)
+      const nodeEnter = node.enter().append("circle")
+        .attr("class", d => {
+          let cls = `node ${d.type === "root" ? "node-root" : "node-word"}`;
+          if (d.type === "root") { cls += ` size-${d.sizeLevel}`; }
+          if (d.isTop100) cls += " top100";
+          return cls;
+        })
         .attr("r", d => d.radius)
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-        .on("click", handleNodeClick)
-        .on("mouseover", showLabel)
-        .on("mouseout", hideLabel);
-
+        .on("click", handleNodeClick);
       node.merge(nodeEnter);
 
-      // 标签
-      const label = g.selectAll(".label")
-        .data(nodes, d => d.id);
-
+      const label = mainG.selectAll(".label").data(nodes, d => d.id);
       label.exit().remove();
-      label.enter()
-        .append("text")
+      label.enter().append("text")
         .attr("class", d => `label ${d.type === "root" ? "label-root" : "label-word"}`)
         .merge(label)
         .each(function (d) {
           const self = d3.select(this);
           self.selectAll("*").remove();
-          let displayLabel = d.label;
-          if (displayLabel.length > 8) displayLabel = displayLabel.substring(0, 8) + "...";
-          if (d.type === "word" && displayLabel.length > 4) {
-            const words = [];
-            for (let i = 0; i < displayLabel.length; i += 4) words.push(displayLabel.substring(i, i + 4));
-            const totalLines = words.length;
-            const startY = -(totalLines - 1) * 1.2 / 2;
-            words.forEach((word, i) => {
-              self.append("tspan").attr("x", 0).attr("dy", i === 0 ? startY + "em" : "1.2em").text(word);
-            });
-          } else {
-            self.text(displayLabel);
-          }
+          const displayLabel = d.label;
+          if (displayLabel.length > 4) {
+            const firstLine = displayLabel.substring(0, 4);
+            const secondLine = displayLabel.substring(4);
+            const secondLineDisplay = secondLine.length > 4 ? secondLine.substring(0, 4) + "..." : secondLine;
+            self.append("tspan").attr("x", 0).attr("dy", "-0.6em").text(firstLine);
+            self.append("tspan").attr("x", 0).attr("dy", "1.2em").text(secondLineDisplay);
+          } else { self.text(displayLabel); }
         });
 
-      simulation.nodes(nodes);
-      simulation.force("link").links(links);
-      simulation.alpha(0.3).restart();
+      mainSimulation.nodes(nodes);
+      mainSimulation.force("link").links(links);
+      mainSimulation.alpha(0.3).restart();
+    }
 
-      simulation.on("tick", () => {
-        g.selectAll(".link").attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
-        g.selectAll(".node").attr("cx", d => d.x = Math.max(d.radius, Math.min(width - d.radius, d.x))).attr("cy", d => d.y = Math.max(d.radius, Math.min(height - d.radius, d.y)));
-        g.selectAll(".label").attr("transform", d => `translate(${d.x}, ${d.y})`);
-      });
+    function updatePositions() {
+      mainG.selectAll(".link")
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+      mainG.selectAll(".node")
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y);
+
+      mainG.selectAll(".label")
+        .attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+      if (minimapContainer && minimapContainer.classList.contains("expanded")) {
+        updateMinimapNodes();
+        updateMinimapViewport();
+      }
     }
 
     function handleNodeClick(event, d) {
@@ -519,11 +1439,7 @@
       const rootId = rootNode.id;
 
       if (expandedRoots.has(root)) {
-        // 收起：先动画缩小，再移除
-        const wordNodes = g.selectAll(".node-word").filter(d => d.root === root);
-        const wordLabels = g.selectAll(".label-word").filter(d => d.root === root);
-
-        wordLabels.transition().duration(300).style("opacity", 0);
+        const wordNodes = mainG.selectAll(".node-word").filter(d => d.root === root);
         wordNodes.transition().duration(300).attr("r", 0).on("end", () => {
           links = links.filter(l => l.source.id !== rootId && l.target.id !== rootId);
           nodes = nodes.filter(n => n.type !== "word" || n.root !== root);
@@ -531,7 +1447,6 @@
           updateGraph();
         });
       } else {
-        // 展开：新节点从中心出现
         const words = rootToWords[root] || [];
         words.forEach(word => {
           const wordId = `word_${word}`;
@@ -541,7 +1456,7 @@
               label: word,
               type: "word",
               root: root,
-              radius: 0, // 初始不可见
+              radius: 18,
               x: rootNode.x,
               y: rootNode.y
             });
@@ -550,154 +1465,186 @@
         });
         expandedRoots.add(root);
         updateGraph();
-
-        // 延迟执行放大动画
         setTimeout(() => {
-          const newWordNodes = g.selectAll(".node-word").filter(d => d.root === root && d.radius === 0);
-          newWordNodes.transition().duration(600).attr("r", 22).on("end", function () {
-            const wordLabels = g.selectAll(".label-word").filter(d => d.root === root);
-            wordLabels.transition().duration(300).style("opacity", 1);
-          });
+          const newWordNodes = mainG.selectAll(".node-word").filter(d => d.root === root && d.radius === 0);
+          newWordNodes.transition().duration(600).attr("r", 18);
         }, 100);
       }
     }
 
     function initZoom() {
-      zoomBehavior = d3.zoom().scaleExtent([0.1, 5]).on("zoom", (event) => {
-        g.attr("transform", event.transform);
-        document.getElementById("zoom-level").textContent = `${Math.round(event.transform.k * 100)}%`;
-      });
-      svg.call(zoomBehavior);
-      setTimeout(() => fitToScreen(), 500);
-    }
-
-    function fitToScreen() {
-      if (nodes.length === 0) return;
-      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-      nodes.forEach(node => {
-        if (node.x < minX) minX = node.x;
-        if (node.x > maxX) maxX = node.x;
-        if (node.y < minY) minY = node.y;
-        if (node.y > maxY) maxY = node.y;
-      });
-      const padding = 80;
-      minX -= padding; maxX += padding; minY -= padding; maxY += padding;
-      const graphWidth = maxX - minX;
-      const graphHeight = maxY - minY;
-      const scale = Math.min(width / graphWidth, height / graphHeight, 1);
-      const translateX = (width - graphWidth * scale) / 2 - minX * scale;
-      const translateY = (height - graphHeight * scale) / 2 - minY * scale;
-      svg.transition().duration(1000).call(zoomBehavior.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
-    }
-
-    document.getElementById("zoom-in").addEventListener("click", () => svg.transition().duration(300).call(zoomBehavior.scaleBy, 1.2));
-    document.getElementById("zoom-out").addEventListener("click", () => svg.transition().duration(300).call(zoomBehavior.scaleBy, 0.8));
-    document.getElementById("zoom-reset").addEventListener("click", () => svg.transition().duration(300).call(zoomBehavior.transform, d3.zoomIdentity));
-
-    document.getElementById("searchBtn").addEventListener("click", performSearch);
-    document.getElementById("searchInput").addEventListener("keypress", e => e.key === "Enter" && performSearch());
-    document.addEventListener("click", e => !e.target.closest('#searchBox') && hideSearchResults());
-
-    function performSearch() {
-      const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
-      const type = document.getElementById("searchType").value;
-      if (!keyword) { hideSearchResults(); return; }
-
-      let matches = [];
-      if (type === "root" || type === "all") {
-        allRoots.forEach(root => {
-          if (root.toLowerCase().includes(keyword)) {
-            const node = nodes.find(n => n.type === "root" && n.label === root);
-            if (node) matches.push({ node: node, label: root, type: "词族" });
+      zoomBehavior = d3.zoom()
+        .scaleExtent([0.1, 5])
+        .on("zoom", (event) => {
+          currentScale = event.transform.k;
+          mainG.attr("transform", event.transform);
+          document.getElementById("zoom-level").textContent = `${Math.round(currentScale * 100)}%`;
+          updateLabelsVisibility();
+          if (minimapContainer && minimapContainer.classList.contains("expanded")) {
+            updateMinimapViewport();
           }
         });
-      }
-      if (type === "word" || type === "all") {
-        for (const [root, words] of Object.entries(rootToWords)) {
-          words.forEach(word => {
-            if (word.toLowerCase().includes(keyword)) {
-              const existingNode = nodes.find(n => n.type === "word" && n.label === word);
-              if (existingNode) {
-                matches.push({ node: existingNode, label: word, type: "词汇", root: root });
-              } else {
-                matches.push({ node: { label: word, root: root }, label: word, type: "词汇", root: root });
-              }
-            }
-          });
-        }
-      }
-
-      const uniqueMatches = [];
-      const seen = new Set();
-      matches.forEach(match => {
-        const key = match.node.id ? match.node.id : `${match.label}-${match.root}`;
-        if (!seen.has(key)) { seen.add(key); uniqueMatches.push(match); }
-      });
-
-      if (uniqueMatches.length === 0) showNoResults();
-      else if (uniqueMatches.length === 1) { selectAndCenter(uniqueMatches[0]); hideSearchResults(); }
-      else showSearchResults(uniqueMatches);
+      mainSvg.call(zoomBehavior);
     }
 
-    function showSearchResults(matches) {
-      const resultsContainer = document.getElementById("searchResults");
-      resultsContainer.innerHTML = '';
-      matches.forEach((match, index) => {
-        const item = document.createElement('div');
-        item.className = 'search-result-item';
-        item.dataset.index = index;
-        item.innerHTML = `<span class="result-label">${match.label}</span><span class="result-type">${match.type}</span>`;
-        item.addEventListener('click', () => { selectAndCenter(match); hideSearchResults(); });
-        item.addEventListener('mouseenter', () => {
-          document.querySelectorAll('.search-result-item').forEach(el => el.classList.remove('selected'));
-          item.classList.add('selected');
+    function updateLabelsVisibility() {
+      const shouldShowLabels = currentScale >= LOD_THRESHOLD;
+      if (shouldShowLabels !== labelsVisible) {
+        labelsVisible = shouldShowLabels;
+        mainG.selectAll(".label")
+          .transition()
+          .duration(200)
+          .style("opacity", labelsVisible ? 1 : 0);
+        document.getElementById("perf-labels").textContent = labelsVisible ? "开启" : "关闭";
+      }
+    }
+
+    function fitToTop100() {
+        const top100Nodes = nodes.filter(d => d.isTop100);
+        if (top100Nodes.length === 0) return;
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        top100Nodes.forEach(node => {
+          if (node.x < minX) minX = node.x;
+          if (node.x > maxX) maxX = node.x;
+          if (node.y < minY) minY = node.y;
+          if (node.y > maxY) maxY = node.y;
         });
-        resultsContainer.appendChild(item);
-      });
-      resultsContainer.style.display = 'block';
-      searchResultsVisible = true;
-      if (resultsContainer.firstChild) resultsContainer.firstChild.classList.add('selected');
+        const padding = 100;
+        minX -= padding; maxX += padding; minY -= padding; maxY += padding;
+        const graphWidth = maxX - minX;
+        const graphHeight = maxY - minY;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const scale = Math.min(viewportWidth / graphWidth, viewportHeight / graphHeight, 1);
+        const translateX = (viewportWidth - graphWidth * scale) / 2 - minX * scale;
+        const translateY = (viewportHeight - graphHeight * scale) / 2 - minY * scale;
+        mainSvg.transition().duration(1500).call(
+          zoomBehavior.transform,
+          d3.zoomIdentity.translate(translateX, translateY).scale(scale)
+        );
+      }
+
+    function initMinimap() {
+        minimapContainer = document.getElementById("minimap-container");
+        const minimapHeader = document.getElementById("minimap-header");
+        const minimapToggle = document.getElementById("minimapToggle");
+
+        minimapHeader.addEventListener("click", function (e) {
+          e.stopPropagation();
+          minimapContainer.classList.toggle("expanded");
+          minimapToggle.textContent = minimapContainer.classList.contains("expanded") ? "▲" : "▼";
+
+          if (minimapContainer.classList.contains("expanded")) {
+            setTimeout(() => {
+              updateMinimapNodes();
+              updateMinimapViewport();
+            }, 10);
+          }
+        });
+
+        minimapToggle.addEventListener("click", function (e) {
+          e.stopPropagation();
+          minimapHeader.click();
+        });
+
+        minimapSvg.on("click", function (event) {
+          if (!minimapContainer.classList.contains("expanded")) return;
+          const rect = minimapSvg.node().getBoundingClientRect();
+          const ratioX = (event.clientX - rect.left) / rect.width;
+          const ratioY = (event.clientY - rect.top) / rect.height;
+          const targetX = ratioX * BASE_SIZE;
+          const targetY = ratioY * BASE_SIZE;
+          const transform = d3.zoomTransform(mainSvg.node());
+          const scale = transform.k;
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+          mainSvg.transition()
+            .duration(750)
+            .call(zoomBehavior.transform,
+              d3.zoomIdentity
+                .translate(viewportWidth / 2 - targetX * scale, viewportHeight / 2 - targetY * scale)
+                .scale(scale)
+            );
+        });
+      }
+
+    function updateMinimapNodes() {
+      if (!minimapG || !minimapContainer.classList.contains("expanded")) return;
+      const miniNodes = minimapG.selectAll(".mini-node").data(nodes, d => d.id);
+      miniNodes.exit().remove();
+      miniNodes.enter().append("circle")
+        .attr("class", "mini-node")
+        .merge(miniNodes)
+        .attr("cx", d => d.x * MINIMAP_SCALE)
+        .attr("cy", d => d.y * MINIMAP_SCALE)
+        .attr("r", d => { if (d.type === "root") { return d.isTop100 ? 6 : 3; } else { return 2; } });
     }
 
-    function showNoResults() {
-      const resultsContainer = document.getElementById("searchResults");
-      resultsContainer.innerHTML = '<div class="no-results">未找到匹配项</div>';
-      resultsContainer.style.display = 'block';
-      searchResultsVisible = true;
+    function updateMinimapViewport() {
+      if (!minimapViewport || !minimapContainer.classList.contains("expanded")) return;
+      const transform = d3.zoomTransform(mainSvg.node());
+      const scale = transform.k;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const viewX = -transform.x / scale;
+      const viewY = -transform.y / scale;
+      const viewW = viewportWidth / scale;
+      const viewH = viewportHeight / scale;
+      const miniX = viewX * MINIMAP_SCALE;
+      const miniY = viewY * MINIMAP_SCALE;
+      const miniW = viewW * MINIMAP_SCALE;
+      const miniH = viewH * MINIMAP_SCALE;
+      minimapViewport
+        .style("left", miniX + "px")
+        .style("top", miniY + "px")
+        .style("width", miniW + "px")
+        .style("height", miniH + "px");
     }
 
-    function hideSearchResults() {
-      document.getElementById("searchResults").style.display = 'none';
-      searchResultsVisible = false;
+    function updatePerformance() {
+      frameCount++;
+      const currentTime = performance.now();
+      if (currentTime - lastTime >= 1000) {
+        fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+        updatePerformancePanel();
+        frameCount = 0;
+        lastTime = currentTime;
+      }
+      requestAnimationFrame(updatePerformance);
+    }
+
+    function updatePerformancePanel() {
+      document.getElementById("perf-nodes").textContent = nodes.length;
+      document.getElementById("perf-fps").textContent = fps;
+      document.getElementById("perf-mode").textContent = performanceMode ? "开启" : "关闭";
+      document.getElementById("perf-labels").textContent = labelsVisible ? "开启" : "关闭";
+    }
+
+    function highlightNode(node) {
+      mainG.selectAll(".node").classed("highlight", false);
+      mainG.selectAll(".node")
+        .filter(d => d.id === node.id)
+        .classed("highlight", true);
     }
 
     function centerOnNode(node) {
-      g.selectAll(".node").classed("highlight", d => d.id === node.id);
-      const scale = 1.5;
-      const translate = [width / 2 - node.x * scale, height / 2 - node.y * scale];
-      g.transition().duration(800).attr("transform", `translate(${translate}) scale(${scale})`);
+      highlightNode(node);
+      const transform = d3.zoomTransform(mainSvg.node());
+      const screenX = transform.applyX(node.x);
+      const screenY = transform.applyY(node.y);
+      const containerWidth = window.innerWidth;
+      const containerHeight = window.innerHeight;
+      const dx = containerWidth / 2 - screenX;
+      const dy = containerHeight / 2 - screenY;
+      mainSvg.transition().duration(800).call(
+        zoomBehavior.translateBy,
+        dx / transform.k,
+        dy / transform.k
+      );
     }
 
-    function selectAndCenter(match) {
-      if (match.node.x !== undefined && match.node.y !== undefined) {
-        centerOnNode(match.node);
-      } else {
-        const root = match.root;
-        const rootNode = nodes.find(n => n.type === "root" && n.label === root);
-        if (rootNode) {
-          if (!expandedRoots.has(root)) {
-            toggleRoot(rootNode);
-            setTimeout(() => {
-              const wordNode = nodes.find(n => n.type === "word" && n.label === match.label);
-              if (wordNode) centerOnNode(wordNode);
-            }, 100);
-          } else {
-            const wordNode = nodes.find(n => n.type === "word" && n.label === match.label);
-            if (wordNode) centerOnNode(wordNode);
-          }
-        }
-      }
-    }
+    function showLabel(event, d) { }
+    function hideLabel(event, d) { }
 
     function showQueryTip(event, d) {
       currentWord = d.label;
@@ -727,6 +1674,101 @@
       }, 1000);
     }
 
+    document.getElementById("searchBtn").addEventListener("click", performSearch);
+    document.getElementById("searchInput").addEventListener("keypress", e => e.key === "Enter" && performSearch());
+    document.addEventListener("click", e => !e.target.closest('#searchBox') && hideSearchResults());
+
+    function performSearch() {
+      const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+      const type = document.getElementById("searchType").value;
+      if (!keyword) { hideSearchResults(); return; }
+      let matches = [];
+      if (type === "root" || type === "all") {
+        allRoots.forEach(root => {
+          if (root.toLowerCase().includes(keyword)) {
+            const node = nodes.find(n => n.type === "root" && n.label === root);
+            if (node) matches.push({ node: node, label: root, type: "词族" });
+          }
+        });
+      }
+      if (type === "word" || type === "all") {
+        for (const [root, words] of Object.entries(rootToWords)) {
+          words.forEach(word => {
+            if (word.toLowerCase().includes(keyword)) {
+              const existingNode = nodes.find(n => n.type === "word" && n.label === word);
+              if (existingNode) {
+                matches.push({ node: existingNode, label: word, type: "词汇", root: root });
+              } else {
+                matches.push({ node: { label: word, root: root }, label: word, type: "词汇", root: root });
+              }
+            }
+          });
+        }
+      }
+      const uniqueMatches = [];
+      const seen = new Set();
+      matches.forEach(match => {
+        const key = match.node.id ? match.node.id : `${match.label}-${match.root}`;
+        if (!seen.has(key)) { seen.add(key); uniqueMatches.push(match); }
+      });
+      if (uniqueMatches.length === 0) showNoResults();
+      else if (uniqueMatches.length === 1) { selectAndCenter(uniqueMatches[0]); hideSearchResults(); }
+      else showSearchResults(uniqueMatches);
+    }
+
+    function showSearchResults(matches) {
+      const resultsContainer = document.getElementById("searchResults");
+      resultsContainer.innerHTML = '';
+      matches.forEach((match, index) => {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        item.dataset.index = index;
+        item.innerHTML = `<div><span class="result-label">${match.label}</span></div><span class="result-type">${match.type}</span>`;
+        item.addEventListener('click', () => { selectAndCenter(match); hideSearchResults(); });
+        item.addEventListener('mouseenter', () => {
+          document.querySelectorAll('.search-result-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+        });
+        resultsContainer.appendChild(item);
+      });
+      resultsContainer.style.display = 'block';
+      searchResultsVisible = true;
+      if (resultsContainer.firstChild) resultsContainer.firstChild.classList.add('selected');
+    }
+
+    function showNoResults() {
+      const resultsContainer = document.getElementById("searchResults");
+      resultsContainer.innerHTML = '<div class="no-results">未找到匹配项</div>';
+      resultsContainer.style.display = 'block';
+      searchResultsVisible = true;
+    }
+
+    function hideSearchResults() {
+      document.getElementById("searchResults").style.display = 'none';
+      searchResultsVisible = false;
+    }
+
+    function selectAndCenter(match) {
+      if (match.node.x !== undefined && match.node.y !== undefined) {
+        centerOnNode(match.node);
+      } else {
+        const root = match.root;
+        const rootNode = nodes.find(n => n.type === "root" && n.label === root);
+        if (rootNode) {
+          if (!expandedRoots.has(root)) {
+            toggleRoot(rootNode);
+            setTimeout(() => {
+              const wordNode = nodes.find(n => n.type === "word" && n.label === match.label);
+              if (wordNode) centerOnNode(wordNode);
+            }, 100);
+          } else {
+            const wordNode = nodes.find(n => n.type === "word" && n.label === match.label);
+            if (wordNode) centerOnNode(wordNode);
+          }
+        }
+      }
+    }
+
     const searchBox = document.getElementById("searchBox");
     searchBox.addEventListener("mousedown", startDrag);
     document.addEventListener("mousemove", drag);
@@ -740,8 +1782,6 @@
       dragOffset.x = e.clientX - rect.left;
       dragOffset.y = e.clientY - rect.top;
       e.preventDefault();
-
-      // 修复拖动左偏
       searchBox.style.transform = 'none';
       searchBox.style.left = rect.left + 'px';
       searchBox.style.top = rect.top + 'px';
@@ -759,23 +1799,6 @@
     }
 
     function endDrag() { isDragging = false; searchBox.classList.remove("dragging"); }
-
-    function showLabel(event, d) {
-      // 只显示文字，不显示球
-      if (d.type === "root" || expandedRoots.has(d.root)) {
-        // 找到对应的文字元素并显示
-        const label = d3.select(event.currentTarget.parentNode).select("text");
-        label.transition().duration(200).style("opacity", 1);
-      }
-    }
-
-    function hideLabel(event, d) {
-      // 只隐藏文字，不隐藏球
-      if (d.type === "root") return;
-      // 找到对应的文字元素并隐藏
-      const label = d3.select(event.currentTarget.parentNode).select("text");
-      label.transition().duration(200).style("opacity", 0);
-    }
 
     document.getElementById("searchInput").addEventListener("keydown", (e) => {
       if (!searchResultsVisible) return;
@@ -801,6 +1824,34 @@
       items.forEach(item => item.classList.remove('selected'));
       if (items[index]) { items[index].classList.add('selected'); items[index].scrollIntoView({ block: 'nearest' }); }
     }
+
+    document.getElementById("zoom-in").addEventListener("click", () => {
+      const transform = d3.zoomTransform(mainSvg.node());
+      mainSvg.transition().duration(300).call(zoomBehavior.scaleTo, transform.k * 1.2);
+    });
+
+    document.getElementById("zoom-out").addEventListener("click", () => {
+      const transform = d3.zoomTransform(mainSvg.node());
+      mainSvg.transition().duration(300).call(zoomBehavior.scaleTo, transform.k * 0.8);
+    });
+
+    document.getElementById("zoom-reset").addEventListener("click", () => {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // 计算将画布中心(BASE_SIZE/2, BASE_SIZE/2)对齐到视口中心的平移量
+        const translateX = viewportWidth / 2 - BASE_SIZE / 2;
+        const translateY = viewportHeight / 2 - BASE_SIZE / 2;
+
+        // 创建重置变换：缩放为1，平移到画布中心
+        const resetTransform = d3.zoomIdentity
+          .translate(translateX, translateY)
+          .scale(1);
+
+        mainSvg.transition().duration(300).call(zoomBehavior.transform, resetTransform);
+      });
+
+    window.onload = loadDataWithWorker;
   </script>
 </body>
 
