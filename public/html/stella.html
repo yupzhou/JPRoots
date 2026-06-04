@@ -108,7 +108,6 @@
       stroke-width: 1.5px;
     }
 
-    /* 修改1：词族球悬停放大效果 - 放大到30 */
     .node-root:hover {
       filter: drop-shadow(0 0 12px var(--glow-color));
       r: 30;
@@ -157,12 +156,10 @@
       filter: drop-shadow(0 0 6px var(--glow-color)) !important;
       transition: r 0.3s ease-out;
       paint-order: stroke fill;
-      /* 添加液态玻璃效果 */
       fill: url(#glass-gradient-word);
       stroke: rgba(255, 255, 255, 0.3);
     }
 
-    /* 修改1：单词球悬停放大效果 - 减小到26，确保不超过词族球 */
     .node-word:hover {
       r: 26;
       filter: drop-shadow(0 0 10px var(--glow-color)) !important;
@@ -193,7 +190,6 @@
       font-size: 11px;
     }
 
-    /* 高亮样式 */
     .node.highlight {
       fill: var(--highlight-word) !important;
       stroke: var(--highlight-word) !important;
@@ -243,22 +239,47 @@
 
     /* ================= 搜索框 ================= */
     #searchBox {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.17);
-      backdrop-filter: blur(var(--glass-blur));
-      -webkit-backdrop-filter: blur(var(--glass-blur));
-      border-radius: 16px;
-      padding: 12px 20px;
-      border: 1px solid var(--glass-border);
-      box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
-      z-index: 1000;
-      cursor: move;
-      min-width: 320px;
-      user-select: none;
-    }
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.17);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: 16px;
+  padding: 12px 20px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
+  z-index: 1000;
+  cursor: move;
+  min-width: 320px;
+  user-select: none;
+  max-width: 500px;
+  width: 60%;
+}
+
+/* 窄屏适配 */
+@media (max-width: 768px) {
+  #searchBox {
+    min-width: unset;
+    max-width: calc(100% - 40px); /* 左右各留20px边距，不占满 */
+    padding: 8px 12px;
+    font-size: 12px;
+    left: 33%;
+  }
+  #searchBox .search-row {
+    gap: 6px;
+  }
+  #searchBox select,
+  #searchBox input,
+  #searchBox button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  #searchBox select {
+    width: 70px;
+  }
+}
 
     .search-header {
       display: flex;
@@ -300,7 +321,7 @@
 
     input {
       flex: 1;
-      min-width: 150px;
+      min-width: 50px;
     }
 
     input:focus {
@@ -378,8 +399,8 @@
     /* ================= 缩放控件 ================= */
     #zoom-controls {
       position: fixed;
-      bottom: 30px;
-      right: 30px;
+      bottom: 20px;
+      right: 10px;
       background: rgba(0, 0, 0, 0.17);
       backdrop-filter: blur(var(--glass-blur));
       -webkit-backdrop-filter: blur(var(--glass-blur));
@@ -393,6 +414,23 @@
       gap: 10px;
       align-items: center;
     }
+
+    /* 窄屏适配 */
+@media (max-width: 768px) {
+  #zoom-reset {
+    display: none !important; /* 隐藏重置按钮 */
+  }
+  #zoom-controls {
+    padding: 8px 12px;
+    gap: 4px !important;
+    bottom: 50px;
+  }
+  #zoom-controls button {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 16px !important;
+  }
+}
 
     #zoom-controls button {
       width: 44px;
@@ -429,8 +467,8 @@
     /* ================= 小星图 ================= */
     #minimap-wrapper {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 10px;
+      right: 10px;
       z-index: 999;
       pointer-events: none;
     }
@@ -493,24 +531,32 @@
 
     /* ================= 性能信息面板 ================= */
     #performance-panel {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 12px;
-      z-index: 1000;
-      min-width: 233px;
-      border: 1px solid var(--ui-border);
-    }
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 10px;
+  z-index: 1000;
+  min-width: unset;
+  border: 1px solid var(--ui-border);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
 
-    .perf-row {
-      display: flex;
-      justify-content: space-between;
-      margin: 3px 0;
-      color: #8bb9fe;
-    }
+.perf-row {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: #8bb9fe;
+}
+
+.perf-row span:first-child {
+  margin-right: 4px;
+}
 
     .perf-value {
       color: var(--ui-accent);
@@ -518,36 +564,49 @@
     }
 
     /* ================= 配色选择器 ================= */
-    #color-picker-panel {
+#color-picker-panel {
       position: fixed;
-      bottom: 110px;
+      bottom: 50px; /* 稍高于性能栏 */
       left: 10px;
       z-index: 1000;
-      min-width: 233px;
+      min-width: 60px;
       border-radius: 16px;
       overflow: hidden;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      background: rgba(0, 0, 0, 0.17);
+    }
+
+    /* 收纳状态：只显示头部，高度自适应 */
+    #color-picker-panel:not(.expanded) {
+      height: 51px;
+      padding: 0;
+    }
+
+    /* 展开状态：显示完整内容 */
+    #color-picker-panel.expanded {
+      height: auto;
+      padding: 0;
     }
 
     .color-picker-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 15px;
+      padding: 8px 12px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--text-light);
-      background: rgba(0, 0, 0, 0.17);
       backdrop-filter: blur(var(--glass-blur));
       -webkit-backdrop-filter: blur(var(--glass-blur));
-      border-radius: 16px;
+      border-radius: 50px; /* 胶囊状 */
       border: 1px solid var(--glass-border);
       box-shadow: 0px 6px 11px rgba(0, 0, 0, 0.3), var(--glass-inner-shadow), var(--glass-highlight);
       transition: all 0.3s ease;
+      gap: 8px;
+      margin: 8px;
     }
 
-    /* 动态悬停背景色 - 通过JS设置，这里提供默认值 */
     .color-picker-header:hover {
       background: rgba(255, 255, 255, 0.15);
     }
@@ -556,26 +615,42 @@
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      background: rgba(0, 0, 0, 0.17);
-      backdrop-filter: blur(var(--glass-blur));
-      -webkit-backdrop-filter: blur(var(--glass-blur));
-      border: 1px solid var(--glass-border);
-      border-top: none;
-      border-radius: 0 0 16px 16px;
-      box-shadow: var(--glass-outer-shadow);
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0 8px 8px 8px;
     }
 
     .color-picker-panel.expanded .color-picker-content {
-      max-height: 220px;
-      /* 固定高度，无需滚动条 */
+      max-height: 127px;
+      overflow-y: auto;
+    }
+
+    /* 美化滚动条（液态玻璃风） */
+    .color-picker-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .color-picker-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .color-picker-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 10px;
+    }
+
+    .color-picker-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.6);
     }
 
     .color-scheme-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      /* 双列布局 */
+      display: flex;
+      flex-direction: column;
       gap: 8px;
-      padding: 12px;
+      padding: 0;
     }
 
     .color-scheme-btn {
@@ -590,6 +665,7 @@
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(var(--glass-blur));
       -webkit-backdrop-filter: blur(var(--glass-blur));
+      width: 100%;
     }
 
     .color-scheme-btn:hover {
@@ -604,7 +680,6 @@
 
     .color-preview {
       width: 16px;
-      /* 与文字同高 */
       height: 16px;
       border-radius: 50%;
       box-shadow:
@@ -718,6 +793,37 @@
 #minimap-header:hover #minimapToggle {
   color: #fff;
 }
+
+/* 配色框中的纯文本注释 */
+.color-scheme-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 1);
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.random-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid transparent;
+  margin-bottom: 8px;
+}
+
+.random-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.random-btn.active {
+  border-color: var(--ui-accent) !important;
+  box-shadow: 0 0 15px rgba(77, 171, 247, 0.3) !important;
+}
+
+.random-btn .color-preview {
+  background: linear-gradient(45deg, #ff9143, #7dcd4e, #45b7d1, #96ceb4, #ffeaa7) !important;
+}
   </style>
 </head>
 
@@ -788,19 +894,25 @@
 
   <!-- 性能信息面板 -->
   <div id="performance-panel">
-    <div class="perf-row"><span>节点总数:</span><span class="perf-value" id="perf-nodes">0</span></div>
-    <div class="perf-row"><span>FPS:</span><span class="perf-value" id="perf-fps">60</span></div>
-    <div class="perf-row"><span>性能模式:</span><span class="perf-value" id="perf-mode">关闭</span></div>
-    <div class="perf-row"><span>标签显示:</span><span class="perf-value" id="perf-labels">开启</span></div>
+    <div class="perf-row"><span>节点 </span><span class="perf-value" id="perf-nodes">0</span></div>
+    <div class="perf-row"><span>FPS </span><span class="perf-value" id="perf-fps">60</span></div>
+    <div class="perf-row"><span>性能模式 </span><span class="perf-value" id="perf-mode">关</span></div>
+    <div class="perf-row"><span>标签 </span><span class="perf-value" id="perf-labels">开</span></div>
   </div>
 
   <!-- 配色选择器 -->
   <div id="color-picker-panel" class="color-picker-panel liquid-glass">
     <div class="color-picker-header" id="colorPickerHeader">
-      <span>🎨 配色方案</span>
+      <span>🎨 主题</span>
       <span id="colorPickerToggle">▼</span>
     </div>
     <div class="color-picker-content" id="colorPickerContent">
+      <!-- 随机配色按钮 -->
+      <div id="randomColorBtn" class="color-scheme-btn random-btn">
+        <div class="color-preview" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);">
+        </div>
+        <span class="color-name">随机配色</span>
+      </div>
       <div class="color-scheme-grid" id="colorSchemeGrid"></div>
     </div>
   </div>
@@ -816,7 +928,7 @@
     <div id="minimap-container">
       <div id="minimap-header">
         <span>🔭 小星图</span>
-        <span id="minimapToggle">▼</span> <!-- 新增：小三角 -->
+        <span id="minimapToggle">▼</span>
       </div>
       <svg id="minimap-svg"></svg>
       <div id="minimap-viewport"></div>
@@ -829,7 +941,7 @@
   </div>
 
   <script>
-    // ================= 新增：CSV解析函数（来自JLDB.html，修复引号问题） =================
+    // ================= CSV解析函数 =================
     function parseCSVLine(line) {
       const result = [];
       let current = '';
@@ -850,8 +962,9 @@
       result.push(current.trim());
       return result;
     }
-    // ================= 配色方案定义 - 优化版 =================
+    // ================= 配色主题定义 =================
     const COLOR_SCHEMES = {
+      "_text_经典之选": {},
       "泡沫之夏": {
         background: "#caf0f8ff",
         node_size1: "#48cae4ff",
@@ -959,6 +1072,476 @@
         glow_highlight: "rgba(255, 255, 255, 1)",
         preview_color: "#ffb3c1ff", // 预览色：主色
         hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "_text_七国巡礼": {},
+      "断罪皇女": {
+        background: "#e2cff4",
+        node_word: "#52e24b",
+        node_size1: "#9c6ee1",
+        preview_color: "#9c6ee1", // 预览色：主色
+        node_size2: "#563981",
+        node_size3: "#8c6461",
+        node_size4: "#684843",
+        node_size5: "#472c20",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "兔兔伯爵": {
+        background: "#e7ceb0",
+        node_size1: "#df8952",
+        node_size2: "#91694a",
+        node_size3: "#6c412e",
+        node_size4: "#4a2519",
+        node_size5: "#b03d21",
+        node_word: "#ad9288",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#df8952", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "闪耀偶像": {
+        background: "#d7e2e2",
+        node_size1: "#82cbea",
+        preview_color: "#82cbea", // 预览色：主色
+        node_size2: "#87766f",
+        node_size3: "#775138",
+        node_size4: "#515364",
+        node_size5: "#322d38",
+        node_word: "#b2a5a1",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "星天水镜": {
+        background: "#85ccf0",
+        node_word: "#3e2e44",
+        node_size1: "#504383",
+        preview_color: "#504383", // 预览色：主色
+        node_size2: "#503147",
+        node_size3: "#a8aeb3",
+        node_size4: "#948484",
+        node_size5: "#a63b44",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "霆霓快雨": {
+        background: "#dad5e7",
+        node_word: "#bebbd7",
+        node_size1: "#918ad0",
+        preview_color: "#8373af", // 预览色：主色
+        node_size2: "#8373af",
+        node_size3: "#6a4b44",
+        node_size4: "#44366b",
+        node_size5: "#28262a",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "雪霁梅香": {
+        background: "#823e2c",
+        node_word: "#b07e5b",
+        node_size1: "#41271c",
+        preview_color: "#41271c", // 预览色：主色
+        node_size2: "#ce4c2d",
+        node_size3: "#ef9e57",
+        node_size4: "#fac86c",
+        node_size5: "#fef372",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "琉焰华舞": {
+        background: "#f9e0a6",
+        node_word: "#e7c498",
+        node_size1: "#cb6c49",
+        preview_color: "#cb6c49", // 预览色：主色
+        node_size2: "#e1a67c",
+        node_size3: "#cb6c49",
+        node_size4: "#6e585c",
+        node_size5: "#412c25",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "一心净土": {
+        background: "#3c2e5c",
+        node_word: "#3f368d",
+        node_size1: "#5b50bd",
+        preview_color: "#5b50bd", // 预览色：主色
+        node_size2: "#896fd0",
+        node_size3: "#b198e0",
+        node_size4: "#a4879b",
+        node_size5: "#715772",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "真珠之智": {
+        background: "#5cd0f1",
+        node_word: "#ddbfc5",
+        node_size1: "#7d8cd9",
+        preview_color: "#7d8cd9", // 预览色：主色
+        node_size2: "#28a3e8",
+        node_size3: "#aa8f9b",
+        node_size4: "#5a75bb",
+        node_size5: "#2e3a67",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "白草净华": {
+        background: "#d9efda",
+        node_word: "#cadbbb",
+        node_size1: "#a6c27f",
+        preview_color: "#a6c27f", // 预览色：主色
+        node_size2: "#7aab8d",
+        node_size3: "#6f9865",
+        node_size4: "#42785c",
+        node_size5: "#224e3f",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "机逐封秘": {
+        background: "#e2e7e2",
+        node_word: "#abe6e2",
+        node_size1: "#7ae2da",
+        preview_color: "#7ae2da", // 预览色：主色
+        node_size2: "#8bb1b5",
+        node_size3: "#aa9984",
+        node_size4: "#865f3f",
+        node_size5: "#6d7978",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "不休独舞": {
+        background: "#8fcff5",
+        node_word: "#b7abdc",
+        node_size1: "#4f8de3",
+        preview_color: "#4f8de3", // 预览色：主色
+        node_size2: "#7ca5e7",
+        node_size3: "#c8e6f8",
+        node_size4: "#3160c1",
+        node_size5: "#2d4695",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "鸣雷裁锦": {
+        background: "#efce7a",
+        node_word: "#975724",
+        node_size1: "#db9d3e",
+        preview_color: "#db9d3e", // 预览色：主色
+        node_size2: "#c67720",
+        node_size3: "#975724",
+        node_size4: "#6b4a33",
+        node_size5: "#4a3127",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "秉烛狝影": {
+        background: "#322b5e",
+        node_word: "#42379d",
+        node_size1: "#6157d6",
+        preview_color: "#6157d6", // 预览色：主色
+        node_size2: "#6c5d79",
+        node_size3: "#8982e7",
+        node_size4: "#c3c2f8",
+        node_size5: "#ede9fd",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "龙女妙变": {
+        background: "#8ec1f1",
+        node_word: "#c1d5f3",
+        node_size1: "#f1a6ba",
+        preview_color: "#f1a6ba", // 预览色：主色
+        node_size2: "#f4cde5",
+        node_size3: "#debad1",
+        node_size4: "#6ca6e2",
+        node_size5: "#558ae3",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "白星黑曜": {
+        background: "#c2dbff",
+        node_word: "#2c337b",
+        node_size1: "#828bd3",
+        preview_color: "#828bd3", // 预览色：主色
+        node_size2: "#576fc3",
+        node_size3: "#344abf",
+        node_size4: "#c19ac8",
+        node_size5: "#725c83",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "翦玉编春": {
+        background: "#d4f2ef",
+        node_word: "#85a1b3",
+        node_size1: "#3da4ab",
+        preview_color: "#3da4ab", // 预览色：主色
+        node_size2: "#40e7e2",
+        node_size3: "#29778b",
+        node_size4: "#385763",
+        node_size5: "#242f38",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "虚渊暗星": {
+        background: "#131741",
+        node_word: "#747fab",
+        node_size1: "#424fcc",
+        preview_color: "#424fcc", // 预览色：主色
+        node_size2: "#1f2680",
+        node_size3: "#6d82e6",
+        node_size4: "#a2b2e8",
+        node_size5: "#e1e7f6",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "妙械咣铛": {
+        background: "#e7dfeb",
+        node_size1: "#74c8fa",
+        node_size2: "#e3e9a6",
+        node_size3: "#c3ae73",
+        node_size4: "#a57fa1",
+        node_size5: "#676254",
+        node_word: "#eab6eb",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#74c8fa", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "永月祀歌": {
+        background: "#e2edf0",
+        node_word: "#b0dbdf",
+        node_size1: "#7dd8cb",
+        preview_color: "#7dd8cb", // 预览色：主色
+        node_size2: "#44ada7",
+        node_size3: "#69869c",
+        node_size4: "#496a83",
+        node_size5: "#334a60",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "空月归乡": {
+        background: "#e0f0fc",
+        node_word: "#b8d6f9",
+        node_size1: "#8bb2ef",
+        preview_color: "#8bb2ef", // 预览色：主色
+        node_size2: "#5d84e5",
+        node_size3: "#3c4fa3",
+        node_size4: "#7c61b5",
+        node_size5: "#20295f",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "不灭之火": {
+        background: "#1d0d28",
+        node_word: "#32224e",
+        node_size1: "#4e1c33",
+        preview_color: "#4e1c33", // 预览色：主色
+        node_size2: "#4e1c33",
+        node_size3: "#c5445c",
+        node_size4: "#ac7391",
+        node_size5: "#e9c8ca",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "稚梦归心": {
+        background: "#dceceb",
+        node_word: "#9fa2bc",
+        node_size1: "#53e9ee",
+        preview_color: "#53e9ee", // 预览色：主色
+        node_size2: "#44b1c2",
+        node_size3: "#1e8697",
+        node_size4: "#686391",
+        node_size5: "#353f52",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "喧寂于心": {
+        background: "#f6ece3",
+        node_word: "#c6c4db",
+        node_size1: "#e8bba0",
+        preview_color: "#e8bba0", // 预览色：主色
+        node_size2: "#df9c77",
+        node_size3: "#7b729a",
+        node_size4: "#f5853c",
+        node_size5: "#36305d",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "_text_胜利女神": {},
+     "爱丽丝": {
+        background: "#eee1e9",
+        node_size1: "#f8abcc",
+        node_size2: "#db7699",
+        node_size3: "#b55375",
+        node_size4: "#907f8b",
+        node_size5: "#5b404c",
+        node_word: "#c2aebd",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#f8abcc", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
+      },
+      "丽塔": {
+        background: "#fff0a9",
+        node_size1: "#dbb363",
+        node_size2: "#ab9d9c",
+        node_size3: "#ae804f",
+        node_size4: "#736461",
+        node_size5: "#453838",
+        node_word: "#e0cdbe",
+        highlight_root: "#ffe641",
+        highlight_word: "#ffe641",
+        text_primary: "#ffffff",
+        text_secondary: "#b3e5fc",
+        text_light: "#ffffff",
+        text_outline: "rgba(255, 255, 255, 0.8)",
+        glow_highlight: "rgba(255, 255, 255, 1)",
+        preview_color: "#dbb363", // 预览色：主色
+        hover_bg: "rgba(0, 0, 0, 0.17)" // 浅色背景用深色悬停
       }
     };
 
@@ -966,43 +1549,85 @@
     let currentColorScheme = "泡沫之夏";
 
     function initColorPicker() {
-      const grid = document.getElementById('colorSchemeGrid');
-      const header = document.getElementById('colorPickerHeader');
-      const content = document.getElementById('colorPickerContent');
-      const toggle = document.getElementById('colorPickerToggle');
-      const panel = document.getElementById('color-picker-panel');
+        const grid = document.getElementById('colorSchemeGrid');
+        const header = document.getElementById('colorPickerHeader');
+        const content = document.getElementById('colorPickerContent');
+        const toggle = document.getElementById('colorPickerToggle');
+        const panel = document.getElementById('color-picker-panel');
+        const randomColorBtn = document.getElementById('randomColorBtn'); // 新增
 
-      // 生成配色方案按钮
-      Object.keys(COLOR_SCHEMES).forEach(schemeName => {
-        const scheme = COLOR_SCHEMES[schemeName];
-        const btn = document.createElement('div');
-        btn.className = 'color-scheme-btn';
-        if (schemeName === currentColorScheme) btn.classList.add('active');
+        // 生成配色方案按钮
+        Object.keys(COLOR_SCHEMES).forEach(schemeName => {
+          const scheme = COLOR_SCHEMES[schemeName];
 
-        btn.innerHTML = `
-          <div class="color-preview" style="background: ${scheme.preview_color};"></div>
-          <div class="color-name">${schemeName}</div>
-        `;
+          // 检查是否是纯文本注释（以 _text_ 开头）
+          if (schemeName.startsWith('_text_')) {
+            // 创建纯文本元素
+            const textElement = document.createElement('div');
+            textElement.className = 'color-scheme-text';
+            // 去掉 _text_ 前缀，显示剩余部分
+            textElement.textContent = schemeName.replace('_text_', '');
+            grid.appendChild(textElement);
+            return; // 跳过后续按钮创建逻辑
+          }
 
-        btn.addEventListener('click', () => {
-          applyColorScheme(schemeName);
-          document.querySelectorAll('.color-scheme-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
+          // 正常创建配色方案按钮
+          const btn = document.createElement('div');
+          btn.className = 'color-scheme-btn';
+          btn.dataset.scheme = schemeName;
+          if (schemeName === currentColorScheme) btn.classList.add('active');
+
+          btn.innerHTML = `
+  <div class="color-preview" style="background: ${scheme.preview_color};"></div>
+  <div class="color-name">${schemeName}</div>
+`;
+
+          btn.addEventListener('click', () => {
+            applyColorScheme(schemeName);
+            // 移除所有按钮的激活状态，包括随机按钮
+            document.querySelectorAll('.color-scheme-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active'); // 激活当前按钮
+          });
+
+          grid.appendChild(btn);
         });
 
-        grid.appendChild(btn);
+        // 随机配色按钮功能
+      randomColorBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // 阻止事件冒泡
+
+        // 获取所有有效的配色方案名称（排除纯文本注释）
+        const validSchemes = Object.keys(COLOR_SCHEMES).filter(name => !name.startsWith('_text_'));
+
+        // 随机选择一个配色方案
+        const randomIndex = Math.floor(Math.random() * validSchemes.length);
+        const randomScheme = validSchemes[randomIndex];
+
+        // 应用随机配色
+        applyColorScheme(randomScheme);
+
+        // 更新按钮激活状态：移除所有按钮的激活状态，然后给随机按钮添加激活状态
+        document.querySelectorAll('.color-scheme-btn').forEach(b => b.classList.remove('active'));
+        randomColorBtn.classList.add('active'); // 添加激活状态
+
+        // 添加点击动画效果
+        randomColorBtn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          randomColorBtn.style.transform = '';
+        }, 150);
       });
 
-      // 折叠/展开功能
-      header.addEventListener('click', () => {
-        panel.classList.toggle('expanded');
-        toggle.textContent = panel.classList.contains('expanded') ? '▲' : '▼';
-      });
+        // 折叠/展开功能
+        header.addEventListener('click', (e) => {
+          e.stopPropagation(); // 阻止事件冒泡到画布
+          panel.classList.toggle('expanded');
+          toggle.textContent = panel.classList.contains('expanded') ? '▲' : '▼';
+        });
 
-      // 默认折叠
-      panel.classList.remove('expanded');
-      toggle.textContent = '▼';
-    }
+        // 默认折叠
+        panel.classList.remove('expanded');
+        toggle.textContent = '▼';
+      }
 
     function applyColorScheme(schemeName) {
       const scheme = COLOR_SCHEMES[schemeName];
@@ -1095,11 +1720,11 @@
   self.onmessage = function(e) {
     const csvText = e.data;
     const lines = csvText.split('\\n');
-    const headers = parseCSVLine(lines[0]); // ✅ 正确解析表头
+    const headers = parseCSVLine(lines[0]); // 解析表头
     const data = [];
     for (let i = 1; i < lines.length; i++) {
       if (lines[i].trim()) {
-        const values = parseCSVLine(lines[i]); // ✅ 正确解析行（处理引号）
+        const values = parseCSVLine(lines[i]); // 处理引号
         const row = {};
         headers.forEach((header, index) => {
           row[header] = values[index] ? values[index].trim() : '';
@@ -1265,7 +1890,7 @@
         initZoom();
         requestAnimationFrame(updatePerformance);
 
-        // 修改点：立即居中，无动画
+        // 立即居中，无动画
         immediateCenterView();
 
         // 性能模式下停止模拟
@@ -1274,7 +1899,7 @@
         }
       }
 
-      // 新的立即居中函数（无动画）
+      // 立即居中（无动画）
         function immediateCenterView() {
           const top100Nodes = nodes.filter(d => d.isTop100);
           if (top100Nodes.length === 0) return;
@@ -1310,8 +1935,8 @@
     function initForceSimulation() {
       const centerX = BASE_SIZE / 2;
       const centerY = BASE_SIZE / 2;
-      const innerRadius = 350; // 修改2：从450减小到350
-      const outerRadius = 600; // 修改2：从750减小到600
+      const innerRadius = 350;
+      const outerRadius = 600;
 
       nodes = allRoots.map((root, i) => {
         const wordCount = rootWordCount[root] || 0;
@@ -1328,7 +1953,7 @@
         } else {
           radius = sizeLevel.radius * 0.9;
           const angle = Math.random() * 2 * Math.PI;
-          const distance = outerRadius + Math.random() * 150; // 修改2：从400减小到150
+          const distance = outerRadius + Math.random() * 150;
           x = centerX + Math.cos(angle) * distance;
           y = centerY + Math.sin(angle) * distance;
         }
@@ -1347,18 +1972,18 @@
         };
       });
 
-      // 修改2：调整斥力参数，减少移动距离
-      const chargeStrength = performanceMode ? -40 : -80; // 从-60/-120调整为-40/-80
-      const linkDistance = performanceMode ? 25 : 40; // 从30/50调整为25/40
-      const alphaDecay = performanceMode ? 0.12 : 0.04; // 从0.15/0.05调整为0.12/0.04
+      // 调整斥力参数，减少移动距离
+      const chargeStrength = performanceMode ? -40 : -80;
+      const linkDistance = performanceMode ? 25 : 40;
+      const alphaDecay = performanceMode ? 0.12 : 0.04;
 
       mainSimulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(links).id(d => d.id).distance(linkDistance).strength(0.8))
-        .force("charge", d3.forceManyBody().strength(chargeStrength).distanceMin(40).distanceMax(400)) // 调整距离范围
-        .force("center", d3.forceCenter(centerX, centerY).strength(0.08)) // 增加中心引力
-        .force("collision", d3.forceCollide().radius(d => d.radius + 6)) // 从8减小到6
+        .force("charge", d3.forceManyBody().strength(chargeStrength).distanceMin(40).distanceMax(400))
+        .force("center", d3.forceCenter(centerX, centerY).strength(0.08))
+        .force("collision", d3.forceCollide().radius(d => d.radius + 6))
         .alphaDecay(alphaDecay)
-        .velocityDecay(0.5) // 增加速度衰减
+        .velocityDecay(0.5)
         .on("tick", updatePositions);
     }
 
@@ -1495,7 +2120,7 @@
           .transition()
           .duration(200)
           .style("opacity", labelsVisible ? 1 : 0);
-        document.getElementById("perf-labels").textContent = labelsVisible ? "开启" : "关闭";
+        document.getElementById("perf-labels").textContent = labelsVisible ? "开" : "关";
       }
     }
 
@@ -1614,11 +2239,11 @@
     }
 
     function updatePerformancePanel() {
-      document.getElementById("perf-nodes").textContent = nodes.length;
-      document.getElementById("perf-fps").textContent = fps;
-      document.getElementById("perf-mode").textContent = performanceMode ? "开启" : "关闭";
-      document.getElementById("perf-labels").textContent = labelsVisible ? "开启" : "关闭";
-    }
+        document.getElementById("perf-nodes").textContent = nodes.length;
+        document.getElementById("perf-fps").textContent = fps;
+        document.getElementById("perf-mode").textContent = performanceMode ? "开" : "关"; 
+        document.getElementById("perf-labels").textContent = labelsVisible ? "开" : "关"; 
+      }
 
     function highlightNode(node) {
       mainG.selectAll(".node").classed("highlight", false);
@@ -1843,7 +2468,7 @@
         const translateX = viewportWidth / 2 - BASE_SIZE / 2;
         const translateY = viewportHeight / 2 - BASE_SIZE / 2;
 
-        // 创建重置变换：缩放为1，平移到画布中心
+        // 重置变换：缩放为1，平移到画布中心
         const resetTransform = d3.zoomIdentity
           .translate(translateX, translateY)
           .scale(1);
