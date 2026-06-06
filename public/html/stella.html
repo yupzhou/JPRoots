@@ -67,8 +67,28 @@
       box-sizing: border-box;
     }
 
+/* ================= 视差微粒深空背景 ================= */
+    #starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0; /* 最底层 */
+      pointer-events: none; /* 不拦截任何鼠标点击或拖拽事件 */
+      transition: transform 5s linear; /* 视差移动过渡 */
+    }
+
+    /* 确保主容器和所有 UI 都在背景之上 */
+    #main-container, #searchBox, #zoom-controls, #performance-panel, 
+    #color-picker-panel, #minimap-wrapper, #queryTip, #loading-progress {
+      position: relative;
+      z-index: 1; /* UI 组件保持原有的高 z-index (如 1000) 不受影响 */
+    }
+
     body {
       background: var(--bg-primary);
+      transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
       overflow: hidden;
       color: var(--text-primary);
@@ -96,135 +116,82 @@
     }
 
     /* ================= 球体样式 - 液态玻璃效果 ================= */
-    .node-root {
+    .node-root, .node-word {
       cursor: pointer;
-      filter: drop-shadow(0 0 8px var(--glow-color));
-      transition: r 0.3s ease-out, filter 0.3s ease-out;
-      stroke-width: 2px;
-      paint-order: stroke fill;
-      /* 添加液态玻璃效果 */
-      fill: url(#glass-gradient);
+      transition: r 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  stroke 0.3s ease, 
+                  stroke-width 0.3s ease,
+                  filter 0.3s ease;
       stroke: rgba(255, 255, 255, 0.3);
       stroke-width: 1.5px;
+      paint-order: stroke fill;
     }
 
-    .node-root:hover {
-      filter: drop-shadow(0 0 12px var(--glow-color));
-      r: 30;
+    /* 悬停时的“引力光晕”效果 */
+    .node-root:hover, .node-word:hover {
+      r: 34;
+      stroke: rgba(255, 255, 255, 0.9);
+      stroke-width: 3px;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) url(#liquid-glass) !important;
+    }
+    
+    .node-root {
+      cursor: pointer;
+      transition: r 0.3s ease-out;
+      stroke: rgba(255, 255, 255, 0.5);
+      stroke-width: 1.5px;
+      paint-order: stroke fill;
     }
 
-    .node-root.size-1 {
-      fill: var(--node-size1);
-      stroke: color-mix(in srgb, var(--node-size1) 70%, white);
-      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
-    }
+    .node-root:hover { r: 30; }
 
-    .node-root.size-2 {
-      fill: var(--node-size2);
-      stroke: color-mix(in srgb, var(--node-size2) 70%, white);
-      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
-    }
+    .node-root.size-1 { fill: var(--node-size1) !important; stroke: color-mix(in srgb, var(--node-size1) 70%, white) !important; }
+    .node-root.size-2 { fill: var(--node-size2) !important; stroke: color-mix(in srgb, var(--node-size2) 70%, white) !important; }
+    .node-root.size-3 { fill: var(--node-size3) !important; stroke: color-mix(in srgb, var(--node-size3) 70%, white) !important; }
+    .node-root.size-4 { fill: var(--node-size4) !important; stroke: color-mix(in srgb, var(--node-size4) 70%, white) !important; }
+    .node-root.size-5 { fill: var(--node-size5) !important; stroke: color-mix(in srgb, var(--node-size5) 70%, white) !important; }
 
-    .node-root.size-3 {
-      fill: var(--node-size3);
-      stroke: color-mix(in srgb, var(--node-size3) 70%, white);
-      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
-    }
-
-    .node-root.size-4 {
-      fill: var(--node-size4);
-      stroke: color-mix(in srgb, var(--node-size4) 70%, white);
-      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
-    }
-
-    .node-root.size-5 {
-      fill: var(--node-size5);
-      stroke: color-mix(in srgb, var(--node-size5) 70%, white);
-      filter: drop-shadow(0 0 8px var(--glow-color)) drop-shadow(inset 0 2px 4px rgba(255, 255, 255, 0.3));
-    }
-
-    .node-root.top100 {
-      stroke-width: 3px !important;
-      filter: drop-shadow(0 0 12px var(--glow-top100)) !important;
-    }
+    .node-root.top100 { stroke-width: 3px !important; }
 
     .node-word {
       fill: var(--node-word) !important;
       stroke: color-mix(in srgb, var(--node-word) 70%, white) !important;
       stroke-width: 1.5px;
       cursor: pointer;
-      filter: drop-shadow(0 0 6px var(--glow-color)) !important;
       transition: r 0.3s ease-out;
       paint-order: stroke fill;
-      fill: url(#glass-gradient-word);
-      stroke: rgba(255, 255, 255, 0.3);
     }
 
-    .node-word:hover {
-      r: 26;
-      filter: drop-shadow(0 0 10px var(--glow-color)) !important;
-    }
+    .node-word:hover { r: 26; }
 
     .link {
-      stroke: rgba(100, 150, 255, 0.3);
-      stroke-opacity: 0.4;
+      stroke: rgba(150, 200, 255, 0.4);
+      stroke-opacity: 0.6;
       stroke-width: 1.5px;
+      filter: drop-shadow(0 0 3px rgba(150, 200, 255, 0.5)); 
+      transition: stroke-opacity 0.3s;
     }
 
     .label {
-      fill: var(--text-light);
-      font-weight: bold;
-      text-anchor: middle;
-      dominant-baseline: middle;
-      pointer-events: none;
-      transition: opacity 0.3s ease-out;
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-      paint-order: stroke fill;
+      fill: var(--text-light); font-weight: bold; text-anchor: middle; dominant-baseline: middle;
+      pointer-events: none; transition: opacity 0.3s ease-out;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8); paint-order: stroke fill;
     }
-
-    .label-root {
-      font-size: 14px;
-    }
-
-    .label-word {
-      font-size: 11px;
-    }
+    .label-root { font-size: 14px; }
+    .label-word { font-size: 11px; }
 
     .node.highlight {
-      fill: var(--highlight-word) !important;
-      stroke: var(--highlight-word) !important;
-      filter: drop-shadow(0 0 20px var(--glow-highlight)) !important;
-      stroke-width: 4px !important;
-      animation: pulse 1.5s infinite alternate;
+      fill: var(--highlight-word) !important; stroke: var(--highlight-word) !important;
+      stroke-width: 4px !important; animation: pulse 1.5s infinite alternate;
     }
-
     .node-root.highlight {
-      fill: var(--highlight-root) !important;
-      stroke: #ffd700 !important;
-      filter: drop-shadow(0 0 25px var(--glow-highlight)) !important;
-      stroke-width: 4px !important;
-      animation: pulse-gold 1.5s infinite alternate;
+      fill: var(--highlight-root) !important; stroke: #ffd700 !important;
+      stroke-width: 4px !important; animation: pulse-gold 1.5s infinite alternate;
     }
 
-    @keyframes pulse {
-      0% {
-        filter: drop-shadow(0 0 15px var(--glow-highlight));
-      }
-
-      100% {
-        filter: drop-shadow(0 0 30px var(--glow-highlight));
-      }
-    }
-
-    @keyframes pulse-gold {
-      0% {
-        filter: drop-shadow(0 0 20px var(--glow-highlight));
-      }
-
-      100% {
-        filter: drop-shadow(0 0 40px var(--glow-highlight));
-      }
-    }
+    /* 呼吸灯动画 */
+    @keyframes pulse { 0% { stroke-width: 4px; } 100% { stroke-width: 7px; } }
+    @keyframes pulse-gold { 0% { stroke-width: 4px; } 100% { stroke-width: 7px; } }
 
     /* ================= 液态玻璃UI组件 ================= */
     .liquid-glass {
@@ -258,7 +225,6 @@
   width: 60%;
 }
 
-/* 窄屏适配 */
 @media (max-width: 768px) {
   #searchBox {
     min-width: unset;
@@ -415,7 +381,6 @@
       align-items: center;
     }
 
-    /* 窄屏适配 */
 @media (max-width: 768px) {
   #zoom-reset {
     display: none !important; /* 隐藏重置按钮 */
@@ -474,6 +439,7 @@
     }
 
     #minimap-container {
+      position: relative;
       height: 40px;
       background: rgba(0, 0, 0, 0.17);
       backdrop-filter: blur(var(--glass-blur));
@@ -509,6 +475,11 @@
       height: calc(100% - 40px);
       display: none;
       background: rgba(10, 15, 30, 0.8);
+      cursor: grab; /* 鼠标悬停时显示抓手 */
+    }
+
+    #minimap-svg:active {
+      cursor: grabbing; /* 鼠标按下拖动时显示紧握抓手 */
     }
 
     #minimap-container.expanded #minimap-svg {
@@ -576,13 +547,13 @@
       background: rgba(0, 0, 0, 0.17);
     }
 
-    /* 收纳状态：只显示头部，高度自适应 */
+    /* 收纳：只显示头部，高度自适应 */
     #color-picker-panel:not(.expanded) {
       height: 51px;
       padding: 0;
     }
 
-    /* 展开状态：显示完整内容 */
+    /* 展开 */
     #color-picker-panel.expanded {
       height: auto;
       padding: 0;
@@ -627,7 +598,6 @@
       overflow-y: auto;
     }
 
-    /* 美化滚动条（液态玻璃风） */
     .color-picker-content::-webkit-scrollbar {
       width: 6px;
     }
@@ -757,8 +727,9 @@
       background: rgba(0, 0, 0, 0.17);
       backdrop-filter: blur(var(--glass-blur));
       -webkit-backdrop-filter: blur(var(--glass-blur));
-      border: 1px solid rgba(0, 200, 255, 0.3);
-      box-shadow: 0 0 25px rgba(0, 200, 255, 0.15);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4),
+        0 3px 4px rgba(0, 0, 0, 0.17);
       padding: 12px 20px;
       border-radius: 16px;
     }
@@ -807,6 +778,8 @@
   background: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid transparent;
   margin-bottom: 8px;
+  transition: all 0.3s ease;
+  margin-top: 8px;
 }
 
 .random-btn:hover {
@@ -827,6 +800,8 @@
 </head>
 
 <body>
+  <!-- 视差微粒深空背景 -->
+  <canvas id="starfield"></canvas>
   <!-- SVG滤镜定义 - 用于液态玻璃效果 -->
   <svg style="position: absolute; width: 0; height: 0;">
     <defs>
@@ -1553,7 +1528,7 @@
         const content = document.getElementById('colorPickerContent');
         const toggle = document.getElementById('colorPickerToggle');
         const panel = document.getElementById('color-picker-panel');
-        const randomColorBtn = document.getElementById('randomColorBtn'); // 新增
+        const randomColorBtn = document.getElementById('randomColorBtn'); 
 
         // 生成配色方案按钮
         Object.keys(COLOR_SCHEMES).forEach(schemeName => {
@@ -1675,7 +1650,6 @@
         });
     }
 
-    // ================= 原有代码（保持不变） =================
     const CSV_FILE = "JLDB.csv";
     const JLDB_URL = "JLDB.html";
     const BASE_SIZE = 4000;
@@ -1874,8 +1848,66 @@
       document.getElementById("loading-text").textContent = text;
     }
 
+  // ================= 悬停引力波纹 =================
+  function createRipple(event, d) {
+
+    if (currentScale < 0.6) return;
+    
+      // 🎛️ 【参数调节面板】
+      const LAYERS = 2;      // 1. 波纹圈数
+      const DELAY = 100;     // 2. 发射延迟（毫秒）
+      // =========================================================
+
+      for (let i = 0; i < LAYERS; i++) {
+        const ripple = mainG.insert("circle", ".node")
+          .attr("cx", d.x)
+          .attr("cy", d.y)
+          .attr("r", d.radius + 1) // 比球大1px，确保在下层时边缘能透出来，不会完全被吃掉
+          .attr("fill", "none")
+          .attr("stroke", "#ffffff")
+          .attr("stroke-width", 3)
+          .attr("pointer-events", "none")
+          .attr("opacity", 0.8);
+
+        // 扩散动画
+        ripple.transition()
+          .delay(i * DELAY)  // 错开发射
+          .duration(800)
+          .ease(d3.easeCubicOut)
+          .attr("r", d.radius * 3)
+          .attr("stroke-width", 0.1)
+          .attr("opacity", 0)
+          .remove();
+      }
+    }
+
     function initGraph() {
         mainSvg = d3.select("#graph-svg");
+
+      const defs = mainSvg.append("defs");
+      const filter = defs.append("filter")
+        .attr("id", "liquid-glass")
+        .attr("x", "-50%").attr("y", "-50%")
+        .attr("width", "200%").attr("height", "200%");
+
+      // 1. 外发光
+      filter.append("feGaussianBlur").attr("in", "SourceAlpha").attr("stdDeviation", "5").attr("result", "blur");
+      filter.append("feFlood").attr("flood-color", "#ffffff").attr("flood-opacity", "0.6").attr("result", "glowColor");
+      filter.append("feComposite").attr("in", "glowColor").attr("in2", "blur").attr("operator", "in").attr("result", "glow");
+
+      // 2. 顶部内高光
+      filter.append("feOffset").attr("dx", "0").attr("dy", "3").attr("in", "SourceAlpha").attr("result", "offset");
+      filter.append("feGaussianBlur").attr("stdDeviation", "2").attr("in", "offset").attr("result", "blur2");
+      filter.append("feComposite").attr("operator", "out").attr("in", "SourceAlpha").attr("in2", "blur2").attr("result", "inverse");
+      filter.append("feFlood").attr("flood-color", "#ffffff").attr("flood-opacity", "0.4").attr("result", "highlightColor");
+      filter.append("feComposite").attr("in", "highlightColor").attr("in2", "inverse").attr("operator", "in").attr("result", "highlight");
+
+      // 3. 合并图层
+      const merge = filter.append("feMerge");
+      merge.append("feMergeNode").attr("in", "glow");
+      merge.append("feMergeNode").attr("in", "SourceGraphic");
+      merge.append("feMergeNode").attr("in", "highlight");
+
         mainG = mainSvg.append("g");
         minimapContainer = document.getElementById("minimap-container");
         minimapSvg = d3.select("#minimap-svg");
@@ -1894,7 +1926,7 @@
 
         // 性能模式下停止模拟
         if (performanceMode) {
-          setTimeout(() => mainSimulation.stop(), 2000);
+          setTimeout(() => mainSimulation.stop(), 10000);
         }
       }
 
@@ -1934,8 +1966,8 @@
     function initForceSimulation() {
       const centerX = BASE_SIZE / 2;
       const centerY = BASE_SIZE / 2;
-      const innerRadius = 350;
-      const outerRadius = 600;
+      const innerRadius = 400; //词族内圈
+      const outerRadius = 800; //词族外圈
 
       nodes = allRoots.map((root, i) => {
         const wordCount = rootWordCount[root] || 0;
@@ -1952,7 +1984,7 @@
         } else {
           radius = sizeLevel.radius * 0.9;
           const angle = Math.random() * 2 * Math.PI;
-          const distance = outerRadius + Math.random() * 150;
+          const distance = outerRadius + Math.random() * 300; //词族外圈范围
           x = centerX + Math.cos(angle) * distance;
           y = centerY + Math.sin(angle) * distance;
         }
@@ -1971,7 +2003,7 @@
         };
       });
 
-      // 调整斥力参数，减少移动距离
+      // 斥力参数
       const chargeStrength = performanceMode ? -40 : -80;
       const linkDistance = performanceMode ? 25 : 40;
       const alphaDecay = performanceMode ? 0.12 : 0.04;
@@ -1987,50 +2019,61 @@
     }
 
     function updateGraph() {
-      const link = mainG.selectAll(".link").data(links, d => `${d.source.id}-${d.target.id}`);
-      link.exit().remove();
-      link.enter().append("line")
-        .attr("class", "link")
-        .attr("stroke-width", performanceMode ? 0.5 : 1.5)
-        .merge(link);
+        // ================= 1. 连线层 =================
+        const link = mainG.selectAll(".link").data(links, d => `${d.source.id}-${d.target.id}`);
+        link.exit().remove();
+        link.enter().insert("line", ".node")
+          .attr("class", "link")
+          .attr("stroke-width", performanceMode ? 0.5 : 1.5)
+          .merge(link);
 
-      const node = mainG.selectAll(".node").data(nodes, d => d.id);
-      node.exit().remove();
-      const nodeEnter = node.enter().append("circle")
-        .attr("class", d => {
-          let cls = `node ${d.type === "root" ? "node-root" : "node-word"}`;
-          if (d.type === "root") { cls += ` size-${d.sizeLevel}`; }
-          if (d.isTop100) cls += " top100";
-          return cls;
-        })
-        .attr("r", d => d.radius)
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-        .on("click", handleNodeClick);
-      node.merge(nodeEnter);
+        // ================= 2. 节点层 =================
+        const node = mainG.selectAll(".node").data(nodes, d => d.id);
+        node.exit().remove();
 
-      const label = mainG.selectAll(".label").data(nodes, d => d.id);
-      label.exit().remove();
-      label.enter().append("text")
-        .attr("class", d => `label ${d.type === "root" ? "label-root" : "label-word"}`)
-        .merge(label)
-        .each(function (d) {
-          const self = d3.select(this);
-          self.selectAll("*").remove();
-          const displayLabel = d.label;
-          if (displayLabel.length > 4) {
-            const firstLine = displayLabel.substring(0, 4);
-            const secondLine = displayLabel.substring(4);
-            const secondLineDisplay = secondLine.length > 4 ? secondLine.substring(0, 4) + "..." : secondLine;
-            self.append("tspan").attr("x", 0).attr("dy", "-0.6em").text(firstLine);
-            self.append("tspan").attr("x", 0).attr("dy", "1.2em").text(secondLineDisplay);
-          } else { self.text(displayLabel); }
-        });
+        const nodeEnter = node.enter().append("circle")
+          .attr("class", d => {
+            let cls = `node ${d.type === "root" ? "node-root" : "node-word"}`;
+            if (d.type === "root") { cls += ` size-${d.sizeLevel}`; }
+            if (d.isTop100) cls += " top100";
+            return cls;
+          })
+          .attr("r", d => d.radius)
+          .attr("cx", d => d.x)
+          .attr("cy", d => d.y)
+          .attr("filter", "url(#liquid-glass)")
+          .on("click", handleNodeClick)
+          .on("mouseenter", function (event, d) {
+            if (currentScale < 0.8) return; // LOD 拦截
+            createRipple(event, d);
+          });
 
-      mainSimulation.nodes(nodes);
-      mainSimulation.force("link").links(links);
-      mainSimulation.alpha(0.3).restart();
-    }
+        node.merge(nodeEnter);
+
+        // ================= 3. 标签层 =================
+        const label = mainG.selectAll(".label").data(nodes, d => d.id);
+        label.exit().remove();
+        label.enter().append("text")
+          .attr("class", d => `label ${d.type === "root" ? "label-root" : "label-word"}`)
+          .merge(label)
+          .each(function (d) {
+            const self = d3.select(this);
+            self.selectAll("*").remove();
+            const displayLabel = d.label;
+            if (displayLabel.length > 4) {
+              const firstLine = displayLabel.substring(0, 4);
+              const secondLine = displayLabel.substring(4);
+              const secondLineDisplay = secondLine.length > 4 ? secondLine.substring(0, 4) + "..." : secondLine;
+              self.append("tspan").attr("x", 0).attr("dy", "-0.6em").text(firstLine);
+              self.append("tspan").attr("x", 0).attr("dy", "1.2em").text(secondLineDisplay);
+            } else { self.text(displayLabel); }
+          });
+
+        // 重启力导向模拟
+        mainSimulation.nodes(nodes);
+        mainSimulation.force("link").links(links);
+        mainSimulation.alpha(0.3).restart();
+      }
 
     function updatePositions() {
       mainG.selectAll(".link")
@@ -2097,19 +2140,33 @@
     }
 
     function initZoom() {
-      zoomBehavior = d3.zoom()
-        .scaleExtent([0.1, 5])
-        .on("zoom", (event) => {
-          currentScale = event.transform.k;
-          mainG.attr("transform", event.transform);
-          document.getElementById("zoom-level").textContent = `${Math.round(currentScale * 100)}%`;
-          updateLabelsVisibility();
-          if (minimapContainer && minimapContainer.classList.contains("expanded")) {
-            updateMinimapViewport();
-          }
-        });
-      mainSvg.call(zoomBehavior);
-    }
+        // 初始化 lastTransform，防止首次加载时产生巨大的 dx/dy 跳变；这里假设初始 transform 是 (0,0)，通常 D3 初始就是 (0,0)
+        lastTransformX = 0;
+        lastTransformY = 0;
+
+        zoomBehavior = d3.zoom()
+          .scaleExtent([0.1, 5])
+          .on("zoom", (event) => {
+            currentScale = event.transform.k;
+            mainG.attr("transform", event.transform);
+
+            // 传入当前的绝对坐标，函数内部自动计算安全的增量 (dx, dy)
+            applyParallaxOffset(event.transform.x, event.transform.y);
+
+            document.getElementById("zoom-level").textContent = `${Math.round(currentScale * 100)}%`;
+
+            // 原有 LOD 逻辑
+            const isZoomedIn = currentScale >= 0.8;
+            mainG.selectAll(".node").attr("filter", isZoomedIn ? "url(#liquid-glass)" : null);
+            mainG.selectAll(".link").style("display", isZoomedIn ? "block" : "none");
+
+            updateLabelsVisibility();
+            if (minimapContainer && minimapContainer.classList.contains("expanded")) {
+              updateMinimapViewport();
+            }
+          });
+        mainSvg.call(zoomBehavior);
+      }
 
     function updateLabelsVisibility() {
       const shouldShowLabels = currentScale >= LOD_THRESHOLD;
@@ -2152,12 +2209,13 @@
         minimapContainer = document.getElementById("minimap-container");
         const minimapHeader = document.getElementById("minimap-header");
         const minimapToggle = document.getElementById("minimapToggle");
+        const minimapSvgEl = document.getElementById("minimap-svg");
 
+        // 1. 展开/折叠逻辑
         minimapHeader.addEventListener("click", function (e) {
           e.stopPropagation();
           minimapContainer.classList.toggle("expanded");
           minimapToggle.textContent = minimapContainer.classList.contains("expanded") ? "▲" : "▼";
-
           if (minimapContainer.classList.contains("expanded")) {
             setTimeout(() => {
               updateMinimapNodes();
@@ -2171,59 +2229,162 @@
           minimapHeader.click();
         });
 
-        minimapSvg.on("click", function (event) {
+        // ================= 小星图拖动与点击逻辑 =================
+        let isMinimapDragging = false;
+        let minimapDragStartX = 0;
+        let minimapDragStartY = 0;
+        let hasDragged = false; // 用于区分 click 和 drag
+
+        // 鼠标按下：准备拖动
+        minimapSvgEl.addEventListener("mousedown", function (e) {
           if (!minimapContainer.classList.contains("expanded")) return;
-          const rect = minimapSvg.node().getBoundingClientRect();
-          const ratioX = (event.clientX - rect.left) / rect.width;
-          const ratioY = (event.clientY - rect.top) / rect.height;
-          const targetX = ratioX * BASE_SIZE;
-          const targetY = ratioY * BASE_SIZE;
-          const transform = d3.zoomTransform(mainSvg.node());
-          const scale = transform.k;
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
-          mainSvg.transition()
-            .duration(750)
-            .call(zoomBehavior.transform,
-              d3.zoomIdentity
-                .translate(viewportWidth / 2 - targetX * scale, viewportHeight / 2 - targetY * scale)
-                .scale(scale)
-            );
+          isMinimapDragging = true;
+          hasDragged = false;
+          minimapDragStartX = e.clientX;
+          minimapDragStartY = e.clientY;
+          e.preventDefault();
         });
+
+        // 鼠标移动：执行画布平移
+        document.addEventListener("mousemove", function (e) {
+          if (!isMinimapDragging) return;
+
+          const dx = e.clientX - minimapDragStartX;
+          const dy = e.clientY - minimapDragStartY;
+
+          // 如果移动超过 2px，标记为拖动状态（防止误触点击）
+          if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+            hasDragged = true;
+          }
+
+          // 核心算法：小星图位移 -> 世界坐标位移 -> 屏幕像素位移
+          // 视口框向右拖，相当于主画布内容向左移，取负号
+          const screenDx = -(dx / MINIMAP_SCALE) * currentScale;
+          const screenDy = -(dy / MINIMAP_SCALE) * currentScale;
+
+          // 调用 D3 的平移方法
+          mainSvg.call(zoomBehavior.translateBy, screenDx, screenDy);
+
+          // 更新起点，实现丝滑连续拖动
+          minimapDragStartX = e.clientX;
+          minimapDragStartY = e.clientY;
+        });
+
+        // 鼠标松开：结束拖动 或 触发点击跳转
+        document.addEventListener("mouseup", function (e) {
+          if (!isMinimapDragging) return;
+          isMinimapDragging = false;
+
+          // 如果没有发生拖动，则视为点击，执行原有的跳转逻辑
+          if (!hasDragged) {
+            const rect = minimapSvgEl.getBoundingClientRect();
+            const ratioX = (e.clientX - rect.left) / rect.width;
+            const ratioY = (e.clientY - rect.top) / rect.height;
+            const targetX = ratioX * BASE_SIZE;
+            const targetY = ratioY * BASE_SIZE;
+            const transform = d3.zoomTransform(mainSvg.node());
+            const scale = transform.k;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+
+            mainSvg.transition()
+              .duration(750)
+              .call(zoomBehavior.transform,
+                d3.zoomIdentity
+                  .translate(viewportWidth / 2 - targetX * scale, viewportHeight / 2 - targetY * scale)
+                  .scale(scale)
+              );
+          }
+        });
+
+        // ================= 小星图滚轮缩放逻辑 =================
+        minimapContainer.addEventListener("wheel", function (e) {
+          if (!minimapContainer.classList.contains("expanded")) return;
+          e.preventDefault(); // 阻止页面默认滚动
+
+          // 计算缩放因子 (向上滚放大，向下滚缩小)
+          const delta = -e.deltaY;
+          const scaleFactor = delta > 0 ? 1.1 : 0.9;
+
+          const transform = d3.zoomTransform(mainSvg.node());
+          // 以主屏幕正中心为锚点进行缩放，视觉最稳定
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+
+          // 计算新缩放比，并限制在 [0.1, 5] 范围内
+          let newScale = transform.k * scaleFactor;
+          newScale = Math.max(0.1, Math.min(5, newScale));
+
+          // 计算保持屏幕中心点不变所需的 X/Y 平移量
+          const worldX = (centerX - transform.x) / transform.k;
+          const worldY = (centerY - transform.y) / transform.k;
+          const newX = centerX - worldX * newScale;
+          const newY = centerY - worldY * newScale;
+
+          // 应用新的 Transform
+          mainSvg.call(zoomBehavior.transform, d3.zoomIdentity.translate(newX, newY).scale(newScale));
+        }, { passive: false });
       }
 
     function updateMinimapNodes() {
-      if (!minimapG || !minimapContainer.classList.contains("expanded")) return;
-      const miniNodes = minimapG.selectAll(".mini-node").data(nodes, d => d.id);
-      miniNodes.exit().remove();
-      miniNodes.enter().append("circle")
-        .attr("class", "mini-node")
-        .merge(miniNodes)
-        .attr("cx", d => d.x * MINIMAP_SCALE)
-        .attr("cy", d => d.y * MINIMAP_SCALE)
-        .attr("r", d => { if (d.type === "root") { return d.isTop100 ? 6 : 3; } else { return 2; } });
-    }
+        if (!minimapG || !minimapContainer.classList.contains("expanded")) return;
+
+        // 获取当前激活的配色方案
+        const scheme = COLOR_SCHEMES[currentColorScheme];
+
+        const miniNodes = minimapG.selectAll(".mini-node").data(nodes, d => d.id);
+        miniNodes.exit().remove();
+
+        miniNodes.enter().append("circle")
+          .attr("class", "mini-node")
+          .merge(miniNodes)
+          .attr("cx", d => d.x * MINIMAP_SCALE)
+          .attr("cy", d => d.y * MINIMAP_SCALE)
+          .attr("r", d => {
+            if (d.type === "root") { return d.isTop100 ? 6 : 3; }
+            else { return 2; }
+          })
+          // 在生成/更新小星图节点时，直接赋予当前主题的颜色
+          .attr("fill", d => {
+            if (d.type === "root") {
+              switch (d.sizeLevel) {
+                case 1: return scheme.node_size1;
+                case 2: return scheme.node_size2;
+                case 3: return scheme.node_size3;
+                case 4: return scheme.node_size4;
+                case 5: return scheme.node_size5;
+                default: return scheme.node_size1;
+              }
+            } else {
+              return scheme.node_word;
+            }
+          });
+      }
 
     function updateMinimapViewport() {
-      if (!minimapViewport || !minimapContainer.classList.contains("expanded")) return;
-      const transform = d3.zoomTransform(mainSvg.node());
-      const scale = transform.k;
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const viewX = -transform.x / scale;
-      const viewY = -transform.y / scale;
-      const viewW = viewportWidth / scale;
-      const viewH = viewportHeight / scale;
-      const miniX = viewX * MINIMAP_SCALE;
-      const miniY = viewY * MINIMAP_SCALE;
-      const miniW = viewW * MINIMAP_SCALE;
-      const miniH = viewH * MINIMAP_SCALE;
-      minimapViewport
-        .style("left", miniX + "px")
-        .style("top", miniY + "px")
-        .style("width", miniW + "px")
-        .style("height", miniH + "px");
-    }
+        if (!minimapViewport || !minimapContainer.classList.contains("expanded")) return;
+        const transform = d3.zoomTransform(mainSvg.node());
+        const scale = transform.k;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const viewX = -transform.x / scale;
+        const viewY = -transform.y / scale;
+        const viewW = viewportWidth / scale;
+        const viewH = viewportHeight / scale;
+        const miniX = viewX * MINIMAP_SCALE;
+        const miniY = viewY * MINIMAP_SCALE;
+        const miniW = viewW * MINIMAP_SCALE;
+        const miniH = viewH * MINIMAP_SCALE;
+
+        // 获取 SVG 画布相对于容器的顶部偏移量（即 header 的高度 40px）
+        const svgOffsetTop = minimapSvg.node().offsetTop || 40;
+
+        minimapViewport
+          .style("left", miniX + "px")
+          .style("top", (miniY + svgOffsetTop) + "px") // 加上偏移量
+          .style("width", miniW + "px")
+          .style("height", miniH + "px");
+      }
 
     function updatePerformance() {
       frameCount++;
@@ -2474,6 +2635,109 @@
 
         mainSvg.transition().duration(300).call(zoomBehavior.transform, resetTransform);
       });
+
+  // ================= 视差微粒深空背景 =================
+  const starCanvas = document.getElementById('starfield');
+    const ctx = starCanvas.getContext('2d');
+    let stars = [];
+
+    // 🎛️ 【参数调节面板】
+    const STAR_COUNT = 150;          // 1. 粒子数量
+    const PARALLAX_FACTOR = 0.08;    // 2. 视差系数 (0.08 表示主画布拖拽100px，背景反向移动8px)
+    const MIN_OPACITY = 0.1;        // 3. 粒子最小透明度 (0.0 ~ 1.0)
+    const MAX_OPACITY = 0.8;         // 4. 粒子最大透明度 (0.0 ~ 1.0)
+    // =====================================================================
+
+    // 记录上一次 D3 transform 的位置，用于计算增量
+    let lastTransformX = 0;
+    let lastTransformY = 0;
+
+    function resizeStarCanvas() {
+      starCanvas.width = window.innerWidth;
+      starCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', () => {
+      resizeStarCanvas();
+      initStarfield(); // 窗口大小改变时重新分布
+    });
+    resizeStarCanvas();
+
+    class Star {
+      constructor() {
+        // 初始位置严格限制在屏幕范围内
+        this.x = Math.random() * starCanvas.width;
+        this.y = Math.random() * starCanvas.height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.05; // 自主漂浮
+        this.speedY = (Math.random() - 0.5) * 0.05; // 自主漂浮
+        this.opacity = Math.random() * (MAX_OPACITY - MIN_OPACITY) + MIN_OPACITY;
+      }
+
+      update() {
+        // 1. 加上自主漂浮速度
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        // 2. 实时边界取模循环 (贪吃蛇逻辑)，无论坐标如何变化，立刻将其拉回 [0, width] 和 [0, height] 范围内
+        if (this.x < 0) this.x += starCanvas.width;
+        if (this.x >= starCanvas.width) this.x -= starCanvas.width;
+        if (this.y < 0) this.y += starCanvas.height;
+        if (this.y >= starCanvas.height) this.y -= starCanvas.height;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    function initStarfield() {
+      stars = [];
+      for (let i = 0; i < STAR_COUNT; i++) {
+        stars.push(new Star());
+      }
+    }
+
+    function animateStarfield() {
+      ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStarfield);
+    }
+
+    // 启动背景系统
+    initStarfield();
+    animateStarfield();
+
+    // 供 D3 Zoom 调用，施加增量视差
+    function applyParallaxOffset(currentTransformX, currentTransformY) {
+      // 计算本次事件的拖拽增量 (dx, dy)
+      const dx = currentTransformX - lastTransformX;
+      const dy = currentTransformY - lastTransformY;
+
+      // 更新记录，供下一帧使用
+      lastTransformX = currentTransformX;
+      lastTransformY = currentTransformY;
+
+      // 如果增量为0（例如仅仅是滚轮缩放，没有拖拽），则不处理
+      if (dx === 0 && dy === 0) return;
+
+      // 给所有粒子施加反向的视差偏移，并立即触发边界循环
+      stars.forEach(star => {
+        star.x -= dx * PARALLAX_FACTOR;
+        star.y -= dy * PARALLAX_FACTOR;
+
+        // 立即取模循环，确保坐标永不越界
+        if (star.x < 0) star.x += starCanvas.width;
+        if (star.x >= starCanvas.width) star.x -= starCanvas.width;
+        if (star.y < 0) star.y += starCanvas.height;
+        if (star.y >= starCanvas.height) star.y -= starCanvas.height;
+      });
+    }
 
     window.onload = loadDataWithWorker;
   </script>
