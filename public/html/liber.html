@@ -97,7 +97,6 @@
     </div>
 				<p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">© Nanasi 七梨子 - <a class="index" href="https://yupzhou.github.io/JPRoots/">JPRoots : 日琉语之道</a></p>
 <style>
-        /* 重置样式 */
         * {
             margin: 0;
             padding: 0;
@@ -112,7 +111,7 @@
             height: 85vh;
         }
         
-        /* 主容器 - 类似JLDB风格 */
+        /* 主容器 */
         .main-container {
             max-width: 1150px;
             height: 85vh;
@@ -152,7 +151,7 @@
             flex-direction: column;
         }
         
-        /* 搜索区域 - 类似JLDB顶部样式 */
+        /* 搜索区域 */
         .search-section {
             padding: 15px;
             border-bottom: 1px solid #e0e0e0;
@@ -379,7 +378,7 @@
             overflow: hidden;
         }
         
-        /* 标签栏 - 类似JLDB的标签样式 */
+        /* 标签栏 */
         .tab-bar {
             display: flex;
             border-bottom: 1px solid #e0e0e0;
@@ -404,8 +403,8 @@
         .tab-content {
             flex: 1;
             display: none;
-            overflow: hidden; /* 隐藏自身溢出 */
-            min-height: 0; /* 关键：允许收缩 */
+            overflow: hidden;
+            min-height: 0;
             position: relative;
         }
         
@@ -415,12 +414,12 @@
         
         /* 元数据区域 */
         .metadata-content {
-            position: absolute; /* 使用绝对定位确保占满父容器 */
+            position: absolute;
             top: 0;
             right: 0;
             bottom: 0;
             left: 0;
-            overflow-y: auto; /* 关键：允许垂直滚动 */
+            overflow-y: auto;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -484,9 +483,9 @@
             margin-bottom: 0rem;
         }
 
-                    h3 {
-                margin-bottom: 0px;
-            }
+        h3 {
+            margin-bottom: 0px;
+        }
 
 
         
@@ -509,9 +508,9 @@
         }
 
         .index {
-  color: #007bff;
-  text-decoration: none;
-}
+            color: #007bff;
+            text-decoration: none;
+        }
         
         /* 响应式设计 */
         @media (max-width: 713px) {

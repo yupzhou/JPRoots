@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
-    <!-- 引入 html2canvas 用于一键生成高清学术卡片图片 -->
+    <!-- 引入 html2canvas 用于一键生成词族图片 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
       var _hmt = _hmt || [];
@@ -25,14 +25,13 @@
     </script>
 </head>
 
-<!-- 768px 改为 720px，也修改了 bootstrap.min.css -->
 <body>
     <div class="card" style="padding: 30px;filter: blur(0px);;height: auto;">
         <div class="container">
                     <div class="row" style="margin-top: 0px;">
 
                         <div class="col-md-3 col-lg-2 col-xl-3 d-block d-md-block d-none" style="margin: 0px 14px 0px 14px;">
-                            <div class="form-group"><label for="search-field""></label>
+                            <div class="form-group"><label for="search-field"></label>
                               <!-- 将两个搜索框组合在一起 -->
         <div class="search-combo-container">
             <!-- 单词搜索框组合 -->
@@ -97,10 +96,10 @@
 
 <!-- 词族弹窗 (整合词族卡片功能) -->
 <div id="root-info-modal" class="root-modal">
-  <!-- 【外层壳】：负责定高、圆角、阴影，并截断溢出内容 -->
+  <!-- 外层：定高、圆角、阴影，并截断溢出内容 -->
   <div class="root-modal-content">
 
-    <!-- 右上角窗口控制按钮组 (绝对定位，浮在壳上) -->
+    <!-- 右上角窗口控制按钮组 -->
     <div class="window-controls">
       <button id="saveRootCardBtn" class="win-ctrl-btn" title="导出词族卡片">
         <i class="fa fa-save"></i>
@@ -110,7 +109,7 @@
       </button>
     </div>
 
-    <!-- 【内层核】：负责内容展示和滚动 -->
+    <!-- 内层：内容展示和滚动 -->
     <div class="root-modal-body">
       <!-- 标题栏 -->
       <div class="card-header">
@@ -183,11 +182,10 @@ function parseCSVLine(line) {
     return result;
 }
 
-  // ================= 终极括号剥离器（状态机算法） =================
-    // 无论全角半角、嵌套、未闭合、特殊符号，都能精准切除括号及内部所有内容
+  // ================= 括号剥离器（状态机算法） =================
     function stripParentheses(str) {
       let result = '';
-      let depth = 0; // 括号嵌套深度
+      let depth = 0; 
       for (let i = 0; i < str.length; i++) {
         const char = str[i];
         if (char === '(' || char === '（') {
@@ -201,7 +199,7 @@ function parseCSVLine(line) {
       return result.replace(/\s+/g, ' ').trim(); // 清理多余空格
     }
 
-    // ================= 词形噪音清洗函数 (终极鲁棒版) =================
+    // ================= 词形噪音清洗函数 =================
     function cleanDialectForm(formText) {
       if (!formText) return '';
 
@@ -224,7 +222,7 @@ function parseCSVLine(line) {
         const eqIndex = cleaned.indexOf('=');
         if (eqIndex !== -1) cleaned = cleaned.substring(0, eqIndex).trim();
 
-        // 3.2 【核心修复】调用状态机，彻底剥离所有括号及内部注释（如 (?= /anda/)）
+        // 3.2 【核心修复】调用状态机，彻底剥离所有括号及内部注释
         cleaned = stripParentheses(cleaned);
 
         // 3.3 去除开头的序号
@@ -312,21 +310,21 @@ function closeIfOutside(e) {
   }
 }
 
-  // 使用 Fetch API 并行加载三个 CSV 文件 (重构版)
+  // 使用 Fetch API 并行加载三个 CSV 文件
   Promise.all([
     fetch("JLDB.csv").then(res => res.text()),
     fetch("dialect_relation.csv").then(res => res.text()),
     fetch("dialect_form.csv").then(res => res.text())
   ])
     .then(([jldbText, relText, formText]) => {
-      // 1. 解析 dialect_relation.csv (地点、经纬度、大区、排序、清洗)
+      // 1. 解析 dialect_relation.csv
       const relLines = relText.trim().split(/\r?\n/);
       const relHeaders = parseCSVLine(relLines[0]);
       window.relationDict = {};
       window.dialectFields = [];
       window.locationCoords = {};
       window.locationRegions = {};
-      window.locationCleanMap = {}; // 【新增】地点清洗映射表
+      window.locationCleanMap = {}; // 地点清洗映射表
 
       for (let i = 1; i < relLines.length; i++) {
         if (!relLines[i].trim()) continue;
@@ -337,7 +335,7 @@ function closeIfOutside(e) {
         const rawLoc = row['地点'];
         if (!rawLoc) continue;
 
-        // 【核心修改】：获取清洗后的标准地点名（如果“清洗”列有值则使用，否则用原名）
+        // 获取清洗后的标准地点名（如果“清洗”列有值则使用，否则用原名）
         const cleanLoc = (row['清洗'] && row['清洗'].trim() !== '') ? row['清洗'].trim() : rawLoc;
 
         // 记录映射关系，供 dialect_form.csv 使用
@@ -369,7 +367,7 @@ function closeIfOutside(e) {
         return (window.relationDict[a].order || 0) - (window.relationDict[b].order || 0);
       });
 
-      // 2. 解析 dialect_form.csv (word, 地点, 词形)
+      // 2. 解析 dialect_form.csv
       const formLines = formText.trim().split(/\r?\n/);
       const formHeaders = parseCSVLine(formLines[0]);
       window.dialectForms = {};
@@ -379,7 +377,7 @@ function closeIfOutside(e) {
         const row = {};
         formHeaders.forEach((h, idx) => row[h] = values[idx] || '');
 
-        // 【核心修改】：地点清洗映射
+        // 地点清洗映射
         const rawLoc = row['地点'];
         if (rawLoc && window.locationCleanMap && window.locationCleanMap[rawLoc]) {
           row['地点'] = window.locationCleanMap[rawLoc]; // 替换为标准地点名
@@ -392,7 +390,7 @@ function closeIfOutside(e) {
         }
       }
 
-      // 3. 解析 JLDB.csv (现在第1行是表头，第2行开始是数据，无前三行元数据)
+      // 3. 解析 JLDB.csv
       const jldbLines = jldbText.trim().split(/\r?\n/);
       const headers = parseCSVLine(jldbLines[0]);
       const wordData = jldbLines.slice(1).map(line => {
@@ -432,7 +430,7 @@ function closeIfOutside(e) {
       wordList.appendChild(li);
     }
 
-    //250330新增反查功能
+    //词族反查
     const wd_fFilter = document.getElementById("wd_fFilter");
 
         // 获取所有唯一的 wd_f 值（支持 | 分隔的多词族拆分）
@@ -679,8 +677,8 @@ function closeIfOutside(e) {
       });
     }
 
-    // 250609 新增词根弹窗
-    // 加载词根数据
+    // 词族弹窗
+    // 加载词族数据
     let rootData = [];
     fetch("JPRoots.csv")
       .then(response => response.text())
@@ -750,7 +748,7 @@ function closeIfOutside(e) {
           treeHTML += `<div style="font-family: 'Microsoft YaHei', monospace; font-size: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 20px; line-height: 1.8;">`;
           treeHTML += `<div style="font-weight: bold; color: #007bff; margin-bottom: 5px;">${rootName}</div>`;
 
-          // 【核心逻辑】将单词分为“直接归属”和“下位词族”两类
+          // 将单词分为“直接归属”和“下位词族”两类
           const directWords = [];
           const subFamilyMap = {};
 
@@ -938,7 +936,7 @@ function closeIfOutside(e) {
             <h4>探秘分野 ...</h4>
             <div class="field-checkboxes">
                 ${fields.map(field => {
-          // 【新增】处理方言大区的显示名称，加上地图emoji和后缀
+          // 处理方言大区的显示名称
           let displayName = fieldNameMap[field] || field;
           if (field.startsWith('region_')) {
             displayName = `${field.replace('region_', '')}`;
@@ -1031,7 +1029,7 @@ function closeIfOutside(e) {
         advancedSearchPanel.style.display = "none";
     }
 
-    // 执行高级搜索逻辑 (重构版：适配三表结构)
+    // 执行高级搜索逻辑
       function performAdvancedSearch(searchTerm, fields) {
         let regex;
         if (searchTerm.startsWith('/') && searchTerm.endsWith('/')) {
@@ -1211,12 +1209,12 @@ function closeIfOutside(e) {
         }
       }); */
 
-            // 【重构】处理 dialect_form 中的新方言点字段，按全局地点顺序排序后分组
+            // 处理 dialect_form 中的新方言点字段，按全局地点顺序排序后分组
       const regionGroups = {};
       let currentWordForms = window.dialectForms ? (window.dialectForms[word] || []) : [];
 
       if (currentWordForms.length > 0) {
-        // 1. 核心修复：先对所有词形按全局“地点排序”进行升序排列
+        // 1. 先对所有词形按全局“地点排序”进行升序排列
         currentWordForms.sort((a, b) => {
           const orderA = (window.relationDict && window.relationDict[a['地点']]) ? window.relationDict[a['地点']].order : 999999;
           const orderB = (window.relationDict && window.relationDict[b['地点']]) ? window.relationDict[b['地点']].order : 999999;
@@ -1224,7 +1222,6 @@ function closeIfOutside(e) {
         });
 
         // 2. 遍历排序后的数组进行分组 
-        // (JS 对象会严格保留键的插入顺序，从而保证大区也是按 1->2->3 的顺序排列的)
         currentWordForms.forEach(form => {
           const loc = form['地点'];
           const formVal = form['词形']; 
@@ -1266,7 +1263,7 @@ function closeIfOutside(e) {
       }
 
 
-            // 判断是否存在方言数据 (仅以 dialect_form.csv 中的实际词形为准，彻底抛弃旧的 class3/class4 标记)
+            // 判断是否存在方言数据 
       const hasDialect = currentWordForms && currentWordForms.length > 0;
 
       // 插入地图容器（蓝色圆角边框）及下方方言大区展示区
@@ -1315,7 +1312,7 @@ function closeIfOutside(e) {
         if (info.lg_c && info.lg_c.trim() !== "") {
           infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">地域分布</strong> ${info.lg_c}</p>`;
         }
-        // 修改词根（词族）显示为可点击链接（支持多词族拆分显示）
+        // 修改词族显示为可点击链接（支持多词族拆分显示）
       if (info.wd_f && info.wd_f.trim() !== "") {
         // 1. 将 "A|B" 拆分为独立的词族数组
         const families = info.wd_f.split(/\||｜/).map(f => f.trim()).filter(f => f !== "");
@@ -1451,36 +1448,36 @@ function closeIfOutside(e) {
               attributionControl: false,
               preferCanvas: false
             });
-            window.currentMap = map; // 【新增】保存地图实例，供外部拖拽事件调用
+            window.currentMap = map; // 保存地图实例，供外部拖拽事件调用
             L.control.zoom({ position: 'bottomright' }).addTo(map); //缩放按钮
             L.control.scale({
               position: 'bottomleft',
-              imperial: true,      // 【新增】启用英制单位（英里）
-              metric: true,        // 【新增】保留公制单位（公里）
-              maxWidth: 120        // 【新增】调整比例尺宽度
+              imperial: true,      // 启用英制单位（英里）
+              metric: true,        // 保留公制单位（公里）
+              maxWidth: 120        // 调整比例尺宽度
             }).addTo(map); //比例尺
-            // 【层级 1】创建专属的“海域遮罩” Pane (位于底图 200 之上，分析图层 350 之下)
+            // 海域遮罩
             map.createPane('maskPane');
             map.getPane('maskPane').style.zIndex = 250;
             map.getPane('maskPane').style.pointerEvents = 'none'; // 彻底不拦截鼠标事件
 
-            // 【层级 2】创建专属的“同言线/分布区” Pane (位于遮罩 250 之上，打点 400 之下)
+            // 同言线/分布区
             map.createPane('polygonPane');
             map.getPane('polygonPane').style.zIndex = 350;
             map.getPane('polygonPane').style.pointerEvents = 'auto'; // 允许多边形响应鼠标 Tooltip
 
-            // 特定海域遮挡
+            // 特定海域遮罩
             const maskCoords = [
               [26, 123.3], [26, 124.7],
               [25.6, 124.7], [25.6, 123.3]
             ];
             L.polygon(maskCoords, {
-              pane: 'maskPane', // 【核心修改】强制渲染到 Z-Index 250 的遮罩层
-              color: '#dcf3fb',      // 与海洋相近的浅蓝色
+              pane: 'maskPane', // 强制渲染到 Z-Index 250 的遮罩层
+              color: '#dcf3fb',  
               fillColor: '#dcf3fb',
-              fillOpacity: 1,     // 几乎不透明，彻底盖住下方底图
+              fillOpacity: 1,
               weight: 0,
-              interactive: false     // 不阻挡鼠标点击地图和拖动
+              interactive: false
             }).addTo(map);
 
             // Esri 世界街道地图（World Street Map）
@@ -1543,7 +1540,7 @@ function closeIfOutside(e) {
                     const hull = turf.convex(hullPoints);
                     if (hull) {
                       L.geoJSON(hull, {
-                        pane: 'polygonPane', // 【新增】指定渲染层级
+                        pane: 'polygonPane', // 指定渲染层级
                         style: {
                           color: formColorMap[form], weight: 1, opacity: 0.8,
                           fillColor: formColorMap[form], fillOpacity: 0.1, dashArray: '5, 5'
@@ -1552,7 +1549,7 @@ function closeIfOutside(e) {
                     }
                   } else if (uniqueCoords.length === 2) {
                     L.polyline(uniqueCoords.map(c => [c[1], c[0]]), {
-                      pane: 'polygonPane', // 【新增】指定渲染层级
+                      pane: 'polygonPane', // 指定渲染层级
                       color: formColorMap[form], weight: 1, opacity: 0.8, dashArray: '5, 5'
                     }).addTo(convexHullLayer);
                   }
@@ -1579,7 +1576,7 @@ function closeIfOutside(e) {
                     const voronoiPolygons = turf.voronoi(fc, { bbox: expandedBbox });
 
                     if (voronoiPolygons) {
-                      // 【核心优化】按词形分组，进行拓扑融合 (Dissolve)，彻底消除同词形内部的网格线
+                      // 按词形分组，进行拓扑融合 (Dissolve)，彻底消除同词形内部的网格线
                       const formsGroup = {};
 
                       // 1. 为每个多边形分配词形并分组
@@ -1646,14 +1643,14 @@ function closeIfOutside(e) {
               }
             }
 
-            // 【核心】根据 Checkbox 状态决定是否显示图层
+            // 根据 Checkbox 状态决定是否显示图层
             const showIsogloss = document.getElementById('toggleIsogloss')?.checked ?? true;
             const showHull = document.getElementById('toggleConvexHull')?.checked ?? true;
 
             if (showIsogloss) isoglossLayer.addTo(map);
             if (showHull) convexHullLayer.addTo(map);
 
-            // 【核心】绑定开关事件，实现动态切换
+            // 绑定开关事件，实现动态切换
             const toggleIsoBtn = document.getElementById('toggleIsogloss');
             const toggleHullBtn = document.getElementById('toggleConvexHull');
 
@@ -1672,7 +1669,7 @@ function closeIfOutside(e) {
             // ================= 高级功能结束 =================
 
 
-            // 【新增逻辑开始】按经纬度对地点进行分组，解决同坐标重叠和弹窗换行问题
+            // 按经纬度对地点进行分组，解决同坐标重叠和弹窗换行问题
             const groupedPoints = {};
             points.forEach(p => {
               // 使用经纬度拼接作为唯一键（保留5位小数防止浮点数精度误差导致误判）
@@ -1775,7 +1772,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-  // ================= 词族卡片截图引擎 (终极修复：全图 + 颜色加深) =================
+  // ================= 词族卡片截图引擎 =================
     document.addEventListener('click', function (e) {
       const btn = e.target.closest('#saveRootCardBtn');
       if (btn) {
@@ -1789,11 +1786,11 @@ document.addEventListener('DOMContentLoaded', function() {
           overflow: modalShell.style.overflow
         };
 
-        // 【核心 1】解除高度限制
+        // 解除高度限制
         modalShell.style.maxHeight = 'none';
         modalShell.style.overflow = 'visible';
 
-        // 【核心 2】添加截图专用类，强制加深所有颜色
+        // 添加截图专用类，强制加深所有颜色
         modalShell.classList.add('capturing');
 
         icon.className = 'fa fa-spinner fa-spin';
@@ -1817,7 +1814,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }).catch(err => {
             console.error('截图失败:', err);
           }).finally(() => {
-            // 【核心 3】恢复原始状态
+            // 恢复原始状态
             modalShell.style.maxHeight = originalStyles.maxHeight;
             modalShell.style.overflow = originalStyles.overflow;
             modalShell.classList.remove('capturing'); // 移除截图类，恢复正常浅色
@@ -1825,7 +1822,7 @@ document.addEventListener('DOMContentLoaded', function() {
             icon.className = originalIconClass;
             btn.disabled = false;
           });
-        }, 200); // 延迟增加到 200ms，确保样式完全生效
+        }, 200);
       }
     });
   // =========================================================
@@ -1889,10 +1886,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	  #searchResultsContainer {
 	    position: absolute;
 	    z-index: 1;
-	    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+	    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
 		background-color: white;
 		width: 160px;
-		overflow-y: auto; /* 添加纵向滚动条，当内容超过容器高度时显示滚动条 */
+		overflow-y: auto; /* 当内容超过容器高度时显示滚动条 */
 		display: none;
 		height: 100px;
 	  }
@@ -1905,7 +1902,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		#wordList li::before {
 		  content: "»"; /* 添加自定义的符号作为列表项的标记 */
-		  margin-right: 5px; /* 可选：增加一些空间，使汉字与列表项内容之间有一定距离 */
+		  margin-right: 5px; /* 增加一些空间，使汉字与列表项内容之间有一定距离 */
 		  padding: 3px;
 		}
 		
@@ -2011,9 +2008,7 @@ strong.underlined-text{
 	border-bottom: 3px solid #ff67c0;
 }
 
-/* 250609 新增词根弹窗 */
-
-/* 词根弹窗样式 */
+/* 新增词族弹窗 */
     .root-modal {
         display: none;
         position: fixed;
@@ -2026,31 +2021,29 @@ strong.underlined-text{
         justify-content: center;
     }
     
-    /* 【外层壳】：负责外观、定高、截断 */
+    /* 外层 */
     .root-modal-content {
-        background-color: rgba(255, 255, 255, 0.95); /* 稍微提高不透明度防止穿帮 */
+        background-color: rgba(255, 255, 255, 0.95); 
         border-radius: 15px;
-        padding: 0; /* 移除 padding，交给内层 */
+        padding: 0;
         width: 350px;
         max-height: 60%; /* 限制最大高度 */
-        overflow: hidden; /* 【核心】隐藏溢出，完美解决滚动条突破圆角问题 */
+        overflow: hidden; /* 隐藏溢出，解决滚动条突破圆角问题 */
         box-shadow: 0 10px 11px rgba(0, 0, 0, 0.3);
         position: relative;
         border: 1px solid #007bff;
         animation: popIn 0.3s;
         backdrop-filter: blur(3px);
-        
-        /* Flex 布局让内层自适应高度 */
         display: flex;
         flex-direction: column;
     }
 
-    /* 【内层核】：负责滚动和内容 */
+    /* 内层 */
     .root-modal-body {
-        flex: 1; /* 占据剩余空间 */
-        overflow-y: auto; /* 【核心】只有这里滚动 */
-        padding: 25px; /* 原来的 padding 移到这里 */
-        padding-top: 30px; /* 给右上角的绝对定位按钮留出空间，防止文字遮挡 */
+        flex: 1;
+        overflow-y: auto;
+        padding: 25px;
+        padding-top: 30px;
     }
     
 
@@ -2060,7 +2053,7 @@ strong.underlined-text{
         to { opacity: 1; transform: scale(1); }
     }
 
-    /* 右上角窗口控制按钮组 - 蓝色、无放大动画、关闭按钮调细 */
+    /* 右上角窗口控制按钮组 */
     .window-controls {
         position: absolute;
         top: 12px;
@@ -2073,44 +2066,43 @@ strong.underlined-text{
         background: none;
         border: none;
         cursor: pointer;
-        padding: 3px 5px; /* 减小内边距，让按钮更紧凑 */
+        padding: 3px 5px;
         border-radius: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #007bff; /* 统一使用网站蓝色 */
-        font-size: 14px; /* 统一图标大小 */
-        transition: background 0.2s; /* 只保留背景色过渡，去掉 transform 放大 */
+        color: #007bff;
+        font-size: 14px;
+        transition: background 0.2s;
     }
-    .win-ctrl-btn:hover { background: rgba(0,123,255,0.1); } /* 仅背景微亮，无放大 */
+    .win-ctrl-btn:hover { background: rgba(0,123,255,0.1); } 
     #saveRootCardBtn:disabled { opacity: 0.5; cursor: not-allowed; }
     
     .root-close-btn { 
-        font-weight: 300; /* 关键：调细字体粗细 */
-        font-size: 16px; /* 稍微调小一点 */
+        font-weight: 300;
+        font-size: 16px;
     }
 
     /* 标题栏布局 - 词族名在左，Logo 在右上，上缘对齐 */
     .card-header {
     border-bottom: 1px solid #007bff;
     padding-bottom: 12px;
-    position: relative; /* 【修改】移除 flex 布局，改为相对定位，作为子元素的参考系 */
+    position: relative;
 }
 
 #root-name {
     margin: 0;
-    font-size: 24px; /* 整合了您原代码中重复的 font-size */
+    font-size: 24px;
     font-weight: bold;
     border: none;
     line-height: 1; 
     margin-top: 4px;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    position: relative; /* 【新增】让 z-index 生效 */
-    z-index: 2;         /* 【核心】层级设为 2，确保长文本能覆盖在 logo 上面 */
+    position: relative;
+    z-index: 2;         /*确保长文本能覆盖在 logo 上面 */
     
-    /* 💡 进阶优化：右侧渐变遮罩（强烈推荐） */
-    /* 当文本很长覆盖到 logo 时，文字会平滑淡出，避免文字和 logo 重叠导致两者都看不清 */
+    /* 当文本很长覆盖到 logo 时，文字平滑淡出 */
     -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
     mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
@@ -2120,10 +2112,10 @@ strong.underlined-text{
         padding-bottom: 3px;
     }
     .card-logo {
-    position: absolute; /* 【核心】脱离文档流，死死钉在右上角 */
+    position: absolute;
     top: 0;
     right: 0;
-    z-index: 1;         /* 【核心】层级设为 1，垫在 root-name 下面 */
+    z-index: 1;
     
     font-size: 18px;
     font-weight: bold;
@@ -2151,7 +2143,7 @@ strong.underlined-text{
 	color: #007bff;
     }
     
-    /* 词根链接样式 */
+    /* 词族链接样式 */
     .root-link {
         color: #007bff;
         cursor: pointer;
@@ -2168,7 +2160,7 @@ strong.underlined-text{
     }
 
 
-/* 250609 新增词根弹窗 */
+/* 新增词族弹窗 */
 
 /* 两个框响应式设计 */
 
@@ -2256,7 +2248,7 @@ button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
 
 
 
-/* 新增词族搜索框 */
+/* 词族搜索框 */
         .filter-input-container {
             display: flex;
             gap: 5px;
@@ -2394,7 +2386,7 @@ button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
     text-justify: inter-character; /* 使用字符间距调整 */
 }
 
-/* 251031高级搜索面板样式 */
+/* 高级搜索面板样式 */
 .advanced-search-panel {
     position: absolute;
     top: 100%;
@@ -2410,7 +2402,7 @@ button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
 }
 
 #advancedSearchBtn .fa-list {
-    pointer-events: none; /* 关键代码：让点击事件穿透图标 */
+    pointer-events: none; /* 点击事件穿透图标 */
 }
 
 .advanced-search-panel h4 {

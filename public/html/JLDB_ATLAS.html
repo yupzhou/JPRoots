@@ -45,14 +45,14 @@
       background: #e8f4f8;
     }
 
-    /* 主容器：作为绝对定位的参考系 */
+    /* 主容器 */
     .main-container {
       position: relative;
       width: 100vw;
       height: 100vh;
     }
 
-    /* 右侧地图：铺满全屏，作为底层 */
+    /* 右侧地图 */
     .map-container {
       width: 100%;
       height: 100%;
@@ -65,25 +65,22 @@
       background: #e8f4f8;
     }
 
-    /* ================= 左侧面板：极致液态玻璃悬浮 ================= */
+    /* 左侧面板 */
     .left-panel {
       position: absolute;
-      /* 关键：绝对定位，使其真正悬浮在地图之上 */
+      /* 悬浮 */
       top: 0;
       left: 0;
       width: 200px;
       height: 100%;
       z-index: 1000;
 
-      /* 液态玻璃效果：极低透明度 + 强模糊，完美透出底层地图 */
+      /* 液态玻璃 */
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-
       border-right: 1px solid rgba(255, 255, 255, 0.2);
       box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
-      /* 增加阴影增强悬浮感 */
-
       padding: 15px;
       display: flex;
       flex-direction: column;
@@ -139,7 +136,7 @@
       background: #fff;
     }
 
-    /* ================= 搜索框：极简无边框样式 ================= */
+    /* 搜索框 */
     .search-field-combo {
       display: flex;
       width: 100%;
@@ -153,12 +150,10 @@
       height: 35px;
       border: none;
       border-bottom: 1.5px solid #007bff;
-      /* 仅保留底部蓝线 */
       color: #333;
       font-size: 14px;
       padding-left: 10px;
       background: transparent;
-      /* 搜索框也透明，融入毛玻璃 */
       outline: none;
       transition: all 0.3s;
     }
@@ -172,7 +167,7 @@
       font-style: italic;
     }
 
-    /* 搜索按钮：完全无背景、无边框 */
+    /* 搜索按钮 */
     .btn {
       width: 35px;
       height: 35px;
@@ -198,14 +193,13 @@
       text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
     }
 
-    /* ================= 词表区域 ================= */
+    /* 词表区域 */
     .list-section {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
       background: rgba(255, 255, 255, 0.15);
-      /* 词表内部也保持半透明 */
       border-radius: 10px;
       padding: 10px;
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -271,7 +265,7 @@
       border-radius: 2px;
     }
 
-    /* 底部版权 */
+    /* 底部 */
     .card-footer {
       border-top: 1px dashed rgba(255, 255, 255, 0.3);
       padding-top: 8px;
@@ -315,7 +309,7 @@
       }
     }
 
-    /* 地图 Q弹打点动画 */
+    /* 地图打点动画 */
     .dialect-marker-anim {
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), stroke-width 0.3s ease;
       transform-origin: center;
@@ -340,8 +334,8 @@
       color: #333 !important;
     }
 
-    /* ================= 地图控件样式优化 ================= */
-/* 小地图样式 */
+    /* 地图控件 */
+/* 小地图 */
 .leaflet-control-minimap {
   border: 2px solid rgba(0, 123, 255, 0.3) !important;
   border-radius: 8px !important;
@@ -350,24 +344,22 @@
   margin-top: 0px !important;
 }
 
-/* 鼠标经纬度显示 */
+/* 鼠标经纬度 */
 .leaflet-container .leaflet-control-mouseposition {
   background-color: rgba(255, 255, 255, 0.9) !important;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 123, 255, 0.2) !important;
   border-radius: 6px !important;
-  padding: 6px 10px !important;  /* 增加内边距 */
+  padding: 6px 10px !important; 
   font-size: 12px !important;
   color: #333 !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
-  
-  /* 【关键】让 Leaflet 自动排列，但调整间距 */
-  margin-right: 10px !important;   /* 与右侧边缘的间距 */
+  margin-right: 10px !important; 
   margin-bottom: 10px !important;
   z-index: 1000 !important;
 }
 
-/* ================= 自定义测距按钮样式 ================= */
+/* 测距按钮 */
 .measure-btn-icon {
     background: rgba(255, 255, 255, 0.95) !important;
     color: #007bff !important;
@@ -379,18 +371,18 @@
     text-align: center !important;
     text-decoration: none !important;
     border: 1px solid rgba(0, 123, 255, 0.2) !important;
-    transition: all 0.2s ease !important; /* 丝滑过渡 */
+    transition: all 0.2s ease !important;
     cursor: pointer !important;
 }
 
-/* 鼠标悬停时变蓝 */
+/* 鼠标悬停 */
 .measure-btn-icon:hover {
     background: #78ccf0 !important;
     color: #fff !important;
     border-color: #78ccf0 !important;
 }
 
-/* 绘制工具样式 */
+/* 绘制工具 */
 .leaflet-draw-toolbar a {
   background-color: rgba(255, 255, 255, 0.95) !important;
   border: 1px solid rgba(0, 123, 255, 0.2) !important;
@@ -401,7 +393,7 @@
 }
 
 
-/* 归属信息样式 */
+/* 归属信息 */
 .leaflet-control-attribution {
   background: rgba(255, 255, 255, 0.8) !important;
   backdrop-filter: blur(8px);
@@ -410,28 +402,25 @@
   border-radius: 4px !important;
 }
 
-/* ================= 修复左侧控件被遮挡与过渡动画 ================= */
 .leaflet-left {
-    left: 215px; /* 默认避开 200px 面板 + 15px 间距 */
+    left: 215px; /* 避开 200px 面板 + 15px 间距 */
     transition: left 0.3s ease !important;
 }
 
-/* ================= 左侧栏折叠功能 (重写) ================= */
+/* 左侧栏折叠 */
 .collapse-btn {
   position: absolute;
   top: 50%;
-  left: 100%; /* 关键：贴在左栏右边缘外侧 */
+  left: 100%;
   transform: translateY(-50%);
   width: 24px;
   height: 48px;
-  
-  /* 【修改】与左栏一致的液态玻璃效果 */
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-left: none; /* 与面板无缝连接 */
+  border-left: none; 
   border-radius: 0 8px 8px 0;
   color: #007bff;
   cursor: pointer;
@@ -444,18 +433,18 @@
 }
 
 .collapse-btn:hover {
-  background: rgba(255, 255, 255, 0.9); /* 悬停时稍微亮一点 */
-  width: 28px; /* 悬停稍微变宽 */
+  background: rgba(255, 255, 255, 0.9); 
+  width: 28px; 
 }
 
 .collapse-btn i {
   font-size: 14px;
 }
 
-/* 折叠状态：左侧栏宽度变为0 */
+/* 折叠状态 */
 .left-panel {
   transition: width 0.3s ease, padding 0.3s ease;
-  overflow: visible; /* 允许折叠按钮超出 */
+  overflow: visible;
 }
 
 .left-panel.collapsed {
@@ -471,7 +460,7 @@
   opacity: 0;
 }
 
-/* ================= 修复小地图位置 ================= */
+/* 小地图位置 */
 .leaflet-top.leaflet-right {
   right: 10px !important;
   top: 10px !important;
@@ -479,7 +468,7 @@
 }
 
 
-/* ================= 右下角控件布局与排序 ================= */
+/* 右下角控件布局与排序 */
 .leaflet-bottom.leaflet-right {
     display: flex !important;
     flex-direction: column !important;
@@ -601,29 +590,28 @@
     window.locationRegions = {}; window.dialectForms = {};
     window.wordData = []; window.fpjdData = []; window.deBoerData = [];
 
-    // ================= 2. 核心引擎：地图初始化 =================
+    // ================= 2. 地图初始化 =================
     function initMap() {
-        // 【修复】启用归属信息控件
         map = L.map('map', {
           center: [36.2048, 138.2529],
           zoom: 5,
           zoomControl: false,
-          attributionControl: true, // 【新增】启用归属信息
+          attributionControl: true,
           preferCanvas: false
         });
 
         // 基础控件
         L.control.zoom({ position: 'bottomright' }).addTo(map);
         L.control.scale({
-        position: 'bottomright', // 【修改】移到右下角，与缩放按钮并排
+        position: 'bottomright', 
         imperial: true,
         metric: true,
         maxWidth: 120
       }).addTo(map);
 
-        // 【新增】鼠标经纬度实时显示
+        // 鼠标经纬度实时显示
       L.control.mousePosition({
-        position: 'bottomright',  // Leaflet 会自动排列在 zoom 和 attribution 之间
+        position: 'bottomright', 
         prefix: '鼠标位置：',
         emptyString: '--, --',
         lngFormatter: function (lng) { return lng.toFixed(5) + '°E'; },
@@ -656,7 +644,7 @@
           maxZoom: 18
         }).addTo(map);
 
-        // 【新增】小地图/鹰眼图
+        // 小地图
         const miniMapLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
           attribution: ''
         });
@@ -677,7 +665,7 @@
           shadowRectOptions: { color: '#808080', weight: 1, fillOpacity: 0 }
         }).addTo(map);
 
-        // ================= 完美测量工具 (基于 Turf.js，修复原生 Bug) =================
+        // ================= 测量工具 =================
       let measurePoints = [];
       let measurePolyline = null;
       let measureMarkers = [];
@@ -686,7 +674,6 @@
       const measureBtn = L.control({ position: 'bottomright' });
       measureBtn.onAdd = function () {
         const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-        // 【修改】使用 CSS 类代替内联样式，以便支持 :hover 伪类
         div.innerHTML = '<a href="#" id="measure-toggle" class="measure-btn-icon" title="测量距离">📏</a>';
 
         L.DomEvent.disableClickPropagation(div);
@@ -698,14 +685,12 @@
           if (isMeasuring) {
             map.getContainer().style.cursor = 'crosshair';
             map.on('click', addMeasurePoint);
-            // 【修改】激活状态：强制蓝色背景（覆盖 hover 效果，提示用户正在测量）
             btn.style.background = '#007bff';
             btn.style.color = '#fff';
           } else {
             map.getContainer().style.cursor = '';
             map.off('click', addMeasurePoint);
             clearMeasure();
-            // 【修改】取消激活：清除内联样式，恢复 CSS 默认白底和悬停变蓝效果
             btn.style.background = '';
             btn.style.color = '';
           }
@@ -723,7 +708,6 @@
           if (measurePolyline) map.removeLayer(measurePolyline);
           measurePolyline = L.polyline(measurePoints, { color: '#007bff', weight: 2, dashArray: '5, 5' }).addTo(map);
 
-          // 使用 Turf.js 计算精准距离
           let totalDistance = 0;
           for (let i = 1; i < measurePoints.length; i++) {
             totalDistance += turf.distance(
@@ -751,7 +735,7 @@
       }
 
 
-        // 【新增】绘制工具
+        // 绘制工具
         const drawnItems = new L.FeatureGroup();
         map.addLayer(drawnItems);
 
@@ -799,7 +783,7 @@
       setTimeout(() => {
         map.panBy([-150, 0], { animate: false });
 
-        // 【新增】将比例尺和缩放按钮包裹在一个 Flex 容器中，实现水平并排
+        // 将比例尺和缩放按钮包裹在一个 Flex 容器中，实现水平并排
         const zoomEl = document.querySelector('.leaflet-control-zoom');
         const scaleEl = document.querySelector('.leaflet-control-scale');
         if (zoomEl && scaleEl && zoomEl.parentNode === scaleEl.parentNode) {
@@ -811,7 +795,7 @@
         }
       }, 100);
 
-      // ================= 左侧栏折叠功能 (重写) =================
+      // ================= 左侧栏折叠 =================
       const collapseBtn = document.getElementById('collapseBtn');
       const leftPanel = document.getElementById('leftPanel');
       let isCollapsed = false;
@@ -837,7 +821,7 @@
         }
       });
 
-      // 【新增】小屏环境下默认折叠
+      // 小屏环境下默认折叠
       if (window.innerWidth <= 431) {
         isCollapsed = true;
         leftPanel.classList.add('collapsed');
@@ -846,7 +830,7 @@
       }
     }
 
-    // ================= 3. 核心引擎：数据加载 =================
+    // ================= 3. 数据加载 =================
     async function loadJLDBData() {
         try {
           const [jldbText, relText, formText] = await Promise.all([
@@ -855,7 +839,7 @@
             fetch("dialect_form.csv").then(res => res.text())
           ]);
 
-          // 【修复 1】新增地点清洗映射表
+          // 地点清洗映射
           const locationCleanMap = {};
 
           const relLines = relText.trim().split(/\r?\n/); const relHeaders = parseCSVLine(relLines[0]);
@@ -866,7 +850,7 @@
             const rawLoc = row['地点']; if (!rawLoc) continue;
             const cleanLoc = (row['清洗'] && row['清洗'].trim() !== '') ? row['清洗'].trim() : rawLoc;
 
-            // 【修复 2】记录原始地点到标准地点的映射关系
+            // 记录原始地点到标准地点的映射关系
             locationCleanMap[rawLoc] = cleanLoc;
 
             if (!window.locationCoords[cleanLoc]) {
@@ -885,7 +869,7 @@
             const values = parseCSVLine(formLines[i]); const row = {};
             formHeaders.forEach((h, idx) => row[h] = values[idx] || '');
 
-            // 【修复 3】在存入 dialectForms 前，将地点替换为标准地点名
+            // 在存入 dialectForms 前，将地点替换为标准地点名
             const rawLoc = row['地点'];
             if (rawLoc && locationCleanMap[rawLoc]) {
               row['地点'] = locationCleanMap[rawLoc];
@@ -908,7 +892,7 @@
 
     async function loadfpjdData() {
       try {
-        // 【修改1】读取新的 FPJD 文件
+        // 读取新的 FPJD 文件
         const response = await fetch("FPJD_db_20251007_Simplified.csv");
         const text = await response.text();
         const lines = text.trim().split(/\r?\n/); const headers = parseCSVLine(lines[0]);
@@ -930,7 +914,7 @@
           }
         });
 
-        // 【修改2】使用 Set 对“项目”进行去重，防止左侧列表出现大量重复项
+        // 去重，防止出现大量重复项
         const uniqueProjects = [...new Set(window.fpjdData.map(p => p['项目']).filter(p => p))];
         renderWordList('fpjdWords', uniqueProjects);
       } catch (error) {
@@ -961,7 +945,7 @@
         }
       });
 
-      // 使用 Set 对“项目”进行去重
+      // 去重
       const uniqueProjects = [...new Set(window.deBoerData.map(p => p['项目']).filter(p => p))];
       renderWordList('deBoer', uniqueProjects);
     } catch (error) {
@@ -969,7 +953,7 @@
     }
   }
 
-    // ================= 4. 核心引擎：GIS 空间分析 =================
+    // ================= 4. GIS 空间分析 =================
     function generateIsoglossAndHull(points) {
       if (points.length < 2 || typeof turf === 'undefined') return;
       const uniqueForms = [...new Set(points.map(p => p.form))];
@@ -1022,7 +1006,7 @@
       if (document.getElementById('toggleConvexHull').checked) convexHullLayer.addTo(map);
     }
 
-    // ================= 5. 交互逻辑：列表渲染与地图打点 =================
+    // ================= 5. 列表渲染与地图打点 =================
     function renderWordList(containerId, words) {
       const container = document.getElementById(containerId);
       container.innerHTML = words.map(w => `<li data-word="${w}">${w}</li>`).join('');
@@ -1037,7 +1021,7 @@
     }
 
     function showWordOnMap(word) {
-        // 【修复】清除所有旧图层（包括打点、同言线、分布区）
+        // 清除所有旧图层
         if (isoglossLayer) map.removeLayer(isoglossLayer);
         if (convexHullLayer) map.removeLayer(convexHullLayer);
         if (markerLayer) map.removeLayer(markerLayer);
@@ -1058,17 +1042,17 @@
         });
       }
 
-      // 【修改3】查找 FPJD 数据：使用 filter 获取所有匹配项，支持同一项目在多地打点；读取 '形式' 字段
+      // 查找 FPJD 数据
       const fpjdItems = window.fpjdData.filter(p => p['项目'] === word);
       fpjdItems.forEach(fpjdItem => {
         const loc = fpjdItem['地点'];
-        const formVal = fpjdItem['形式']; // 对应新 CSV 的 '形式' 列
+        const formVal = fpjdItem['形式'];
         if (loc && formVal && window.locationCoords[loc]) {
           currentPoints.push({ name: loc, lng: window.locationCoords[loc].lng, lat: window.locationCoords[loc].lat, form: formVal });
         }
       });
 
-      // 【新增】查找 de Boer (2020) 数据
+      // 查找 de Boer (2020) 数据
       const deBoerItems = window.deBoerData.filter(p => p['项目'] === word);
       deBoerItems.forEach(deBoerItem => {
         const loc = deBoerItem['地点']; const formVal = deBoerItem['形式'];
@@ -1096,7 +1080,7 @@
         const marker = L.circleMarker([group.lat, group.lng], {
           radius: markerRadius, fillColor: markerColor, color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.85,
           className: 'dialect-marker-anim'
-        }).addTo(markerLayer); // 【关键修复】必须将 marker 加入到 markerLayer 中！
+        }).addTo(markerLayer); // 必须将 marker 加入到 markerLayer 中！
 
         let tooltipContent = '<div style="text-align:left; max-width: 260px;">';
         group.locations.forEach((loc, index) => {
@@ -1110,7 +1094,7 @@
         marker.on('click', function () { this.openTooltip(); });
       });
 
-      // 【修复】将新的打点图层组添加到地图
+      // 将新的打点图层组添加到地图
       markerLayer.addTo(map);
 
       if (currentPoints.length > 1) map.fitBounds(currentPoints.map(p => [p.lat, p.lng]), { padding: [50, 50] });
@@ -1133,7 +1117,7 @@
         }
         const jldbMatches = window.wordData.filter(w => w.word.toLowerCase().includes(searchTerm)).map(w => w.word);
 
-        // 【修改4】搜索结果同样需要去重
+        // 搜索结果同样需要去重
         const fpjdMatches = [...new Set(window.fpjdData.filter(p => p['项目'] && p['项目'].toLowerCase().includes(searchTerm)).map(p => p['项目']))];
         const deBoerMatches = [...new Set(window.deBoerData.filter(p => p['项目'] && p['项目'].toLowerCase().includes(searchTerm)).map(p => p['项目']))];
 
@@ -1164,7 +1148,7 @@
       initMap();
       await loadJLDBData();
       await loadfpjdData();
-      await loadDeBoerData(); // 【新增】加载 de Boer 数据
+      await loadDeBoerData(); 
       document.getElementById('loading').style.display = 'none';
 
       const urlParams = new URLSearchParams(window.location.search);
@@ -1180,7 +1164,7 @@
           showWordOnMap(targetWord);
           return;
         }
-        // 【新增】de Boer 精确匹配
+        // de Boer 精确匹配
         const deBoerExact = window.deBoerData.find(p => p['项目'] === targetWord);
         if (deBoerExact) {
           const uniqueProjects = [...new Set(window.deBoerData.map(p => p['项目']).filter(p => p))];

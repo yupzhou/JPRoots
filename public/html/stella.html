@@ -20,7 +20,6 @@
   </head>
   
   <style>
-    /* ================= CSS变量定义 ================= */
     :root {
       /* 背景色 */
       --bg-primary: #e8f4f8;
@@ -85,7 +84,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 0; /* 最底层 */
+      z-index: 0; 
       pointer-events: none; /* 不拦截任何鼠标点击或拖拽事件 */
       transition: transform 5s linear; /* 视差移动过渡 */
     }
@@ -94,7 +93,7 @@
     #main-container, #searchBox, #zoom-controls, #performance-panel, 
     #color-picker-panel, #minimap-wrapper, #queryTip, #loading-progress {
       position: relative;
-      z-index: 1; /* UI 组件保持原有的高 z-index (如 1000) 不受影响 */
+      z-index: 1; 
     }
 
     body {
@@ -126,7 +125,7 @@
       cursor: grabbing;
     }
 
-    /* ================= 球体样式 - 液态玻璃效果 ================= */
+    /* ================= 球体液态玻璃效果 ================= */
     .node-root, .node-word {
       cursor: pointer;
       transition: r 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
@@ -138,7 +137,7 @@
       paint-order: stroke fill;
     }
 
-    /* 悬停时的“引力光晕”效果 */
+    /* 悬停时的引力光晕效果 */
     .node-root:hover, .node-word:hover {
       r: 34;
       stroke: rgba(255, 255, 255, 0.9);
@@ -215,8 +214,8 @@
 
     /* 下位词族白色覆盖层（在球上、字下） */
     .subroot-overlay {
-      fill: url(#subroot-frost); /* 使用径向渐变 */
-      pointer-events: none;      /* 绝不拦截鼠标点击和悬停事件 */
+      fill: url(#subroot-frost); /* 径向渐变 */
+      pointer-events: none;      /* 不拦截鼠标点击和悬停事件 */
       transition: r 0.3s ease-out;
     }
 
@@ -268,7 +267,7 @@
 @media (max-width: 768px) {
   #searchBox {
     min-width: unset;
-    max-width: calc(100% - 40px); /* 左右各留20px边距，不占满 */
+    max-width: calc(100% - 40px);
     padding: 8px 12px;
     font-size: 12px;
     left: 33%;
@@ -577,7 +576,7 @@
     /* ================= 配色选择器 ================= */
 #color-picker-panel {
       position: fixed;
-      bottom: 50px; /* 稍高于性能栏 */
+      bottom: 50px;
       left: 10px;
       z-index: 1000;
       min-width: 60px;
@@ -1898,62 +1897,74 @@
             const rootId = rootNode.id;
 
             if (expandedRoots.has(root)) {
-              // ================= 收起逻辑 =================
-              // 1. 移除与该主词族相关的所有连线 (root->subroot, root->word)
-              links = links.filter(l => {
+            // ================= 收起逻辑 (彻底修复版) =================
+
+            // 1. 找出所有属于该 root 的 subroot 的 ID
+            const relatedSubRootIds = (rootToSubRoots[root] || []).map(s => `subroot_${s}`);
+
+            // 2. 删除所有相关连线：包括 root->subroot, root->word, 以及 subroot->word
+            links = links.filter(l => {
+              const sId = typeof l.source === 'object' ? l.source.id : l.source;
+              const tId = typeof l.target === 'object' ? l.target.id : l.target;
+
+              // 删除直接连接到当前 root 的连线
+              if (sId === rootId || tId === rootId) return false;
+
+              // 删除由属于该 root 的 subroot 发出的连线 (subroot -> word)
+              if (relatedSubRootIds.includes(sId)) return false;
+
+              return true;
+            });
+
+            // 3. 找出所有因为展开该 root 而存在的候选节点 (subroots 和 words)
+            const candidateNodes = nodes.filter(n => {
+              if (n.type === 'subroot') return rootToSubRoots[root]?.includes(n.label);
+              if (n.type === 'word') return rootToWords[root]?.includes(n.label);
+              return false;
+            });
+
+            // 4. 检查这些候选节点是否还连着其他已展开的 root
+            const nodesToRemoveIds = new Set();
+            candidateNodes.forEach(node => {
+              const hasOtherExpandedRoot = links.some(l => {
                 const sId = typeof l.source === 'object' ? l.source.id : l.source;
                 const tId = typeof l.target === 'object' ? l.target.id : l.target;
-                return sId !== rootId && tId !== rootId;
+
+                // 如果该节点连着某个 root，且那个 root 是已展开的（且不是当前 root）
+                if (sId === node.id && tId.startsWith('root_') && expandedRoots.has(tId.substring(5))) return true;
+                if (tId === node.id && sId.startsWith('root_') && expandedRoots.has(sId.substring(5))) return true;
+
+                return false;
               });
 
-              // 2. 找出因此变成“孤儿”的下位词族和单词，标记为待删除
-              const nodesToRemoveIds = new Set();
-              const checkOrphans = (nodeList) => {
-                nodeList.forEach(node => {
-                  const isOrphan = !links.some(l => {
-                    const sId = typeof l.source === 'object' ? l.source.id : l.source;
-                    const tId = typeof l.target === 'object' ? l.target.id : l.target;
-                    return sId === node.id || tId === node.id;
-                  });
-                  if (isOrphan) nodesToRemoveIds.add(node.id);
-                });
-              };
-
-              // 检查当前主词族下的 subroots 和 words
-              const relatedNodes = nodes.filter(n => (n.type === 'subroot' || n.type === 'word') &&
-                links.some(l => {
-                  const sId = typeof l.source === 'object' ? l.source.id : l.source;
-                  const tId = typeof l.target === 'object' ? l.target.id : l.target;
-                  // 只要曾经和这个 root 间接或直接相连的，都检查一遍
-                  return rootToWords[root]?.includes(n.label) || rootToSubRoots[root]?.includes(n.label);
-                })
-              );
-              checkOrphans(relatedNodes);
-
-              // 3. 优雅缩小淡出动画
-              const nodesToAnimate = mainG.selectAll(".node-word, .node-subroot").filter(d => nodesToRemoveIds.has(d.id));
-              const labelsToAnimate = mainG.selectAll(".label-word, .label-subroot").filter(d => nodesToRemoveIds.has(d.id));
-              // 【新增】获取需要删除的覆盖层
-              const overlaysToAnimate = mainG.selectAll(".subroot-overlay").filter(d => nodesToRemoveIds.has(d.id));
-
-              if (nodesToAnimate.size() > 0) {
-                nodesToAnimate.transition().duration(300).ease(d3.easeCubicIn).attr("r", 0);
-                // 【新增】覆盖层同步缩小至 0
-                overlaysToAnimate.transition().duration(300).ease(d3.easeCubicIn).attr("r", 0);
-                labelsToAnimate.transition().duration(300).ease(d3.easeCubicIn).style("opacity", 0)
-                  .on("end", function (d, i) {
-                    if (i === 0) {
-                      nodes = nodes.filter(n => !nodesToRemoveIds.has(n.id));
-                      expandedRoots.delete(root);
-                      updateGraph();
-                    }
-                  });
-              } else {
-                expandedRoots.delete(root);
-                updateGraph();
+              // 如果不连着其他已展开的 root，说明它彻底成了孤例，应该删除
+              if (!hasOtherExpandedRoot) {
+                nodesToRemoveIds.add(node.id);
               }
+            });
 
+            // 5. 缩小淡出动画
+            const nodesToAnimate = mainG.selectAll(".node-word, .node-subroot").filter(d => nodesToRemoveIds.has(d.id));
+            const labelsToAnimate = mainG.selectAll(".label-word, .label-subroot").filter(d => nodesToRemoveIds.has(d.id));
+            const overlaysToAnimate = mainG.selectAll(".subroot-overlay").filter(d => nodesToRemoveIds.has(d.id));
+
+            if (nodesToAnimate.size() > 0) {
+              nodesToAnimate.transition().duration(300).ease(d3.easeCubicIn).attr("r", 0);
+              overlaysToAnimate.transition().duration(300).ease(d3.easeCubicIn).attr("r", 0);
+              labelsToAnimate.transition().duration(300).ease(d3.easeCubicIn).style("opacity", 0)
+                .on("end", function (d, i) {
+                  if (i === 0) {
+                    nodes = nodes.filter(n => !nodesToRemoveIds.has(n.id));
+                    expandedRoots.delete(root);
+                    updateGraph();
+                  }
+                });
             } else {
+              expandedRoots.delete(root);
+              updateGraph();
+            }
+
+          } else {
               // ================= 展开逻辑 =================
               let hasNewNodes = false;
 
@@ -1986,7 +1997,7 @@
                   const angle = Math.random() * 2 * Math.PI;
                   const distance = rootNode.radius + 5;
                   nodes.push({
-                    id: subRootId, label: subRoot, type: "subroot", radius: 18, // 视觉与单词一致
+                    id: subRootId, label: subRoot, type: "subroot", radius: 18,
                     x: rootNode.x + Math.cos(angle) * distance, y: rootNode.y + Math.sin(angle) * distance,
                     vx: Math.cos(angle) * 8, vy: Math.sin(angle) * 8, isNew: true
                   });
@@ -2026,15 +2037,15 @@
               expandedRoots.add(root);
               updateGraph();
 
-              // 优雅放大淡入动画
+              // 放大淡入动画
               if (hasNewNodes) {
                 const newNodes = mainG.selectAll(".node-word, .node-subroot").filter(d => d.isNew);
                 const newLabels = mainG.selectAll(".label-word, .label-subroot").filter(d => d.isNew);
-                // 【新增】获取新生成的覆盖层
+                // 获取新生成的覆盖层
                 const newOverlays = mainG.selectAll(".subroot-overlay").filter(d => d.isNew);
 
                 newNodes.attr("r", 0).transition().duration(300).ease(d3.easeBackOut).attr("r", 18);
-                // 【新增】覆盖层同步从 0 弹性放大到目标半径
+                // 覆盖层同步从 0 弹性放大到目标半径
                 newOverlays.attr("r", 0).transition().duration(300).ease(d3.easeBackOut).attr("r", d => d.radius * 0.85);
                 newLabels.style("opacity", 0).transition().duration(300).ease(d3.easeCubicOut).style("opacity", 1);
 
@@ -2077,7 +2088,7 @@
 
     if (currentScale < 0.6) return;
     
-      // 🎛️ 【参数调节面板】
+      // 参数调节面板
       const LAYERS = 2;      // 1. 波纹圈数
       const DELAY = 100;     // 2. 发射延迟（毫秒）
       // =========================================================
@@ -2145,7 +2156,7 @@
         initZoom();
         requestAnimationFrame(updatePerformance);
 
-        // 立即居中，无动画
+        // 立即居中
         immediateCenterView();
 
         // 性能模式下停止模拟
@@ -2154,7 +2165,7 @@
         }
       }
 
-      // 立即居中（无动画）
+      // 立即居中
         function immediateCenterView() {
           const top100Nodes = nodes.filter(d => d.isTop100);
           if (top100Nodes.length === 0) return;
@@ -2360,10 +2371,14 @@
     }
 
     function handleNodeClick(event, d) {
-      event.stopPropagation();
-      if (d.type === "root") toggleRoot(d);
-      else showQueryTip(event, d);
-    }
+        event.stopPropagation();
+        if (d.type === "root") {
+          toggleRoot(d);
+        } else if (d.type === "word") {
+          showQueryTip(event, d);
+        }
+        // 如果是 subroot（下位词族），不执行任何操作，不弹出探索 JLDB 小窗口
+      }
 
     
 
@@ -2869,7 +2884,7 @@
     const ctx = starCanvas.getContext('2d');
     let stars = [];
 
-    // 🎛️ 【参数调节面板】
+    // 【参数调节面板】
     const STAR_COUNT = 150;          // 1. 粒子数量
     const PARALLAX_FACTOR = 0.08;    // 2. 视差系数 (0.08 表示主画布拖拽100px，背景反向移动8px)
     const MIN_OPACITY = 0.1;        // 3. 粒子最小透明度 (0.0 ~ 1.0)
