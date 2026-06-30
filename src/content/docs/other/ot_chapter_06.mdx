@@ -1,0 +1,49 @@
+---
+title: 东瀛球阳舆图 ALTAS
+description: N/A
+layout: ../../../layouts/FullWidthLayout.astro
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { LinkCard } from '@astrojs/starlight/components';
+
+「**东瀛球阳舆图**」是 JLDB 的衍生 WebGIS 项目。该项目基于 JLDB 原本的方言音韵学域部分，在地图上呈现词汇的方言形式、分布情况，同时支持由系统自动计算同言线和生成词形分布区。本身为 JLDB 的一个小部分，后开发了独立页面，原本称作「日琉语方言地理可视化系统（JLDB MAP）」，后为与 JLDB 命名统一化，改用「东瀛球阳」前缀。支持从 JLDB 的联动查询，同时集成 FPJD 全国方言分布调查数据库、de Boer (2020) 方言划分方案中的共享创新项目（有微调），一次并发读取三表数据，并支持同时查询。
+
+## 东瀛球阳舆图 ALTAS
+
+<iframe
+  src={`${import.meta.env.BASE_URL}html/JLDB_ATLAS.html`}
+  title="JLDB ATLAS"
+/>
+
+<Aside>
+ATLAS 的地点位置仅供参考，可能存在出入。
+</Aside>
+
+<Aside type="tip">也可通过下方链接卡片访问。</Aside>
+
+<LinkCard title="JPRoots JLDB ATLAS" href={`${import.meta.env.BASE_URL}html/JLDB_ATLAS.html`} target="_blank"/>
+
+# 功能介绍
+
+网站结构与外观设计：
+
+1. **全屏地图**  
+   挂载 Esri World Street Map 世界地图。
+2. **液态玻璃控制台**  
+   GIS 图层独立开关 + 极简搜索框 + 三个并列的数据表（JLDB、FPJD、de Boer）
+
+特色功能：
+
+1. **方言地理 WebGIS**  
+   Leaflet 交互地图库动态打点 + Turf.js/Voronoi 泰森多边形算法动态划分同言线 + 凸包算法（Convex Hull）动态生成词形分布区。
+2. **五表联查**  
+   作为小型方言地图 JLDB ATLAS Mini 的大屏版，拥有更强的功能：集成了 FPJD 全国方言分布调查数据库、de Boer (2020) 方言划分方案中的共享创新项目（有微调），使这些数据得以可视化展示。在 JLDB ATLAS Mini 对 JLDB, dialect_form, dialect_relation 三表联查的基础上（词族宝典才涉及查 JPRoots 表），查 FPJD_db_20251007_Simplified, deBoer_2020_Modified 表，合计五表，一次并发读取，穿透五表同时查询。
+4. **数据清洗**  
+   针对 JLDB 数据，将带备注的方言词形进行清洗、同位置但不同名称的地点进行统一化，用于 GIS 展示。
+5. **地点排序**  
+   针对 JLDB 数据，底层数据中预置方言地点顺序和所属大区，输出时严格按大区→地点顺序渲染。
+6. **历史词形**  
+   在同一示意地点分行显示不同时代/细致区域词形，主要解决方言历史词形的集中展示问题。
+7. **图层管理**  
+   内置同言线/词形分布区图层开关按钮；利用 Leaflet 的 Pane 机制，构建了严谨的 4 层结构：底图→特定区域遮罩→同言线/词形分布区→方言词形打点，解决手动开关图层时，图层异常遮挡的问题。

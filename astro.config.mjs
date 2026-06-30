@@ -69,7 +69,12 @@ export default defineConfig({
 					items: [{ autogenerate: { directory: 'onyomi' } }],
 				},
 				{
-					label: '档案空间',
+					label: '特约专栏',
+					collapsed: true,
+					items: [{ autogenerate: { directory: 'special' } }],
+				},
+				{
+					label: '案头助手',
 					collapsed: true,
 					items: [{ autogenerate: { directory: 'other' } }],
 				},

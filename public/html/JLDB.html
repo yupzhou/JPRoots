@@ -4,11 +4,25 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>东瀛球阳辞林 JLDB</title>
+    <title>JPRoots JLDB 东瀛球阳辞林</title>
     <meta name="description" content="日琉语综合知识站：东瀛球阳辞林">
     <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="../images/logo.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+    <!-- 引入 html2canvas 用于一键生成高清学术卡片图片 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?9ee9860863dd852a71bec18837f254c6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
 </head>
 
 <!-- 768px 改为 720px，也修改了 bootstrap.min.css -->
@@ -79,31 +93,152 @@
         				</div>
 					</div>
 				</div>
-				<p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">© Nanasi 七梨子 - JPRoots : 日琉语之道</p>
+				<p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">© Nanasi 七梨子 - <a class="index" href="https://yupzhou.github.io/JPRoots/">JPRoots : 日琉语之道</a></p>
+
+<!-- 词族弹窗 (整合词族卡片功能) -->
+<div id="root-info-modal" class="root-modal">
+  <!-- 【外层壳】：负责定高、圆角、阴影，并截断溢出内容 -->
+  <div class="root-modal-content">
+
+    <!-- 右上角窗口控制按钮组 (绝对定位，浮在壳上) -->
+    <div class="window-controls">
+      <button id="saveRootCardBtn" class="win-ctrl-btn" title="导出词族卡片">
+        <i class="fa fa-save"></i>
+      </button>
+      <button class="win-ctrl-btn root-close-btn" title="关闭">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- 【内层核】：负责内容展示和滚动 -->
+    <div class="root-modal-body">
+      <!-- 标题栏 -->
+      <div class="card-header">
+        <h2 id="root-name"><span class="highlight-root"></span></h2>
+        <div class="card-logo">JPRoots 词族宝典</div>
+      </div>
+
+      <!-- 词根详情与表格区域 -->
+      <div id="root-details"></div>
+      <div id="root-family-table" style="margin-top: 20px;"></div>
+
+      <!-- 卡片底部版权信息 -->
+      <div class="card-footer"
+        style="border-top: 2px dashed #e9ecef; padding-top: 15px; text-align: center; color: #95a5a6; margin-top: 20px;">
+        <p style="margin: 0; font-size: 13px; color: rgb(170,170,170); ">© Nanasi 七梨子 - JPRoots : 日琉语之道<br><i>Japonic
+            Lexical DataBase (JLDB)</i></p>
+        <p style="margin: 5px 0 0; font-size: 12px; color: rgb(170,170,170);">yupzhou.github.io/JPRoots</p>
+      </div>
+    </div>
+  </div>
+</div>
+
     </div>
 	
 	<script>
+
+  // 动态加载 Leaflet 地图库
+  (function () {
+    if (!window.L) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      document.head.appendChild(script);
+    }
+  })();
+
+  // 方言大区折叠面板控制函数
+  window.toggleRegionPanel = function (id) {
+    const content = document.getElementById(id);
+    const arrow = document.getElementById('arrow-' + id);
+    if (content && arrow) {
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        arrow.textContent = '▲';
+      } else {
+        content.style.display = 'none';
+        arrow.textContent = '▼';
+      }
+    }
+  };
+
 // 添加 CSV 解析函数
 function parseCSVLine(line) {
-  const result = [];
-  let current = '';
-  let inQuotes = false;
-  
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim());
-      current = '';
-    } else {
-      current += char;
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') { current += '"'; i++; } 
+            else { inQuotes = !inQuotes; }
+        } else if (char === ',' && !inQuotes) {
+            result.push(current); current = '';
+        } else { current += char; }
     }
-  }
-  result.push(current.trim());
-  return result;
+    result.push(current);
+    return result;
 }
+
+  // ================= 终极括号剥离器（状态机算法） =================
+    // 无论全角半角、嵌套、未闭合、特殊符号，都能精准切除括号及内部所有内容
+    function stripParentheses(str) {
+      let result = '';
+      let depth = 0; // 括号嵌套深度
+      for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (char === '(' || char === '（') {
+          depth++;
+        } else if (char === ')' || char === '）') {
+          if (depth > 0) depth--;
+        } else {
+          if (depth === 0) result += char;
+        }
+      }
+      return result.replace(/\s+/g, ' ').trim(); // 清理多余空格
+    }
+
+    // ================= 词形噪音清洗函数 (终极鲁棒版) =================
+    function cleanDialectForm(formText) {
+      if (!formText) return '';
+
+      // 1. 竖线截断
+      const pipeIndex = formText.indexOf('|');
+      let text = pipeIndex !== -1 ? formText.substring(0, pipeIndex) : formText;
+
+      // 2. 冒号拦截
+      if (text.indexOf('：') !== -1 || text.indexOf(':') !== -1) return '';
+
+      // 3. 按逗号/分号拆分，分别清洗，再拼接
+      const segments = text.split(/[,，;；]/);
+      const cleanedSegments = [];
+
+      for (let seg of segments) {
+        let cleaned = seg.trim();
+        if (!cleaned) continue;
+
+        // 3.1 等号截断
+        const eqIndex = cleaned.indexOf('=');
+        if (eqIndex !== -1) cleaned = cleaned.substring(0, eqIndex).trim();
+
+        // 3.2 【核心修复】调用状态机，彻底剥离所有括号及内部注释（如 (?= /anda/)）
+        cleaned = stripParentheses(cleaned);
+
+        // 3.3 去除开头的序号
+        cleaned = cleaned.replace(/^\d+\s+/, '');
+
+        // 3.4 去除末尾的声调符号
+        cleaned = cleaned.replace(/\s+[A-Za-z0-9\*\'\`\?]+$/, '');
+
+        if (cleaned) cleanedSegments.push(cleaned);
+      }
+
+      return cleanedSegments.join(', ');
+    }
+  // ====================================================
 
 let customDropdown, selectedText, originalSelect;
 
@@ -177,21 +312,98 @@ function closeIfOutside(e) {
   }
 }
 
-// 使用 Fetch API 加载 JLDB.csv 文件
-fetch("JLDB.csv")
-  .then(response => response.text())
-  .then(csvText => {
-    const lines = csvText.trim().split('\n');
-    const headers = lines[0].split(',').map(h => h.trim());
-    
-    const wordData = lines.slice(1).map(line => {
-      const values = parseCSVLine(line);
-      const obj = {};
-      headers.forEach((header, i) => {
-        obj[header] = values[i] || '';
+  // 使用 Fetch API 并行加载三个 CSV 文件 (重构版)
+  Promise.all([
+    fetch("JLDB.csv").then(res => res.text()),
+    fetch("dialect_relation.csv").then(res => res.text()),
+    fetch("dialect_form.csv").then(res => res.text())
+  ])
+    .then(([jldbText, relText, formText]) => {
+      // 1. 解析 dialect_relation.csv (地点、经纬度、大区、排序、清洗)
+      const relLines = relText.trim().split(/\r?\n/);
+      const relHeaders = parseCSVLine(relLines[0]);
+      window.relationDict = {};
+      window.dialectFields = [];
+      window.locationCoords = {};
+      window.locationRegions = {};
+      window.locationCleanMap = {}; // 【新增】地点清洗映射表
+
+      for (let i = 1; i < relLines.length; i++) {
+        if (!relLines[i].trim()) continue;
+        const values = parseCSVLine(relLines[i]);
+        const row = {};
+        relHeaders.forEach((h, idx) => row[h] = values[idx] || '');
+
+        const rawLoc = row['地点'];
+        if (!rawLoc) continue;
+
+        // 【核心修改】：获取清洗后的标准地点名（如果“清洗”列有值则使用，否则用原名）
+        const cleanLoc = (row['清洗'] && row['清洗'].trim() !== '') ? row['清洗'].trim() : rawLoc;
+
+        // 记录映射关系，供 dialect_form.csv 使用
+        window.locationCleanMap[rawLoc] = cleanLoc;
+
+        // 后续所有字典都以 cleanLoc 为 Key，避免重复和冲突
+        if (!window.dialectFields.includes(cleanLoc)) {
+          window.dialectFields.push(cleanLoc);
+        }
+
+        window.locationRegions[cleanLoc] = row['方言大区'] || '其他';
+
+        const lng = parseFloat(row['经度']);
+        const lat = parseFloat(row['纬度']);
+        if (!isNaN(lng) && !isNaN(lat)) {
+          window.locationCoords[cleanLoc] = { lng, lat };
+        }
+
+        window.relationDict[cleanLoc] = {
+          lng: lng,
+          lat: lat,
+          region: row['方言大区'] || '其他',
+          order: parseInt(row['地点排序']) || 0
+        };
+      }
+
+      // 按地点排序
+      window.dialectFields.sort((a, b) => {
+        return (window.relationDict[a].order || 0) - (window.relationDict[b].order || 0);
       });
-      return obj;
-    });
+
+      // 2. 解析 dialect_form.csv (word, 地点, 词形)
+      const formLines = formText.trim().split(/\r?\n/);
+      const formHeaders = parseCSVLine(formLines[0]);
+      window.dialectForms = {};
+      for (let i = 1; i < formLines.length; i++) {
+        if (!formLines[i].trim()) continue;
+        const values = parseCSVLine(formLines[i]);
+        const row = {};
+        formHeaders.forEach((h, idx) => row[h] = values[idx] || '');
+
+        // 【核心修改】：地点清洗映射
+        const rawLoc = row['地点'];
+        if (rawLoc && window.locationCleanMap && window.locationCleanMap[rawLoc]) {
+          row['地点'] = window.locationCleanMap[rawLoc]; // 替换为标准地点名
+        }
+
+        const w = row['word'];
+        if (w) {
+          if (!window.dialectForms[w]) window.dialectForms[w] = [];
+          window.dialectForms[w].push(row);
+        }
+      }
+
+      // 3. 解析 JLDB.csv (现在第1行是表头，第2行开始是数据，无前三行元数据)
+      const jldbLines = jldbText.trim().split(/\r?\n/);
+      const headers = parseCSVLine(jldbLines[0]);
+      const wordData = jldbLines.slice(1).map(line => {
+        if (!line.trim()) return null;
+        const values = parseCSVLine(line);
+        const obj = {};
+        headers.forEach((header, idx) => {
+          obj[header] = values[idx] || '';
+        });
+        return obj;
+      }).filter(item => item !== null);
     
     console.log("Loaded JLDB.csv:", wordData);
     
@@ -223,10 +435,11 @@ fetch("JLDB.csv")
     //250330新增反查功能
     const wd_fFilter = document.getElementById("wd_fFilter");
 
-    // 获取所有唯一的 wd_f 值
-    const uniquewd_f = [...new Set(wordData.map(item => item.wd_f))];
-    // 填充下拉框
-    uniquewd_f.forEach(wd_f => {
+        // 获取所有唯一的 wd_f 值（支持 | 分隔的多词族拆分）
+      const allWdF = wordData.flatMap(item => item.wd_f ? item.wd_f.split('|').map(w => w.trim()) : []);
+      const uniquewd_f = [...new Set(allWdF)].filter(w => w !== "");
+      // 填充下拉框
+      uniquewd_f.forEach(wd_f => {
       if (wd_f && wd_f.trim() !== "") {
         const option = document.createElement("option");
         option.value = wd_f;
@@ -256,7 +469,12 @@ fetch("JLDB.csv")
       searchInput.value = '';
 
       if (selectedwd_f) {
-        const filteredData = wordData.filter(item => item.wd_f === selectedwd_f);
+        const filteredData = wordData.filter(item => {
+          if (!item.wd_f) return false;
+          // 将词族字段按 | 分割，检查是否包含选中的词族
+          const families = item.wd_f.split('|').map(f => f.trim());
+          return families.includes(selectedwd_f);
+        });
         generateWordList(filteredData);
       } else {
         generateWordList();
@@ -283,8 +501,9 @@ fetch("JLDB.csv")
       };
       customDropdown.appendChild(emptyOption);
 
-      // 添加数据选项
-      const uniquewd_f = [...new Set(wordData.map(item => item.wd_f))];
+      // 添加数据选项（支持 | 分隔的多词族拆分）
+      const allWdF = wordData.flatMap(item => item.wd_f ? item.wd_f.split('|').map(w => w.trim()) : []);
+      const uniquewd_f = [...new Set(allWdF)].filter(w => w !== "");
       uniquewd_f.forEach(wd_f => {
         if (wd_f && wd_f.trim() !== "") {
           const option = document.createElement("div");
@@ -409,12 +628,20 @@ fetch("JLDB.csv")
       }
 
       const matchingWords = wordData.filter(item => {
+        // 1. 搜索 JLDB 基础字段
         for (const key in item) {
           if (item.hasOwnProperty(key)) {
-            const value = String(item[key] || ''); // 确保值为字符串
-            if (regex.test(value)) {
+            const value = String(item[key] || '');
+            if (regex.test(value) || (regex.test(key) && value.trim() !== '')) {
               return true;
             }
+          }
+        }
+        // 2. 搜索 dialect_form 词形和地点 (新锚点查询)
+        const forms = window.dialectForms ? (window.dialectForms[item.word] || []) : [];
+        for (const form of forms) {
+          if (regex.test(String(form['词形'] || '')) || regex.test(String(form['地点'] || ''))) {
+            return true;
           }
         }
         return false;
@@ -483,26 +710,115 @@ fetch("JLDB.csv")
       })
       .catch(error => console.error("Failed to load JPRoots.csv:", error));
 
-    // 显示词根信息函数
-    function showRootInfo(rootName) {
-      const rootInfo = rootData.find(item => item.root === rootName);
-      if (rootInfo) {
-          document.getElementById('root-name').textContent = rootInfo.root;
-          let detailsHTML = '';
+    // 显示词根信息函数 (整合词族卡片与树状演化列表)
+      function showRootInfo(rootName) {
+        const rootInfo = rootData.find(item => item.root === rootName);
+
+        // 1. 更新标题栏信息
+        const nameSpan = document.querySelector('#root-name .highlight-root');
+        if (nameSpan) nameSpan.textContent = rootName;
+        const subtitle = document.getElementById('root-subtitle');
+
+        // 2. 渲染词根基础溯源信息 (恢复蓝色胶囊样式，一行两个，去掉左侧蓝边)
+        let detailsHTML = '';
+        if (rootInfo) {
+            if (rootInfo.mn) detailsHTML += `<p class="root-detail"><strong>核心语义</strong> ${rootInfo.mn}</p>`;
           if (rootInfo.pjr) detailsHTML += `<p class="root-detail"><strong>日琉祖语</strong> ${rootInfo.pjr}</p>`;
-          if (rootInfo.poj) detailsHTML += `<p class="root-detail"><strong>表日祖语</strong> ${rootInfo.poj}</p>`;
+          if (rootInfo.poj) detailsHTML += `<p class="root-detail"><strong>日本祖语</strong> ${rootInfo.poj}</p>`;
           if (rootInfo.pr) detailsHTML += `<p class="root-detail"><strong>琉球祖语</strong> ${rootInfo.pr}</p>`;
-          if (rootInfo.ac_r) detailsHTML += `<p class="root-detail"><strong>音　　调</strong> ${rootInfo.ac_r}</p>`;
           if (rootInfo.wd_cl) detailsHTML += `<p class="root-detail"><strong>词　　性</strong> ${rootInfo.wd_cl}</p>`;
-          if (rootInfo.mn) detailsHTML += `<p class="root-detail"><strong>含　　义</strong> ${rootInfo.mn}</p>`;
-          if (rootInfo.era) detailsHTML += `<p class="root-detail"><strong>日语初出</strong> ${rootInfo.era}</p>`;
-          if (rootInfo.lg_c) detailsHTML += `<p class="root-detail"><strong>语言集合</strong> ${rootInfo.lg_c}</p>`;
-          document.getElementById('root-details').innerHTML = detailsHTML;
-          document.getElementById('root-info-modal').style.display = 'flex';
-      } else {
-          alert(`未找到词根“${rootName}”的信息`);
+          if (rootInfo.ac_r) detailsHTML += `<p class="root-detail"><strong>声　　调</strong> ${rootInfo.ac_r}</p>`;
+          if (rootInfo.era) detailsHTML += `<p class="root-detail"><strong>初　　出</strong> ${rootInfo.era}</p>`;
+          if (rootInfo.lg_c) detailsHTML += `<p class="root-detail" style="grid-column: span 2;"><strong>地域分布</strong> ${rootInfo.lg_c}</p>`;
+          detailsHTML += `</div>`;
+        } else {
+          if (subtitle) subtitle.textContent = `Japonic Lexical DataBase (JLDB)`;
+          detailsHTML = '<p style="color:#999; text-align: center; padding: 20px 0;">暂未收录，敬请期待。</p>';
+        }
+        document.getElementById('root-details').innerHTML = detailsHTML;
+
+                // 3. 筛选同词族单词并生成树状演化列表 (支持 wd_f_2 下位词族层级)
+        const familyWords = wordData.filter(item => {
+          if (!item.wd_f) return false;
+          const families = item.wd_f.split(/\||｜/).map(f => f.trim());
+          return families.includes(rootName);
+        });
+
+        let treeHTML = '';
+        if (familyWords.length > 0) {
+          treeHTML += `<h4 style="color: #2c3e50; border-left: 3px solid #007bff; padding-left: 10px; margin-bottom: 15px; font-size: 18px;">同源词表（本典共收 ${familyWords.length} 词）</h4>`;
+          treeHTML += `<div style="font-family: 'Microsoft YaHei', monospace; font-size: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 20px; line-height: 1.8;">`;
+          treeHTML += `<div style="font-weight: bold; color: #007bff; margin-bottom: 5px;">${rootName}</div>`;
+
+          // 【核心逻辑】将单词分为“直接归属”和“下位词族”两类
+          const directWords = [];
+          const subFamilyMap = {};
+
+          familyWords.forEach(item => {
+            // 检查是否存在下位词族 (wd_f_2)
+            if (item.wd_f_2 && item.wd_f_2.trim() !== "") {
+              const subs = item.wd_f_2.split(/\||｜/).map(f => f.trim()).filter(f => f !== "");
+              if (subs.length > 0) {
+                // 支持一个词属于多个下位词族
+                subs.forEach(sub => {
+                  if (!subFamilyMap[sub]) subFamilyMap[sub] = [];
+                  subFamilyMap[sub].push(item);
+                });
+                return; // 已归类，跳过直接归属
+              }
+            }
+            directWords.push(item);
+          });
+
+          // 计算顶层节点总数（直接单词数 + 下位词族数），用于判断最后一个节点的 └─ 符号
+          const totalTopLevelNodes = directWords.length + Object.keys(subFamilyMap).length;
+          let currentIndex = 0;
+
+          // 1. 渲染直接归属的单词
+          directWords.forEach(item => {
+            currentIndex++;
+            const isLast = currentIndex === totalTopLevelNodes;
+            const prefix = isLast ? '└─ ' : '├─ ';
+            treeHTML += `<div>${prefix}<span class="family-word-link" data-word="${item.word}" style="color: #007bff; cursor: pointer; text-decoration: none; transition: all 0.2s;">${item.word}</span></div>`;
+          });
+
+          // 2. 渲染下位词族及其包含的单词
+          Object.keys(subFamilyMap).forEach(subName => {
+            currentIndex++;
+            const isLastSub = currentIndex === totalTopLevelNodes;
+            const subPrefix = isLastSub ? '└─ ' : '├─ ';
+
+            // 渲染下位词族节点
+            treeHTML += `<div>${subPrefix}<span style="color: #007bff; font-weight: bold; font-style: bold;">${subName}</span></div>`;
+
+            // 渲染该下位词族下的单词
+            const words = subFamilyMap[subName];
+            words.forEach((item, wIdx) => {
+              const isLastWord = wIdx === words.length - 1;
+              const wordPrefix = isLastWord ? '└─ ' : '├─ ';
+              // 缩进对齐：父节点前缀占3个字符宽度，子节点缩进 24px 完美对齐
+              treeHTML += `<div style="margin-left: 24px;">${wordPrefix}<span class="family-word-link" data-word="${item.word}" style="color: #007bff; cursor: pointer; text-decoration: none; transition: all 0.2s;">${item.word}</span></div>`;
+            });
+          });
+
+          treeHTML += `</div>`;
+        } else {
+          treeHTML = '<p style="color: #999; text-align: center; margin-top: 20px; font-style: italic;">该词族下暂未收录其他同源词。</p>';
+        }
+        document.getElementById('root-family-table').innerHTML = treeHTML;
+
+        // 4. 绑定树状列表的点击跳转事件
+        document.querySelectorAll('.family-word-link').forEach(link => {
+          link.addEventListener('click', function () {
+            const targetWord = this.getAttribute('data-word');
+            closeRootModal(); // 关闭弹窗
+            displayWordInfo(targetWord); // 跳转并显示单词详情
+          });
+        });
+
+        // 5. 显示弹窗
+        document.getElementById('root-info-modal').style.display = 'flex';
       }
-    }
 
     // 关闭词根弹窗
     function closeRootModal() {
@@ -548,7 +864,7 @@ fetch("JLDB.csv")
         'kz': '汉字',
         'wd_cl': '词性',
         'ky': '活用型',
-        'ac': '音调',
+        'ac': '声调',
         'ac_c': '调类',
         'mn': '释义',
         'pij': '半岛日语',
@@ -564,15 +880,15 @@ fetch("JLDB.csv")
         'mdj': '近世现代日语',
         'hkz': '历史假名遣',
         'mkz': '现代假名遣',
-        'ej': '东日本方言',
-        'wj': '西日本方言',
-        'itj': '出云-东北方言',
-        'kj': '九州方言',
-        'am': '奄美语',
-        'ok': '冲绳语',
-        'mi': '宫古语',
-        'ya': '广域八重山语',
-        'lg_c': '语言集合',
+//        'ej': '东日本方言',
+//        'wj': '西日本方言',
+//        'itj': '出云-东北方言',
+//        'kj': '九州方言',
+//        'am': '奄美语',
+//        'ok': '冲绳语',
+//        'mi': '宫古语',
+//        'ya': '广域八重山语',
+        'lg_c': '地域分布',
         'wd_f': '词族',
         'cp': '复合',
         'da': '分解',
@@ -588,46 +904,52 @@ fetch("JLDB.csv")
     };
 
     // 从第一个词条提取所有字段
-    function extractAllFields(wordData) {
+      function extractAllFields(wordData) {
         if (wordData.length === 0) return [];
         const sampleEntry = wordData[0];
         const allFields = Object.keys(sampleEntry);
-        
-        // 过滤掉不需要搜索的字段
-        return allFields.filter(field => 
-            field !== 'class1' && 
-            field !== 'class2' && 
-            field !== 'class3' && 
-            field !== 'class4' && 
-            field !== 'class5' && 
-            field !== 'class6' && 
-            field !== 'lg_c' && 
-            field !== 'ai' && 
-            field !== 'st' && 
-            field !== 'as' && 
-            field !== 'kt' && 
-            field !== 'ie' && 
-            field !== 'te' && 
-            field !== 'ol' && 
-            field !== 'or' && 
-            field !== 'wd_f_2' && 
-            field !== 'if_o' && 
-            field !== 'rd_o' &&
-            field !== 'woj_2'
-        );
-    }
 
-    // 渲染字段选择界面
-    function renderFieldCheckboxes(fields) {
+        // 1. 从全局获取方言大区数据
+        const regions = window.locationRegions || {};
+        const uniqueRegions = new Set();
+        Object.values(regions).forEach(r => {
+          if (r && r.trim() !== '' && r !== '其他') uniqueRegions.add(r);
+        });
+        const regionFields = Array.from(uniqueRegions).map(r => `region_${r}`);
+
+        // 3. 过滤掉基础字段
+        const filteredFields = allFields.filter(field =>
+          field !== 'class1' && field !== 'class2' && field !== 'class3' &&
+          field !== 'class4' && field !== 'class5' && field !== 'class6' &&
+          field !== 'lg_c' && field !== 'ai' && field !== 'st' &&
+          field !== 'as' && field !== 'kt' && field !== 'ie' &&
+          field !== 'te' && field !== 'ol' && field !== 'or' &&
+          field !== 'wd_f_2' && field !== 'if_o' && field !== 'rd_o' &&
+          field !== 'woj_2' && field !== 'ej' && field !== 'wj' && field !== 'itj' && field !== 'kj' && field !== 'am' && field !== 'ok' && field !== 'mi' && field !== 'ya'
+        );
+
+        // 4. 合并常规字段和大区字段
+        return [...filteredFields, ...regionFields];
+      }
+
+      // 渲染字段选择界面
+      function renderFieldCheckboxes(fields) {
         advancedSearchPanel.innerHTML = `
             <h4>探秘分野 ...</h4>
             <div class="field-checkboxes">
-                ${fields.map(field => `
-                    <div class="field-checkbox">
-                        <input type="checkbox" id="field-${field}" value="${field}">
-                        <label for="field-${field}">${fieldNameMap[field] || field}</label>
-                    </div>
-                `).join('')}
+                ${fields.map(field => {
+          // 【新增】处理方言大区的显示名称，加上地图emoji和后缀
+          let displayName = fieldNameMap[field] || field;
+          if (field.startsWith('region_')) {
+            displayName = `${field.replace('region_', '')}`;
+          }
+          return `
+                        <div class="field-checkbox">
+                            <input type="checkbox" id="field-${field}" value="${field}">
+                            <label for="field-${field}">${displayName}</label>
+                        </div>
+                    `;
+        }).join('')}
             </div>
             <div class="advanced-actions">
                 <button id="applyAdvancedSearch" disabled>甄选</button>
@@ -635,7 +957,7 @@ fetch("JLDB.csv")
                 <button id="selectAllFields">网罗</button>
             </div>
         `;
-    }
+      }
 
     // 初始化高级搜索面板
     function initAdvancedSearch(wordData) {
@@ -709,35 +1031,54 @@ fetch("JLDB.csv")
         advancedSearchPanel.style.display = "none";
     }
 
-    // 执行高级搜索逻辑
-    function performAdvancedSearch(searchTerm, fields) {
-      // 检查正则表达式模式
-      let regex;
-      if (searchTerm.startsWith('/') && searchTerm.endsWith('/')) {
-        try {
-          regex = new RegExp(searchTerm.slice(1, -1), 'i');
-        } catch (e) {
-          alert('正则表达式格式错误');
-          return;
+    // 执行高级搜索逻辑 (重构版：适配三表结构)
+      function performAdvancedSearch(searchTerm, fields) {
+        let regex;
+        if (searchTerm.startsWith('/') && searchTerm.endsWith('/')) {
+          try { regex = new RegExp(searchTerm.slice(1, -1), 'i'); }
+          catch (e) { alert('正则表达式格式错误'); return; }
+        } else {
+          const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          regex = new RegExp(escapedTerm, 'i');
         }
-      } else {
-        // 字面量匹配：转义所有正则特殊字符
-        const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        regex = new RegExp(escapedTerm, 'i');
-      }
 
-      // 过滤数据
-      const matchingWords = wordData.filter(item => {
-        return fields.some(field => {
-          const value = String(item[field] || '');
-          return regex.test(value);
+        // 1. 分离普通字段和方言大区字段
+        const normalFields = fields.filter(f => !f.startsWith('region_'));
+        const selectedRegions = fields.filter(f => f.startsWith('region_')).map(f => f.replace('region_', ''));
+
+        // 2. 过滤数据
+        const matchingWords = wordData.filter(item => {
+          // A. 检查普通基础字段是否匹配
+          const matchNormal = normalFields.some(field => {
+            const value = String(item[field] || '');
+            return regex.test(value) || (regex.test(field) && value.trim() !== '');
+          });
+          if (matchNormal) return true;
+
+          // B. 检查方言大区/词形是否匹配 (基于新表结构内存联查)
+          if (selectedRegions.length > 0) {
+            const wordForms = window.dialectForms ? (window.dialectForms[item.word] || []) : [];
+            const matchRegion = wordForms.some(form => {
+              const loc = form['地点'];
+              const formVal = String(form['词形'] || '');
+              // 从全局关系字典中获取该地点所属的大区
+              const region = (window.locationRegions && window.locationRegions[loc]) ? window.locationRegions[loc] : '';
+
+              // 如果该词形所在的大区被选中，且词形或地点名匹配搜索词
+              if (selectedRegions.includes(region)) {
+                return regex.test(formVal) || regex.test(loc);
+              }
+              return false;
+            });
+            if (matchRegion) return true;
+          }
+
+          return false;
         });
-      });
 
-      // 更新词汇表显示
-      generateWordList(matchingWords);
-      document.getElementById("wd_fFilter").value = ''; // 重置词族选择
-    }
+        generateWordList(matchingWords);
+        document.getElementById("wd_fFilter").value = '';
+      }
 
     // 重置字段选择
     function resetFieldSelection() {
@@ -778,7 +1119,7 @@ fetch("JLDB.csv")
           infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">活用</strong> ${info.ky}</p>`;
         }
         if (info.ac && info.ac.trim() !== "") {
-          infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">音调</strong> ${info.ac}</p>`;
+          infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">声调</strong> ${info.ac}</p>`;
         }
         if (info.ac_c && info.ac_c.trim() !== "") {
           infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">调类</strong> ${info.ac_c}</p>`;
@@ -828,7 +1169,11 @@ fetch("JLDB.csv")
         if (info.mkz && info.mkz.trim() !== "") {
           infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">现代假名</strong> ${info.mkz}</p>`;
         }
-        if (info.class3 && info.class3.trim() !== "0") {
+        const hasNewDialectForms = window.dialectForms && window.dialectForms[word] && window.dialectForms[word].length > 0;
+      if (hasNewDialectForms) {
+        infoHTML += `<p><strong class="underlined-text">日 琉 诸 语 方 言 形 态</strong></p>`;
+      }
+        /*if (info.class3 && info.class3.trim() !== "0") {
           infoHTML += `<p><strong class="underlined-text">本 土 方 言 形 态</strong></p>`;
         }
         if (info.ej && info.ej.trim() !== "") {
@@ -857,20 +1202,134 @@ fetch("JLDB.csv")
         }
         if (info.ya && info.ya.trim() !== "") {
           infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">大八重山</strong> ${info.ya}</p>`;
+        }*/
+
+     /* 【预留】显示 ol 后的新方言点文本
+      dialectFields.forEach(field => {
+        if (info[field] && info[field].trim() !== '') {
+         infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text">${field}</strong> ${info[field]}</p>`;
         }
+      }); */
+
+            // 【重构】处理 dialect_form 中的新方言点字段，按全局地点顺序排序后分组
+      const regionGroups = {};
+      let currentWordForms = window.dialectForms ? (window.dialectForms[word] || []) : [];
+
+      if (currentWordForms.length > 0) {
+        // 1. 核心修复：先对所有词形按全局“地点排序”进行升序排列
+        currentWordForms.sort((a, b) => {
+          const orderA = (window.relationDict && window.relationDict[a['地点']]) ? window.relationDict[a['地点']].order : 999999;
+          const orderB = (window.relationDict && window.relationDict[b['地点']]) ? window.relationDict[b['地点']].order : 999999;
+          return orderA - orderB;
+        });
+
+        // 2. 遍历排序后的数组进行分组 
+        // (JS 对象会严格保留键的插入顺序，从而保证大区也是按 1->2->3 的顺序排列的)
+        currentWordForms.forEach(form => {
+          const loc = form['地点'];
+          const formVal = form['词形']; 
+          if (!loc || !formVal) return;
+
+          const region = (window.locationRegions && window.locationRegions[loc]) ? window.locationRegions[loc] : '其他';
+          if (!regionGroups[region]) regionGroups[region] = [];
+          regionGroups[region].push({ name: loc, form: formVal });
+        });
+      }
+
+      let regionsHTML = '';
+      const regionKeys = Object.keys(regionGroups);
+      if (regionKeys.length > 0) {
+        regionsHTML += `<div class="dialect-regions-container" style="margin-top: 15px; border-top: 1px dashed #007bff; padding-top: 15px;">`;
+//        regionsHTML += `<div style="font-weight: bold; margin-bottom: 10px; color: #007bff; font-size: 15px;">日琉诸语方言词形</div>`;
+        let regionIndex = 0;
+        regionKeys.forEach(regionName => {
+          const points = regionGroups[regionName];
+          const collapseId = `region-collapse-${regionIndex++}`;
+          // 方言点用圆角矩形框住，词形用全角分号区分
+          let pointsHTML = points.map(p =>
+            `<span class="dialect-point-box">${p.name}</span> ${p.form}`
+          ).join('；');
+
+          regionsHTML += `
+            <div class="region-group" style="margin-bottom: 8px;">
+              <div class="region-header" onclick="window.toggleRegionPanel('${collapseId}')" style="cursor: pointer; font-weight: bold; color: #007bff; padding: 8px 12px; background: #f1f3f5; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+                <span>${regionName}</span>
+                <span class="region-arrow" id="arrow-${collapseId}" style="transition: transform 0.2s;">▼</span>
+              </div>
+              <div id="${collapseId}" class="region-content" style="display: none; padding: 12px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 6px 6px; line-height: 1.8; background: #fff;">
+                ${pointsHTML}
+              </div>
+            </div>
+          `;
+        });
+        regionsHTML += `</div>`;
+      }
+
+
+            // 判断是否存在方言数据 (仅以 dialect_form.csv 中的实际词形为准，彻底抛弃旧的 class3/class4 标记)
+      const hasDialect = currentWordForms && currentWordForms.length > 0;
+
+      // 插入地图容器（蓝色圆角边框）及下方方言大区展示区
+      if (hasDialect) {
+        infoHTML += `
+    <div class="dialect-map-container" style="border: 1px solid #007bff; border-radius: 12px; padding: 12px; margin: 15px 0;">
+        <!-- 1. 标题与独立地图按钮 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div class="dialect-map-title" style="font-weight: bold; color: #007bff; font-size: 16px; margin: 0;">JLDB ATLAS Mini</div>
+            <a href="JLDB_ATLAS.html?word=${encodeURIComponent(word)}" target="_blank" 
+               style="font-size: 12px; color: white; background: linear-gradient(135deg, #007bff, #0056b3); padding: 5px 12px; border-radius: 15px; text-decoration: none; font-weight: bold; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,123,255,0.3);" 
+               onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,123,255,0.4)'" 
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,123,255,0.3)'" title="东瀛球阳舆图">
+               ➤ STANDALONE
+            </a>
+        </div>
+        
+        <!-- 2. 开关组独立成行 (解决窄屏换行与对齐问题) -->
+        <div class="map-gis-controls" style="margin-bottom: 5px; font-size: 12px; color: #007bff; display: flex; flex-wrap: wrap; align-items: center;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; background: #f8f9fa; padding: 5px 10px; border-radius: 6px; border: 1px solid #e9ecef; user-select: none; margin-right: 10px;">
+                <input type="checkbox" id="toggleIsogloss" checked style="margin: 0; cursor: pointer;"> 
+                <span style="color: #adb5bd; margin-right: 2px;">动态生成</span> <strong>同言线</strong>
+            </label>
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; background: #f8f9fa; padding: 5px 10px; border-radius: 6px; border: 1px solid #e9ecef; user-select: none;">
+                <input type="checkbox" id="toggleConvexHull" checked style="margin: 0; cursor: pointer;"> 
+                <span style="color: #adb5bd; margin-right: 2px;">动态生成</span> <strong>词形分布区</strong>
+            </label>
+        </div>
+
+
+
+        <!-- 3. 地图容器 (去掉下边框，与手柄无缝融合) -->
+        <div id="dialect-map" style="height: 250px; border-radius: 8px 8px 0 0; overflow: hidden; border: 1px solid #e0e0e0; border-bottom: none; position: relative;"></div>
+        <!-- 4. 拖拽手柄 -->
+        <div class="map-resize-handle" title="拖动调整地图高度">
+            <div class="handle-grip"></div>
+        </div>
+        ${regionsHTML}
+    </div>`;
+    
+      }      
+
         if (info.class5 && info.class5.trim() !== "0") {
           infoHTML += `<p><strong class="underlined-text">词 源 学</strong></p>`;
         }
         if (info.lg_c && info.lg_c.trim() !== "") {
-          infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">语言集合</strong> ${info.lg_c}</p>`;
+          infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">地域分布</strong> ${info.lg_c}</p>`;
         }
-        // 修改词根（词族）显示为可点击链接
-        if (info.wd_f && info.wd_f.trim() !== "") {
-            infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;">
+        // 修改词根（词族）显示为可点击链接（支持多词族拆分显示）
+      if (info.wd_f && info.wd_f.trim() !== "") {
+        // 1. 将 "A|B" 拆分为独立的词族数组
+        const families = info.wd_f.split(/\||｜/).map(f => f.trim()).filter(f => f !== "");
+
+        // 2. 为每个词族生成独立的点击链接，并用灰色的 "|" 在视觉上优雅分隔
+        const familyLinks = families.map(f =>
+          `<span class="root-link" data-root="${f}">${f}</span>`
+        ).join('<span>|</span>');
+
+        infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
                 <strong class="bordered-text justify-text">词族</strong> 
-                <span class="root-link" data-root="${info.wd_f}">${info.wd_f}</span>
+                <span style="display: inline-flex; align-items: center; gap: 4px;">${familyLinks}</span>
             </p>`;
-        }
+      }
         if (info.wd_f_2 && info.wd_f_2.trim() !== "") {
           infoHTML += `<p style="line-height: 1.5; margin: 0 0 10px;"><strong class="bordered-text justify-text">下位词族</strong> ${info.wd_f_2}</p>`;
         }
@@ -939,23 +1398,365 @@ fetch("JLDB.csv")
         }
         wordInfo.innerHTML = infoHTML;
 
-        // 为新创建的元素添加事件监听
-        document.querySelectorAll('.root-link').forEach(link => {
-            link.addEventListener('click', function() {
-                showRootInfo(this.dataset.root);
+        // 初始化 Leaflet 地图
+      if (hasDialect) {
+        if (window.currentMap) { window.currentMap.remove(); window.currentMap = null; }
+
+        // 注入带左侧三角的圆角矩形 Tooltip 样式
+        if (!document.getElementById('custom-dialect-tooltip-style')) {
+          const style = document.createElement('style');
+          style.id = 'custom-dialect-tooltip-style';
+          style.innerHTML = `
+    .custom-dialect-tooltip { background: #fff !important; border: 1.5px solid #007bff !important; border-radius: 8px !important; color: #333 !important; font-size: 14px !important; padding: 8px 14px !important; box-shadow: 0 4px 12px rgba(0,123,255,0.2) !important; } 
+    .custom-dialect-tooltip.leaflet-tooltip-right:before { border-right-color: #007bff !important; } 
+    .custom-dialect-tooltip.leaflet-tooltip-right { margin-left: 8px !important; }
+    
+    /* 小点顺滑放大动画 (cubic-bezier Q弹效果) */
+    .dialect-marker-anim {
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), stroke-width 0.3s ease;
+        transform-origin: center;
+        transform-box: fill-box;
+        cursor: pointer;
+    }
+    .dialect-marker-anim:hover {
+        transform: scale(1.3); /* 放大 */
+        stroke-width: 2px;     /* 边框 */
+    }
+    /* 方言点圆角矩形标签样式 */
+    .dialect-point-box {
+        display: inline-block;
+        background: #f2f4f5;
+        color: #007bff;
+        padding: 0px 5px;
+        border-radius: 5px;
+        font-size: 0.9em;
+        margin-right: 4px;
+        font-weight: 500;
+    }
+    .region-header:hover {
+        background: #e2e6ea !important;
+    }
+`;
+          document.head.appendChild(style);
+        }
+
+        setTimeout(() => {
+          const mapContainer = document.getElementById('dialect-map');
+          if (mapContainer && !mapContainer._leaflet_id && typeof L !== 'undefined') {
+            // 加入 preferCanvas: false 强制使用 SVG，否则 CSS 动画无法生效
+            const map = L.map(mapContainer, {
+              center: [36.2048, 138.2529],
+              zoom: 5,
+              zoomControl: false,
+              attributionControl: false,
+              preferCanvas: false
             });
+            window.currentMap = map; // 【新增】保存地图实例，供外部拖拽事件调用
+            L.control.zoom({ position: 'bottomright' }).addTo(map); //缩放按钮
+            L.control.scale({
+              position: 'bottomleft',
+              imperial: true,      // 【新增】启用英制单位（英里）
+              metric: true,        // 【新增】保留公制单位（公里）
+              maxWidth: 120        // 【新增】调整比例尺宽度
+            }).addTo(map); //比例尺
+            // 【层级 1】创建专属的“海域遮罩” Pane (位于底图 200 之上，分析图层 350 之下)
+            map.createPane('maskPane');
+            map.getPane('maskPane').style.zIndex = 250;
+            map.getPane('maskPane').style.pointerEvents = 'none'; // 彻底不拦截鼠标事件
+
+            // 【层级 2】创建专属的“同言线/分布区” Pane (位于遮罩 250 之上，打点 400 之下)
+            map.createPane('polygonPane');
+            map.getPane('polygonPane').style.zIndex = 350;
+            map.getPane('polygonPane').style.pointerEvents = 'auto'; // 允许多边形响应鼠标 Tooltip
+
+            // 特定海域遮挡
+            const maskCoords = [
+              [26, 123.3], [26, 124.7],
+              [25.6, 124.7], [25.6, 123.3]
+            ];
+            L.polygon(maskCoords, {
+              pane: 'maskPane', // 【核心修改】强制渲染到 Z-Index 250 的遮罩层
+              color: '#dcf3fb',      // 与海洋相近的浅蓝色
+              fillColor: '#dcf3fb',
+              fillOpacity: 1,     // 几乎不透明，彻底盖住下方底图
+              weight: 0,
+              interactive: false     // 不阻挡鼠标点击地图和拖动
+            }).addTo(map);
+
+            // Esri 世界街道地图（World Street Map）
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+              attribution: 'Tiles &copy; Esri',
+              maxZoom: 18
+            }).addTo(map);
+
+            const points = [];
+            let currentWordForms = window.dialectForms ? (window.dialectForms[word] || []) : [];
+
+            // 确保地图 Tooltip 里的列表也按全局地点顺序排列
+            currentWordForms.sort((a, b) => {
+              const orderA = (window.relationDict && window.relationDict[a['地点']]) ? window.relationDict[a['地点']].order : 9999;
+              const orderB = (window.relationDict && window.relationDict[b['地点']]) ? window.relationDict[b['地点']].order : 9999;
+              return orderA - orderB;
+            });
+
+            currentWordForms.forEach(form => {
+              const loc = form['地点'];
+              const formVal = cleanDialectForm(form['词形']); // 调用清洗函数
+              // 增加 !formVal 判断：如果清洗后为空（如纯派生词），则不在地图上打点
+              if (loc && formVal && window.locationCoords && window.locationCoords[loc]) {
+                points.push({
+                  name: loc,
+                  lng: window.locationCoords[loc].lng,
+                  lat: window.locationCoords[loc].lat,
+                  form: formVal
+                });
+              }
+            });
+
+
+                        // ================= 高级功能：图层组化与动态开关 =================
+            const isoglossLayer = L.layerGroup();   // 存放同言线 (Voronoi)
+            const convexHullLayer = L.layerGroup(); // 存放自然方言区 (Convex Hull)
+
+            if (points.length >= 2 && typeof turf !== 'undefined') {
+              try {
+                // 1. 颜色映射
+                const uniqueForms = [...new Set(points.map(p => p.form))];
+                const colorPalette = ['#e6194b', '#3cb44b', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080'];
+                const formColorMap = {};
+                uniqueForms.forEach((form, index) => {
+                  formColorMap[form] = colorPalette[index % colorPalette.length];
+                });
+
+                // 2. 自然方言区 (同词形凸包 Convex Hull) -> 放入 convexHullLayer
+                const formsGroup = {};
+                points.forEach(p => {
+                  if (!formsGroup[p.form]) formsGroup[p.form] = [];
+                  formsGroup[p.form].push([p.lng, p.lat]);
+                });
+
+                for (const [form, coords] of Object.entries(formsGroup)) {
+                  const uniqueCoords = [...new Set(coords.map(c => c.join(',')))].map(s => s.split(',').map(Number));
+
+                  if (uniqueCoords.length >= 3) {
+                    const hullPoints = turf.featureCollection(uniqueCoords.map(c => turf.point(c)));
+                    const hull = turf.convex(hullPoints);
+                    if (hull) {
+                      L.geoJSON(hull, {
+                        pane: 'polygonPane', // 【新增】指定渲染层级
+                        style: {
+                          color: formColorMap[form], weight: 1, opacity: 0.8,
+                          fillColor: formColorMap[form], fillOpacity: 0.1, dashArray: '5, 5'
+                        }
+                      }).addTo(convexHullLayer);
+                    }
+                  } else if (uniqueCoords.length === 2) {
+                    L.polyline(uniqueCoords.map(c => [c[1], c[0]]), {
+                      pane: 'polygonPane', // 【新增】指定渲染层级
+                      color: formColorMap[form], weight: 1, opacity: 0.8, dashArray: '5, 5'
+                    }).addTo(convexHullLayer);
+                  }
+                }
+
+                // 3. 方言等值线 (Voronoi 泰森多边形) -> 放入 isoglossLayer
+                if (points.length >= 3) {
+                  const uniqueVoronoiPoints = [];
+                  const seenCoords = new Set();
+
+                  points.forEach(p => {
+                    const key = `${p.lat.toFixed(4)},${p.lng.toFixed(4)}`;
+                    if (!seenCoords.has(key)) {
+                      seenCoords.add(key);
+                      uniqueVoronoiPoints.push(turf.point([p.lng, p.lat], { name: p.name, form: p.form }));
+                    }
+                  });
+
+                  if (uniqueVoronoiPoints.length >= 3) {
+                    const fc = turf.featureCollection(uniqueVoronoiPoints);
+                    const bbox = turf.bbox(fc);
+                    const expandedBbox = [bbox[0] - 3, bbox[1] - 3, bbox[2] + 3, bbox[3] + 3];
+
+                    const voronoiPolygons = turf.voronoi(fc, { bbox: expandedBbox });
+
+                    if (voronoiPolygons) {
+                      // 【核心优化】按词形分组，进行拓扑融合 (Dissolve)，彻底消除同词形内部的网格线
+                      const formsGroup = {};
+
+                      // 1. 为每个多边形分配词形并分组
+                      voronoiPolygons.features.forEach(feature => {
+                        let form = '';
+                        for (let pt of uniqueVoronoiPoints) {
+                          if (turf.booleanPointInPolygon(pt, feature)) {
+                            form = pt.properties.form;
+                            break;
+                          }
+                        }
+                        feature.properties.form = form;
+                        if (!formsGroup[form]) formsGroup[form] = [];
+                        formsGroup[form].push(feature);
+                      });
+
+                      const dissolvedFeatures = [];
+
+                      // 2. 对同词形的多边形进行“焊接”融合
+                      for (const [form, features] of Object.entries(formsGroup)) {
+                        if (features.length === 1) {
+                          dissolvedFeatures.push(features[0]);
+                        } else {
+                          try {
+                            // 循环调用 turf.union 将多个多边形合并为一个 MultiPolygon
+                            let merged = features[0];
+                            for (let i = 1; i < features.length; i++) {
+                              merged = turf.union(merged, features[i]);
+                            }
+                            merged.properties.form = form;
+                            dissolvedFeatures.push(merged);
+                          } catch (e) {
+                            // 防崩溃护盾：若遇到极端拓扑错误导致融合失败，降级保留原多边形
+                            console.warn(`词形 ${form} 拓扑融合失败，降级显示:`, e);
+                            features.forEach(f => dissolvedFeatures.push(f));
+                          }
+                        }
+                      }
+
+                      // 3. 渲染融合后的“大板块”，此时只有不同词形交界处才有边框！
+                      L.geoJSON({ type: "FeatureCollection", features: dissolvedFeatures }, {
+                        pane: 'polygonPane', // 【新增】指定渲染层级
+                        style: function (feature) {
+                          const form = feature.properties.form;
+                          return {
+                            color: '#555', // 同言线
+                            weight: 1,
+                            opacity: 0.5,
+                            fillColor: formColorMap[form] || '#ccc',
+                            fillOpacity: 0.1 // 色块底色
+                          };
+                        },
+                        onEachFeature: function (feature, layer) {
+                          if (feature.properties.form) {
+                            layer.bindTooltip(`${feature.properties.form}`, { sticky: true, className: 'custom-dialect-tooltip' });
+                          }
+                        }
+                      }).addTo(isoglossLayer);
+                    }
+                  }
+                }
+              } catch (e) {
+                console.warn("GIS 空间计算出现异常，已安全降级:", e);
+              }
+            }
+
+            // 【核心】根据 Checkbox 状态决定是否显示图层
+            const showIsogloss = document.getElementById('toggleIsogloss')?.checked ?? true;
+            const showHull = document.getElementById('toggleConvexHull')?.checked ?? true;
+
+            if (showIsogloss) isoglossLayer.addTo(map);
+            if (showHull) convexHullLayer.addTo(map);
+
+            // 【核心】绑定开关事件，实现动态切换
+            const toggleIsoBtn = document.getElementById('toggleIsogloss');
+            const toggleHullBtn = document.getElementById('toggleConvexHull');
+
+            if (toggleIsoBtn) {
+              toggleIsoBtn.addEventListener('change', function () {
+                if (this.checked) isoglossLayer.addTo(map);
+                else map.removeLayer(isoglossLayer);
+              });
+            }
+            if (toggleHullBtn) {
+              toggleHullBtn.addEventListener('change', function () {
+                if (this.checked) convexHullLayer.addTo(map);
+                else map.removeLayer(convexHullLayer);
+              });
+            }
+            // ================= 高级功能结束 =================
+
+
+            // 【新增逻辑开始】按经纬度对地点进行分组，解决同坐标重叠和弹窗换行问题
+            const groupedPoints = {};
+            points.forEach(p => {
+              // 使用经纬度拼接作为唯一键（保留5位小数防止浮点数精度误差导致误判）
+              const key = `${p.lat.toFixed(5)},${p.lng.toFixed(5)}`;
+              if (!groupedPoints[key]) {
+                groupedPoints[key] = {
+                  lat: p.lat,
+                  lng: p.lng,
+                  locations: []
+                };
+              }
+              groupedPoints[key].locations.push({ name: p.name, form: p.form });
+            });
+
+            // 提取用于 fitBounds 的独立坐标数组
+            const boundsCoords = [];
+
+            // 遍历分组后的数据渲染 Marker
+            Object.values(groupedPoints).forEach(group => {
+              boundsCoords.push([group.lat, group.lng]);
+
+              // 视觉优化：如果同一个经纬度有多个地点/词形，放大半径并改变颜色以作提示
+              const isMultiple = group.locations.length > 1;
+              const markerRadius = isMultiple ? 8 : 6;
+              const markerColor = isMultiple ? '#ff9800' : '#007bff'; // 重合点用橙色，单点用蓝色
+
+              const marker = L.circleMarker([group.lat, group.lng], {
+                radius: markerRadius,
+                fillColor: markerColor,
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.85,
+                className: 'dialect-marker-anim'
+              }).addTo(map);
+
+              // 构建支持换行和分割线的 Tooltip 内容
+              let tooltipContent = '<div style="text-align:left; max-width: 260px;">';
+              group.locations.forEach((loc, index) => {
+                // 多个地点时，从第二个开始添加虚线分割和上边距，实现优雅换行
+                const marginTop = index > 0 ? 'margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;' : '';
+
+                // 【新增】Tooltip 专属过滤：彻底剥离所有括号及其内容（全角/半角），确保视觉纯净
+                const tooltipForm = stripParentheses(loc.form);
+
+                tooltipContent += `
+                  <div style="${marginTop}">
+                    <span style="color:${markerColor}; font-weight:bold;">${loc.name}</span>
+                    <span style="color:#333; margin-left: 6px;"> ${tooltipForm}</span>
+                  </div>`;
+              });
+              tooltipContent += '</div>';
+
+              marker.bindTooltip(tooltipContent, {
+                className: 'custom-dialect-tooltip',
+                direction: 'right',
+                offset: [10, 0]
+              });
+              marker.on('click', function () { this.openTooltip(); });
+            });
+
+            if (points.length > 1) map.fitBounds(points.map(p => [p.lat, p.lng]), { padding: [40, 40] });
+            else if (points.length === 1) map.setView([points[0].lat, points[0].lng], 8);
+          }
+        }, 100);
+      }
+
+        // 为新创建的元素添加事件监听
+      document.querySelectorAll('.root-link').forEach(link => {
+        link.addEventListener('click', function () {
+          showRootInfo(this.dataset.root);
         });
+      });
     }
     
+
     // 监听整个文档的点击事件
-    document.addEventListener("click", (event) => {
-      // 检查点击的元素是否在搜索结果的容器内或搜索输入框上，如果在则保持显示词语列表
-      if (searchResultsContainer.contains(event.target)) {
-        searchResultsContainer.style.display = "block"; // 确保词语列表显示
-      } else {
-        searchResultsContainer.style.display = "none"; // 否则，隐藏词语列表
-      }
-    });
+      document.addEventListener("click", (event) => {
+        if (searchResultsContainer && searchResultsContainer.contains(event.target)) {
+          searchResultsContainer.style.display = "block";
+        } else if (searchResultsContainer) {
+          searchResultsContainer.style.display = "none";
+        }
+      });
     
     // 点击搜索按钮时不隐藏词汇列表
     searchBtn.addEventListener("click", (event) => {
@@ -973,6 +1774,115 @@ document.addEventListener('DOMContentLoaded', function() {
     rowDiv.style.marginTop = '0';
   }
 });
+
+  // ================= 词族卡片截图引擎 (终极修复：全图 + 颜色加深) =================
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('#saveRootCardBtn');
+      if (btn) {
+        const modalShell = document.querySelector('.root-modal-content');
+        const icon = btn.querySelector('i');
+        const originalIconClass = icon.className;
+
+        // 保存原始内联样式
+        const originalStyles = {
+          maxHeight: modalShell.style.maxHeight,
+          overflow: modalShell.style.overflow
+        };
+
+        // 【核心 1】解除高度限制
+        modalShell.style.maxHeight = 'none';
+        modalShell.style.overflow = 'visible';
+
+        // 【核心 2】添加截图专用类，强制加深所有颜色
+        modalShell.classList.add('capturing');
+
+        icon.className = 'fa fa-spinner fa-spin';
+        btn.disabled = true;
+
+        // 延迟 200ms，确保浏览器完成样式重绘
+        setTimeout(() => {
+          html2canvas(modalShell, {
+            backgroundColor: '#ffffff',
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            windowWidth: modalShell.scrollWidth,
+            windowHeight: modalShell.scrollHeight
+          }).then(canvas => {
+            const link = document.createElement('a');
+            const rootName = document.querySelector('#root-name .highlight-root').textContent;
+            link.download = `JPRoots_词族卡片_${rootName}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }).catch(err => {
+            console.error('截图失败:', err);
+          }).finally(() => {
+            // 【核心 3】恢复原始状态
+            modalShell.style.maxHeight = originalStyles.maxHeight;
+            modalShell.style.overflow = originalStyles.overflow;
+            modalShell.classList.remove('capturing'); // 移除截图类，恢复正常浅色
+
+            icon.className = originalIconClass;
+            btn.disabled = false;
+          });
+        }, 200); // 延迟增加到 200ms，确保样式完全生效
+      }
+    });
+  // =========================================================
+
+  // ================= 全局地图拖拽调整高度逻辑 =================
+  let isMapResizing = false;
+  let mapResizeStartY = 0;
+  let mapResizeStartHeight = 0;
+  let mapResizeTarget = null;
+
+  // 1. 鼠标按下：开始拖拽
+  document.addEventListener('mousedown', function (e) {
+    if (e.target.closest('.map-resize-handle')) {
+      isMapResizing = true;
+      mapResizeTarget = document.getElementById('dialect-map');
+      mapResizeStartY = e.clientY;
+      mapResizeStartHeight = parseInt(document.defaultView.getComputedStyle(mapResizeTarget).height, 10);
+      document.body.style.cursor = 'ns-resize';
+      document.body.style.userSelect = 'none'; // 防止拖动时选中文本
+      e.preventDefault();
+    }
+  });
+
+  // 2. 鼠标移动：实时计算高度并通知 Leaflet 重绘
+  document.addEventListener('mousemove', function (e) {
+    if (!isMapResizing || !mapResizeTarget) return;
+    const deltaY = e.clientY - mapResizeStartY;
+    let newHeight = mapResizeStartHeight + deltaY;
+
+    // 限制最小和最大高度 (150px ~ 1000px)
+    if (newHeight < 150) newHeight = 150;
+    if (newHeight > 1000) newHeight = 1000;
+
+    mapResizeTarget.style.height = newHeight + 'px';
+
+    // 【核心】通知 Leaflet 地图容器尺寸已改变，重新渲染瓦片，防止出现灰色空白
+    if (window.currentMap) {
+      window.currentMap.invalidateSize();
+    }
+  });
+
+  // 3. 鼠标松开：结束拖拽
+  document.addEventListener('mouseup', function () {
+    if (isMapResizing) {
+      isMapResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      if (window.currentMap) {
+        window.currentMap.invalidateSize();
+      }
+      mapResizeTarget = null;
+    }
+  });
+  // =========================================================
+
+  
+
 </script>
 	
 	<style>
@@ -1116,46 +2026,116 @@ strong.underlined-text{
         justify-content: center;
     }
     
+    /* 【外层壳】：负责外观、定高、截断 */
     .root-modal-content {
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0.95); /* 稍微提高不透明度防止穿帮 */
         border-radius: 15px;
-        padding: 20px;
-        width: 75%;
-        max-width: 300px;
-        box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+        padding: 0; /* 移除 padding，交给内层 */
+        width: 350px;
+        max-height: 60%; /* 限制最大高度 */
+        overflow: hidden; /* 【核心】隐藏溢出，完美解决滚动条突破圆角问题 */
+        box-shadow: 0 10px 11px rgba(0, 0, 0, 0.3);
         position: relative;
         border: 1px solid #007bff;
         animation: popIn 0.3s;
-		background-color: rgba(255, 255, 255, 0.5); /* 半透明 */
-		backdrop-filter: blur(15px); /* 模糊 */
+        backdrop-filter: blur(3px);
+        
+        /* Flex 布局让内层自适应高度 */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 【内层核】：负责滚动和内容 */
+    .root-modal-body {
+        flex: 1; /* 占据剩余空间 */
+        overflow-y: auto; /* 【核心】只有这里滚动 */
+        padding: 25px; /* 原来的 padding 移到这里 */
+        padding-top: 30px; /* 给右上角的绝对定位按钮留出空间，防止文字遮挡 */
     }
     
+
+
     @keyframes popIn {
-        from { opacity: 0; transform: scale(0.9); }
+        from { opacity: 0; transform: scale(0.95); }
         to { opacity: 1; transform: scale(1); }
     }
-    
-    .root-close-btn {
+
+    /* 右上角窗口控制按钮组 - 蓝色、无放大动画、关闭按钮调细 */
+    .window-controls {
         position: absolute;
         top: 12px;
-        right: 20px;
-        font-size: 28px;
+        right: 15px;
+        display: flex;
+        gap: 10px;
+        z-index: 20;
+    }
+    .win-ctrl-btn {
+        background: none;
+        border: none;
         cursor: pointer;
-        color: #777;
+        padding: 3px 5px; /* 减小内边距，让按钮更紧凑 */
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #007bff; /* 统一使用网站蓝色 */
+        font-size: 14px; /* 统一图标大小 */
+        transition: background 0.2s; /* 只保留背景色过渡，去掉 transform 放大 */
     }
+    .win-ctrl-btn:hover { background: rgba(0,123,255,0.1); } /* 仅背景微亮，无放大 */
+    #saveRootCardBtn:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    .root-close-btn:hover {
+    .root-close-btn { 
+        font-weight: 300; /* 关键：调细字体粗细 */
+        font-size: 16px; /* 稍微调小一点 */
+    }
+
+    /* 标题栏布局 - 词族名在左，Logo 在右上，上缘对齐 */
+    .card-header {
+    border-bottom: 1px solid #007bff;
+    padding-bottom: 12px;
+    position: relative; /* 【修改】移除 flex 布局，改为相对定位，作为子元素的参考系 */
+}
+
+#root-name {
+    margin: 0;
+    font-size: 24px; /* 整合了您原代码中重复的 font-size */
+    font-weight: bold;
+    border: none;
+    line-height: 1; 
+    margin-top: 4px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    position: relative; /* 【新增】让 z-index 生效 */
+    z-index: 2;         /* 【核心】层级设为 2，确保长文本能覆盖在 logo 上面 */
+    
+    /* 💡 进阶优化：右侧渐变遮罩（强烈推荐） */
+    /* 当文本很长覆盖到 logo 时，文字会平滑淡出，避免文字和 logo 重叠导致两者都看不清 */
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+    .highlight-root {
         color: #007bff;
+        border-bottom: 3px solid #ff67c0;
+        padding-bottom: 3px;
+    }
+    .card-logo {
+    position: absolute; /* 【核心】脱离文档流，死死钉在右上角 */
+    top: 0;
+    right: 0;
+    z-index: 1;         /* 【核心】层级设为 1，垫在 root-name 下面 */
+    
+    font-size: 18px;
+    font-weight: bold;
+    color: #a4d0ff;
+    letter-spacing: 1px;
+    font-style: italic;
+    white-space: nowrap;
+    margin-right: 9px;
+    margin-top: 4px;
     }
     
-    #root-name {
-        color: #333;
-        margin-top: 0;
-		margin-bottom: 15px;
-        font-size: 24px;
-        border-bottom: 1px solid #007bff;
-        padding-bottom: 10px;
-    }
+
     
     .root-detail {
         margin: 10px 0;
@@ -1501,19 +2481,55 @@ button#randomBtn.btn.btn-primary, button#advancedSearchBtn.btn.btn-primary {
     border: none;
 }
 
+.index {
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* ================= 地图拖拽手柄样式 ================= */
+    .map-resize-handle {
+        height: 14px;
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-top: 1px dashed #ccc;
+        border-radius: 0 0 8px 8px;
+        cursor: ns-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        transition: background 0.2s;
+        margin-bottom: 15px; 
+    }
+    .map-resize-handle:hover { background: #e9ecef; }
+    .map-resize-handle:active { background: #dee2e6; }
+    
+    /* 手柄中间的三条防滑纹理 */
+    .handle-grip {
+        width: 40px;
+        height: 2px;
+        background: #adb5bd;
+        border-radius: 2px;
+        position: relative;
+    }
+    .handle-grip::before, .handle-grip::after {
+        content: '';
+        position: absolute;
+        width: 40px;
+        height: 2px;
+        background: #adb5bd;
+        left: 0;
+    }
+    .handle-grip::before { top: -4px; }
+    .handle-grip::after { bottom: -4px; }
+
+    .card-footer{
+      background-color: #ffffff08;
+    }
+    
 
 	</style>
 
-	<!--250609 新增词根弹窗-->
-	<!-- 词根弹窗 -->
-<div id="root-info-modal" class="root-modal">
-    <div class="root-modal-content">
-        <span class="root-close-btn">&times;</span>
-        <h3 id="root-name"></h3>
-        <div id="root-details"></div>
-    </div>
-</div>
-<!--250609 新增词根弹窗-->
 
     <script src="jquery.min.js"></script>
     <script src="bootstrap.min.js"></script>
