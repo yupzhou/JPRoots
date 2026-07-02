@@ -567,22 +567,44 @@
     }
 
     function cleanDialectForm(formText) {
-      if (!formText) return '';
-      const pipeIndex = formText.indexOf('|');
-      let text = pipeIndex !== -1 ? formText.substring(0, pipeIndex) : formText;
-      if (text.indexOf('：') !== -1 || text.indexOf(':') !== -1) return '';
-      const segments = text.split(/[,，;；]/);
-      const cleanedSegments = [];
-      for (let seg of segments) {
-        let cleaned = seg.trim(); if (!cleaned) continue;
-        const eqIndex = cleaned.indexOf('=');
-        if (eqIndex !== -1) cleaned = cleaned.substring(0, eqIndex).trim();
-        cleaned = stripParentheses(cleaned);
-        cleaned = cleaned.replace(/^\d+\s+/, '').replace(/\s+[A-Za-z0-9\*\'\`\?]+$/, '');
-        if (cleaned) cleanedSegments.push(cleaned);
+        if (!formText) return '';
+
+        // 1. 竖线截断（只取第一部分）
+        const pipeIndex = formText.indexOf('|');
+        let text = pipeIndex !== -1 ? formText.substring(0, pipeIndex) : formText;
+
+        // 2. 冒号拦截（包含冒号说明是解释，非词形）
+        if (text.indexOf('：') !== -1 || text.indexOf(':') !== -1) return '';
+
+        // 3. 整体剥离所有括号及其内部内容
+        text = stripParentheses(text);
+
+        // 4. 按逗号/分号拆分，分别清洗，再拼接
+        const segments = text.split(/[,，;；]/);
+        const cleanedSegments = [];
+
+        for (let seg of segments) {
+          let cleaned = seg.trim();
+          if (!cleaned) continue;
+
+          // 等号截断（如 "a=b" 取 "a"）
+          const eqIndex = cleaned.indexOf('=');
+          if (eqIndex !== -1) cleaned = cleaned.substring(0, eqIndex).trim();
+
+          // 去除开头的序号（如 "1. abc" -> "abc"）
+          cleaned = cleaned.replace(/^\d+\s+/, '');
+
+          // 去除末尾的分类字母/声调符号（如 "anmaa B" -> "anmaa", "aci A" -> "aci"）
+          cleaned = cleaned.replace(/\s+[A-Za-z0-9\*\'\`\?]+$/, '');
+
+          // 清理末尾可能残留的标点
+          cleaned = cleaned.replace(/[,，;；\.。]+$/, '').trim();
+
+          if (cleaned) cleanedSegments.push(cleaned);
+        }
+
+        return cleanedSegments.join(', ');
       }
-      return cleanedSegments.join(', ');
-    }
 
     // ================= 1. 全局变量 =================
     let map, isoglossLayer, convexHullLayer, markerLayer, currentPoints = [];
@@ -1082,7 +1104,7 @@
           className: 'dialect-marker-anim'
         }).addTo(markerLayer); // 必须将 marker 加入到 markerLayer 中！
 
-        let tooltipContent = '<div style="text-align:left; max-width: 260px;">';
+        let tooltipContent = '<div style="text-align:left; max-width: 400px;">';
         group.locations.forEach((loc, index) => {
           const marginTop = index > 0 ? 'margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;' : '';
           const tooltipForm = stripParentheses(loc.form);

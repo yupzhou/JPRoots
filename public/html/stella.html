@@ -1851,29 +1851,28 @@
             allRoots = []; rootToWords = {}; rootWordCount = {};
             rootToSubRoots = {}; subRootToWords = {}; wordToSubRoots = {};
 
-            data.forEach(d => {
+                        data.forEach(d => {
               const rootStr = d[rootCol]?.trim();
               const word = d[wordCol]?.trim();
-              const subRootStr = d['wd_f_2']?.trim() || ''; // 读取下位词族
+              const subRootStr = d['wd_f_2']?.trim() || '';
 
               if (!word) return;
               const roots = rootStr ? rootStr.split('|').map(r => r.trim()).filter(r => r !== '') : [];
               const subRoots = subRootStr ? subRootStr.split('|').map(r => r.trim()).filter(r => r !== '') : [];
 
+              // 1. 建立 root -> words 映射
               roots.forEach(root => {
                 if (!rootToWords[root]) { rootToWords[root] = []; allRoots.push(root); rootWordCount[root] = 0; }
                 if (!rootToWords[root].includes(word)) { rootToWords[root].push(word); rootWordCount[root]++; }
-
-                subRoots.forEach(subRoot => {
-                  if (!rootToSubRoots[root]) rootToSubRoots[root] = [];
-                  if (!rootToSubRoots[root].includes(subRoot)) rootToSubRoots[root].push(subRoot);
-                });
               });
 
-              if (subRoots.length > 0) {
-                if (!wordToSubRoots[word]) wordToSubRoots[word] = [];
+              // 2. 下位词族只挂载到第一个主词族 (roots[0]) 下，避免在 A|B 情况下，把 a 同时挂在 A 和 B 下导致收起逻辑死锁
+              if (subRoots.length > 0 && roots.length > 0) {
+                const primaryRoot = roots[0];
                 subRoots.forEach(subRoot => {
-                  if (!wordToSubRoots[word].includes(subRoot)) wordToSubRoots[word].push(subRoot);
+                  if (!rootToSubRoots[primaryRoot]) rootToSubRoots[primaryRoot] = [];
+                  if (!rootToSubRoots[primaryRoot].includes(subRoot)) rootToSubRoots[primaryRoot].push(subRoot);
+
                   if (!subRootToWords[subRoot]) subRootToWords[subRoot] = [];
                   if (!subRootToWords[subRoot].includes(word)) subRootToWords[subRoot].push(word);
                 });
@@ -1923,25 +1922,20 @@
               return false;
             });
 
-            // 4. 检查这些候选节点是否还连着其他已展开的 root
-            const nodesToRemoveIds = new Set();
-            candidateNodes.forEach(node => {
-              const hasOtherExpandedRoot = links.some(l => {
-                const sId = typeof l.source === 'object' ? l.source.id : l.source;
-                const tId = typeof l.target === 'object' ? l.target.id : l.target;
+            // 4. 检查这些候选节点是否还有任何物理连线
+              const nodesToRemoveIds = new Set();
+              candidateNodes.forEach(node => {
+                const hasAnyLink = links.some(l => {
+                  const sId = typeof l.source === 'object' ? l.source.id : l.source;
+                  const tId = typeof l.target === 'object' ? l.target.id : l.target;
+                  return sId === node.id || tId === node.id;
+                });
 
-                // 如果该节点连着某个 root，且那个 root 是已展开的（且不是当前 root）
-                if (sId === node.id && tId.startsWith('root_') && expandedRoots.has(tId.substring(5))) return true;
-                if (tId === node.id && sId.startsWith('root_') && expandedRoots.has(sId.substring(5))) return true;
-
-                return false;
+                // 如果彻底没有任何连线，说明它成了孤例，应该删除
+                if (!hasAnyLink) {
+                  nodesToRemoveIds.add(node.id);
+                }
               });
-
-              // 如果不连着其他已展开的 root，说明它彻底成了孤例，应该删除
-              if (!hasOtherExpandedRoot) {
-                nodesToRemoveIds.add(node.id);
-              }
-            });
 
             // 5. 缩小淡出动画
             const nodesToAnimate = mainG.selectAll(".node-word, .node-subroot").filter(d => nodesToRemoveIds.has(d.id));
@@ -1968,8 +1962,12 @@
               // ================= 展开逻辑 =================
               let hasNewNodes = false;
 
-              // 1. 处理直接单词 (没有下位词族的单词，直接连到主词族)
-              const directWords = (rootToWords[root] || []).filter(w => !wordToSubRoots[w] || wordToSubRoots[w].length === 0);
+              // 1. 处理直接单词 (在当前 root 下没有 subroot 的单词)
+              const directWords = (rootToWords[root] || []).filter(w => {
+                // 判断 w 在当前 root 下是否属于某个 subroot
+                return !(rootToSubRoots[root] || []).some(sub => subRootToWords[sub]?.includes(w));
+              });
+
               directWords.forEach(word => {
                 const wordId = `word_${word}`;
                 if (!nodes.find(n => n.id === wordId)) {

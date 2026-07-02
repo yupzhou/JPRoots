@@ -200,42 +200,45 @@ function parseCSVLine(line) {
     }
 
     // ================= 词形噪音清洗函数 =================
-    function cleanDialectForm(formText) {
-      if (!formText) return '';
+      function cleanDialectForm(formText) {
+        if (!formText) return '';
 
-      // 1. 竖线截断
-      const pipeIndex = formText.indexOf('|');
-      let text = pipeIndex !== -1 ? formText.substring(0, pipeIndex) : formText;
+        // 1. 竖线截断（只取第一部分）
+        const pipeIndex = formText.indexOf('|');
+        let text = pipeIndex !== -1 ? formText.substring(0, pipeIndex) : formText;
 
-      // 2. 冒号拦截
-      if (text.indexOf('：') !== -1 || text.indexOf(':') !== -1) return '';
+        // 2. 冒号拦截（包含冒号说明是解释，非词形）
+        if (text.indexOf('：') !== -1 || text.indexOf(':') !== -1) return '';
 
-      // 3. 按逗号/分号拆分，分别清洗，再拼接
-      const segments = text.split(/[,，;；]/);
-      const cleanedSegments = [];
+        // 3. 整体剥离所有括号及其内部内容
+        text = stripParentheses(text);
 
-      for (let seg of segments) {
-        let cleaned = seg.trim();
-        if (!cleaned) continue;
+        // 4. 按逗号/分号拆分，分别清洗，再拼接
+        const segments = text.split(/[,，;；]/);
+        const cleanedSegments = [];
 
-        // 3.1 等号截断
-        const eqIndex = cleaned.indexOf('=');
-        if (eqIndex !== -1) cleaned = cleaned.substring(0, eqIndex).trim();
+        for (let seg of segments) {
+          let cleaned = seg.trim();
+          if (!cleaned) continue;
 
-        // 3.2 【核心修复】调用状态机，彻底剥离所有括号及内部注释
-        cleaned = stripParentheses(cleaned);
+          // 等号截断（如 "a=b" 取 "a"）
+          const eqIndex = cleaned.indexOf('=');
+          if (eqIndex !== -1) cleaned = cleaned.substring(0, eqIndex).trim();
 
-        // 3.3 去除开头的序号
-        cleaned = cleaned.replace(/^\d+\s+/, '');
+          // 去除开头的序号（如 "1. abc" -> "abc"）
+          cleaned = cleaned.replace(/^\d+\s+/, '');
 
-        // 3.4 去除末尾的声调符号
-        cleaned = cleaned.replace(/\s+[A-Za-z0-9\*\'\`\?]+$/, '');
+          // 去除末尾的分类字母/声调符号（如 "anmaa B" -> "anmaa", "aci A" -> "aci"）
+          cleaned = cleaned.replace(/\s+[A-Za-z0-9\*\'\`\?]+$/, '');
 
-        if (cleaned) cleanedSegments.push(cleaned);
+          // 清理末尾可能残留的标点
+          cleaned = cleaned.replace(/[,，;；\.。]+$/, '').trim();
+
+          if (cleaned) cleanedSegments.push(cleaned);
+        }
+
+        return cleanedSegments.join(', ');
       }
-
-      return cleanedSegments.join(', ');
-    }
   // ====================================================
 
 let customDropdown, selectedText, originalSelect;
@@ -1272,7 +1275,7 @@ function closeIfOutside(e) {
     <div class="dialect-map-container" style="border: 1px solid #007bff; border-radius: 12px; padding: 12px; margin: 15px 0;">
         <!-- 1. 标题与独立地图按钮 -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <div class="dialect-map-title" style="font-weight: bold; color: #007bff; font-size: 16px; margin: 0;">JLDB ATLAS Mini</div>
+            <div class="dialect-map-title" style="font-weight: bold; color: #007bff; font-size: 16px; margin: 0;">ATLAS Mini</div>
             <a href="JLDB_ATLAS.html?word=${encodeURIComponent(word)}" target="_blank" 
                style="font-size: 12px; color: white; background: linear-gradient(135deg, #007bff, #0056b3); padding: 5px 12px; border-radius: 15px; text-decoration: none; font-weight: bold; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,123,255,0.3);" 
                onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,123,255,0.4)'" 
@@ -1707,18 +1710,16 @@ function closeIfOutside(e) {
               }).addTo(map);
 
               // 构建支持换行和分割线的 Tooltip 内容
-              let tooltipContent = '<div style="text-align:left; max-width: 260px;">';
+              let tooltipContent = '<div style="text-align:left; max-width: 400px;">';
               group.locations.forEach((loc, index) => {
                 // 多个地点时，从第二个开始添加虚线分割和上边距，实现优雅换行
                 const marginTop = index > 0 ? 'margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;' : '';
 
-                // 【新增】Tooltip 专属过滤：彻底剥离所有括号及其内容（全角/半角），确保视觉纯净
-                const tooltipForm = stripParentheses(loc.form);
-
+                // loc.form 已经过 cleanDialectForm 清洗，无需再次剥离括号
                 tooltipContent += `
                   <div style="${marginTop}">
                     <span style="color:${markerColor}; font-weight:bold;">${loc.name}</span>
-                    <span style="color:#333; margin-left: 6px;"> ${tooltipForm}</span>
+                    <span style="color:#333; margin-left: 6px;"> ${loc.form}</span>
                   </div>`;
               });
               tooltipContent += '</div>';
