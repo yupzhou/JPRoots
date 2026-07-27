@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>JPRoots JFD 词形推导</title>
+    <meta name="description" content="日琉语综合知识站：日琉语词形推导器">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="font-awesome.min.css">
+    <link rel="icon" type="image/x-icon" href="../images/logo.png">
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?9ee9860863dd852a71bec18837f254c6";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+    <style>
+        :root {
+            --primary-blue: #007bff;
+            --light-blue: #e7f3ff;
+            --border-blue: rgb(0, 128, 255);
+            --pink-accent: #ff67c0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        .main-card {
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-container h3 {
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .header-container h5 {
+            font-weight: bold;
+            color: var(--primary-blue);
+            text-decoration: overline;
+        }
+
+        .section-card {
+            border-radius: 15px;
+            border: 1px solid var(--border-blue);
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--primary-blue);
+            padding-bottom: 5px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .input-label {
+            font-size: 13px;
+            color: #555;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .form-select {
+            padding: 5px 6px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            background-color: white;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .form-input {
+            flex: 1;
+            min-width: 60px;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-derive {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .btn-derive:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .output-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+        }
+
+        .output-placeholder {
+            color: #999;
+            font-style: italic;
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        /* Timeline styles */
+        .timeline-container {
+            position: relative;
+            margin-top: 15px;
+        }
+
+        .timeline-track {
+            position: relative;
+            background: linear-gradient(to right, #e2edff, #f5f5f5);
+            border-radius: 10px;
+            padding: 10px;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .timeline-stages {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .timeline-stages.long-content {
+    justify-content: flex-start;
+}
+
+        .timeline-stage {
+            flex: 0 0 auto;
+            min-width: 130px;
+            text-align: center;
+            position: relative;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timeline-stage:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .timeline-stage.active {
+            background-color: rgba(0, 123, 255, 0.15);
+            border-radius: 8px;
+        }
+
+        .stage-label {
+            font-size: 11px;
+            color: var(--primary-blue);
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+
+        .stage-form {
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stage-form.empty {
+            color: #999;
+            font-style: italic;
+            font-weight: normal;
+        }
+
+        .stage-arrow {
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-blue);
+            font-size: 18px;
+        }
+
+        .stage-rule {
+            font-size: 10px;
+            color: var(--primary-blue);
+            margin-top: 2px;
+            font-style: italic;
+            white-space: pre-wrap;
+        }
+
+        /* Slider for timeline navigation */
+        .timeline-slider-container {
+            margin-top: 10px;
+            padding: 0 10px;
+        }
+
+        .timeline-slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #dce9ff;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .timeline-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .timeline-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Rule details */
+        .rule-details {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .rule-details h6 {
+            font-size: 13px;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .rule-details p {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 3px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-card {
+                padding: 15px;
+                margin: 10px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .input-row {
+                gap: 8px;
+            }
+
+            .input-label {
+                display: none;
+            }
+
+            .btn-derive {
+                font-size: 0;
+                padding: 5px 8px;
+            }
+            
+            .btn-derive i {
+                font-size: 14px;
+            }
+        }
+
+        .copyright {
+            font-size: 13px;
+            text-align: center;
+            padding-top: 15px;
+            color: rgb(170, 170, 170);
+        }
+
+        .copyright a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-card">
+        <div class="header-container">
+            <h3>日琉语词形推导器 JFD</h3>
+        </div>
+
+        <!-- Input Row: Language Settings + Input -->
+        <div class="section-card">
+            <div class="input-row">
+                <span class="input-label">输入语言：</span>
+                <select id="inputLangSelect" class="form-select" onchange="onInputLangChange()">
+                    <option value="japanese">上代日语</option>
+                    <option value="ryukyuan">琉球祖语</option>
+                </select>
+
+                <input type="text" id="inputForm" class="form-input" placeholder="输入词形...">
+
+                <span class="input-label">输出语言：</span>
+                <select id="outputLangSelect" class="form-select" onchange="onInputLangChange()">
+                    <option value="modern_japanese">现代日语风格</option>
+                    <option value="northern_amami">北奄美大岛语风格</option>
+                    <option value="northern_okinawa">北冲绳语风格</option>
+                    <option value="centralsouthern_okinawa">中南冲绳语风格</option>
+                    <option value="miyako">宫古平良语风格</option>
+                    <option value="irabu">池间-伊良部语风格</option>
+                    <option value="ishigaki">八重山石垣语风格</option>
+                    <option value="hatoma">八重山鸠间语风格</option>
+                    <option value="yonaguni">与那国语风格</option>
+                </select>
+
+                <button class="btn-derive" onclick="derive()">
+                    <i class="fa fa-arrow-right"></i> 推导
+                </button>
+            </div>
+        </div>
+
+        <!-- Output -->
+        <div class="section-card">
+            <div class="output-display" id="outputDisplay">
+                <span class="output-placeholder">请输入词形...</span>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="section-card">
+            <div class="section-title">
+                演变历程
+            </div>
+            <div id="timelineContainer" class="timeline-container">
+                <div class="timeline-track" id="timelineTrack">
+                    <div class="timeline-stages" id="timelineStages">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+                <div class="timeline-slider-container">
+                    <input type="range" id="timelineSlider" class="timeline-slider" min="0" max="0" value="0"
+                        oninput="updateTimelineView(this.value)">
+                </div>
+                <div id="ruleDetails" class="rule-details" style="display: none;">
+                    <h6 id="ruleTitle">当前阶段</h6>
+                    <p id="ruleDescription">点击时间轴上的阶段查看详细信息</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="copyright" style="font-size: 13px;text-align: center;padding-top: 10px;color: rgb(170,170,170);">
+            <span id="dynamicDisclaimerText"></span>音变规律复杂，不能完全复刻现代词形，仅供参考。<br>© Nanasi 七梨子 - <a class="index"
+                href="https://yupzhou.github.io/JPRoots/">JPRoots : 日琉语之道</a>
+        </p>
+    </div>
+
+    <script>
+        let currentDerivation = null;
+        let currentStageIndex = 0;
+
+        function detectLanguage(input) {
+            if (input.startsWith("*")) {
+                return "ryukyuan";
+            }
+            return "japanese";
+        }
+
+        function getRuleName(rule) {
+                if (!rule) return rule;
+                // 使用正则全局匹配所有在冒号（全角：或半角:）前面的文本，提取所有规则名
+                const matches = rule.match(/[^：:]+(?=[：:])/g);
+                if (matches) {
+                    // 将提取出的多个规则名用顿号连接，例如："甲乙元音合流、ハ行转呼（阶段1）"
+                    return matches.map(m => m.trim()).join('、');
+                }
+                return rule;
+            }
+
+    function getDefaultStages(lang, dialect) {
+        if (lang === "japanese") {
+            return [
+                { form: "", label: "上代日语（OJ）", rule: "" },
+                { form: "", label: "中古日语（EMJ）", rule: "甲乙元音合流\nハ行转呼（阶段 1）" }, // 👈 用 \n 代替 ；
+                { form: "", label: "中世日语（LMJ）", rule: "/w/ 音衰弱（阶段 1）\n/t, d/ 腭化-擦化\n连续元音融合" },
+                { form: "", label: "近世现代日语（MdJ）", rule: "ハ行转呼（阶段 2）\n/w/ 音衰弱（阶段 2）\n四个假名混同（主流）\n开合 /oo/ 合流\n/w/ 音衰弱" }
+            ];
+        } else {
+            let mvrPreRules = "*i 的顺行颚化\n辅音擦化-颚化\n舌冠音后 u 央化\n鼻音拨音化";
+            let mvrPostRules = "MVR（元音推移）\n/w/ 音衰弱\n连续元音融合";
+
+            if (dialect === "northern_amami") {
+                mvrPreRules = "辅音送气（北）\n*i 的顺行颚化\n辅音擦化-颚化\n舌冠音后 u 央化\n鼻音拨音化";
+                mvrPostRules = "MVR（北）\nハ行转呼\n/w/ 音衰弱\n连续元音融合";
+            } else if (dialect === "northern_okinawa") {
+                mvrPreRules = "辅音送气（北）\n*i 的顺行颚化\n辅音擦化-颚化\nC{i,u}r 同化\n舌冠音后 u 央化\n*r 条件失落\n鼻音拨音化";
+                mvrPostRules = "MVR（北）\nハカ行转呼\n/w/ 音衰弱\n连续元音融合\n*{i,ï} 合流\n舌冠音合流";
+            } else if (dialect === "centralsouthern_okinawa") {
+                mvrPreRules = "*i 的顺行颚化\n辅音擦化-颚化\n*C{i,u}r 同化\n舌冠音后 u 央化\n*r 条件失落\n鼻音拨音化";
+                mvrPostRules = "MVR（南）\nハカ行转呼\n/w/ 音衰弱\n连续元音融合\n*{i, ï} 合流\n舌冠音合流";
+            } else if (dialect === "miyako") {
+                mvrPreRules = "辅音送气（南）\n词首 w 强化\n齿龈音擦化-颚化\nC{i,u}r 同化\n舌冠音后 u 央化\n鼻音拨音化";
+                mvrPostRules = "MVR（南）\nr 条件失落\nハカ行转呼\n/w/ 音衰弱\n连续元音融合";
+            } else if (dialect === "irabu") {
+                mvrPreRules = "辅音送气（南）\n词首 w 强化\n辅音擦化-颚化\nC{i,u}r 同化\n舌冠音后 u 央化\n鼻音拨音化";
+                mvrPostRules = "MVR（南）\nr 条件失落\nハカ行转呼\n/w/ 音衰弱";
+            } else if (dialect === "ishigaki") {
+                mvrPreRules = "辅音送气（南）\n词首 w 强化\n辅音擦化-颚化\nC{i,u}r 同化\n舌冠音后 u 央化\n鼻音拨音化";
+                mvrPostRules = "MVR（南）\nハカ行转呼\n/w/ 音衰弱\n连续元音融合";
+            } else if (dialect === "hatoma") {
+                mvrPreRules = "辅音送气（南）\n词首 w 强化\n辅音擦化-颚化\nC{i,u}r 同化\n舌冠音后 u 央化\n鼻音拨音化";
+                mvrPostRules = "MVR（南）\nハカ行转呼\n/w/ 音衰弱\n连续元音融合\n{i,ï} 合流";
+            } else if (dialect === "yonaguni") {
+                mvrPreRules = "辅音送气（南）\n词首 w 强化\n*i 的顺行颚化\n辅音擦化-颚化\nC{i,u}r 同化\n辅音进一步擦化\n舌冠音后的 u 央化\n拨音化";
+                mvrPostRules = "MVR（南）\nr 条件失落\n辅音塞化-咽化\nハカ行转呼\n/w/ 音衰弱\n连续元音融合\n{i,ï} 合流";
+            }
+
+            return [
+                { form: "", label: "琉球祖语（PR）", rule: "" },
+                { form: "", label: "MVR 前", rule: mvrPreRules },
+                { form: "", label: "MVR 后", rule: mvrPostRules },
+                { form: "", label: "现代琉球诸语", rule: "单音节词元音延长" }
+            ];
+        }
+    }
+
+        function deriveJapanese(input) {
+            let stages = [];
+            let currentForm = input;
+
+            stages.push({ form: currentForm, label: "上代日语（OJ）", rule: "" });
+
+            // --- 中古日语（EMJ） ---
+            let emjForm = currentForm.replace(/[12]/g, "");
+            if (emjForm !== currentForm) {
+                stages.push({ form: emjForm, label: "中古日语（EMJ）", rule: "甲乙元音合流：OJ e1, e2 > EMJ e; OJ i1, i2 > EMJ i; OJ o1, o2 > EMJ o" });
+                currentForm = emjForm;
+            }
+
+            let emj2Form = currentForm.replace(/^p/, 'f').replace(/p(?=u)/g, '').replace(/p/g, 'w');
+            if (emj2Form !== currentForm) {
+                stages.push({ form: emj2Form, label: "中古日语（EMJ）", rule: "ハ行转呼（阶段 1）：OJ p- > EMJ f- [ɸ]; OJ -p- > EMJ -w- (-Ø-/_u)" });
+                currentForm = emj2Form;
+            }
+
+            if (stages[stages.length - 1].label !== "中古日语（EMJ）") {
+                stages.push({ form: currentForm, label: "中古日语（EMJ）", rule: "" });
+            }
+
+            // --- 中世日语（LMJ） ---
+            let lmjForm = currentForm.replace(/w(?=[iueo])/g, '');
+            if (lmjForm !== currentForm) {
+                stages.push({ form: lmjForm, label: "中世日语（LMJ）", rule: "/w/ 音衰弱（阶段 1）：EMJ w > LMJ Ø (/_非a)" });
+                currentForm = lmjForm;
+            }
+
+            let lmj2Form = currentForm.replace(/t(?=u)/g, 'ts').replace(/t(?=i)/g, 'c').replace(/d(?=u)/g, 'dz').replace(/d(?=i)/g, 'j');
+            if (lmj2Form !== currentForm) {
+                stages.push({ form: lmj2Form, label: "中世日语（LMJ）", rule: "/t, d/ 腭化-擦化：EMJ t > LMJ ts/_u; c [tɕ]/_i; EMJ d > LMJ dz/_u; j [dʑ]/_i" });
+                currentForm = lmj2Form;
+            }
+
+            let lmj3Form = currentForm.replace(/eu/g, 'you').replace(/iu/g, 'yuu');
+            if (lmj3Form !== currentForm) {
+                stages.push({ form: lmj3Form, label: "中世日语（LMJ）", rule: "连续元音融合：EMJ au > LMJ au [ɔɔ]; EMJ eu > LMJ you; EMJ iu > LMJ yuu" });
+                currentForm = lmj3Form;
+            }
+
+            if (stages[stages.length - 1].label !== "中世日语（LMJ）") {
+                stages.push({ form: currentForm, label: "中世日语（LMJ）", rule: "" });
+            }
+
+            // --- 近世现代日语（MdJ） ---
+            let mdjForm = currentForm.replace(/f(?=[aeoi])/g, 'h');
+            if (mdjForm !== currentForm) {
+                stages.push({ form: mdjForm, label: "近世现代日语（MdJ）", rule: "ハ行转呼（阶段 2）：LMJ f- > MdJ h-/_{a,e,o}; > h- [ç] /_i" });
+                currentForm = mdjForm;
+            }
+
+            let mdj2Form = currentForm.replace(/([kg])w(?=a)/g, '$1');
+            if (mdj2Form !== currentForm) {
+                stages.push({ form: mdj2Form, label: "近世现代日语（MdJ）", rule: "/w/ 音衰弱（阶段 2）：LMJ w > MdJ Ø/{k,g}_a" });
+                currentForm = mdj2Form;
+            }
+
+            let mdj3Form = currentForm.replace(/dz/g, 'z').replace(/j/g, 'z');
+            if (mdj3Form !== currentForm) {
+                stages.push({ form: mdj3Form, label: "近世现代日语（MdJ）", rule: "四个假名混同（主流）：LMJ dz > MdJ z; LMJ j > MdJ z [ʑ]" });
+                currentForm = mdj3Form;
+            }
+
+            let mdj4Form = currentForm.replace(/au/g, 'ou');
+            if (mdj4Form !== currentForm) {
+                stages.push({ form: mdj4Form, label: "近世现代日语（MdJ）", rule: "开合 /oo/ 合流：LMJ au [ɔɔ] > MdJ ou" });
+                currentForm = mdj4Form;
+            }
+
+            let mdj5Form = currentForm.replace(/w(?=[o])/g, '');
+            if (mdj5Form !== currentForm) {
+                stages.push({ form: mdj5Form, label: "近世现代日语（MdJ）", rule: "/w/ 音衰弱（阶段 1）：MdJ w > MdJ Ø (/_非a)" });
+                currentForm = mdj5Form;
+            }
+
+            if (stages[stages.length - 1].label !== "近世现代日语（MdJ）" && stages[stages.length - 1].label !== "近世现代日语（MdJ）") {
+                stages.push({ form: currentForm, label: "近世现代日语（MdJ）", rule: "" });
+            } else {
+                stages[stages.length - 1].label = "近世现代日语（MdJ）";
+            }
+
+            return stages;
+        }
+
+        function deriveRyukyuan(input, dialect) {
+                let stages = [];
+                let currentForm = input;
+                stages.push({ form: currentForm, label: "琉球祖语（PR）", rule: "" });
+
+                function applyRule(form, label, rule, regex, replacement) {
+                    let newForm = form.replace(regex, replacement);
+                    if (newForm !== form) {
+                        stages.push({ form: newForm, label: label, rule: rule });
+                        return newForm;
+                    }
+                    return form;
+                }
+
+                if (dialect === "northern_amami") {
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（北）：{t,k}>{th,kh}/{Ø,e,o,a}_{e,o,a}（简化的规则）", /(^|[eoa])([tk])(?=[eoa])/g, '$1$2h');
+                    currentForm = currentForm.replace(/i([tskdzgn])/g, 'i$1y');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "*i 的顺行颚化：{t,s,k,d,z,g,n}>{t,s,k,d,z,g,n}y/i_" });
+
+                    currentForm = currentForm.replace(/t(?=i)/g, 'c').replace(/d(?=i)/g, 'z').replace(/ty/g, 'c').replace(/dy/g, 'zy').replace(/t(?=u)/g, 'ts').replace(/d(?=u)/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "辅音擦化-颚化：{t,d}i>{c,z}i; {t,d}y>{c,zy}; {t,d}u>{ts,z}u" });
+
+                    currentForm = applyRule(currentForm, "MVR 前", "舌冠音后 u 央化：u>ï/*{s,z,ts}_", /([sz]|ts)u/g, '$1ï');
+                    currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{m,n}{i,u}>n", /([mn])[iu]/g, 'n');
+
+                    currentForm = currentForm.replace(/e/g, 'ï').replace(/o/g, 'u');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（北）：{e,o}>{ï,u}" });
+
+                    currentForm = currentForm.replace(/^p(?=[ïu])/g, 'f').replace(/^p(?=a)/g, 'h').replace(/(?<!^)p(?=a)/g, 'w').replace(/(?<!^)p/g, '');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "ハ行转呼：p->f-/_{ï,u}; p->h-/_a; -p->-Ø-(/_非a); -p->-w-/_a" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：awa>oo", /awa/g, 'oo');
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：-w->-Ø-(/_非a)", /(?<!^)w(?=[^a])/g, '');
+
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：au>oo", /au/g, 'oo');
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：ai>ëë", /ai/g, 'ëë');
+                }
+                else if (dialect === "northern_okinawa") {
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（北）：{p-,t-,k-}>{ph-,th-,kh-}/_{e,o,a}（简化的规则）", /^([ptk])(?=[eoa])/g, '$1h');
+                    currentForm = currentForm.replace(/i([tskdzgn])/g, 'i$1y');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "*i 的顺行颚化：{t,s,k,d,z,g,n}>{t,s,k,d,z,g,n}y/i_" });
+
+                    currentForm = currentForm.replace(/t(?=i)/g, 'c').replace(/d(?=i)/g, 'z').replace(/ty/g, 'c').replace(/dy/g, 'zy').replace(/t(?=u)/g, 'ts').replace(/d(?=u)/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "辅音擦化-颚化：{t,d}i>{c,z}i; {t,d}y>{c,zy}; {t,d}u>{ts,z}u" });
+
+                    currentForm = currentForm.replace(/bur/g, 'nb').replace(/kur/g, 'Qkw').replace(/gur/g, 'ng').replace(/sur/g, 'Qs').replace(/zir/g, 'nz').replace(/zur/g, 'nz');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "C{i,u}r 同化：bur>nb; kur>Qkw; gur>ng; sur>Qs; zir>nz; zur>nz" });
+
+                    currentForm = applyRule(currentForm, "MVR 前", "舌冠音后 u 央化：u>ï/*{s,z,ts}_", /([sz]|ts)u/g, '$1ï');
+                    currentForm = applyRule(currentForm, "MVR 前", "*r 条件失落：r>Ø/_{i,y}", /r(?=[iy])/g, '');
+                    currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{m,n}{i,u}>n", /([mn])[iu]/g, 'n');
+
+                    currentForm = currentForm.replace(/e/g, 'ï').replace(/o/g, 'u');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（北）：{e,o}>{ï,u}" });
+
+                    currentForm = currentForm.replace(/(?<!^)ph(?=a)/g, 'w').replace(/(?<!^)p(?:h)?/g, '').replace(/ky(?=[iï])/g, 'cy').replace(/gy(?=[iï])/g, 'zy').replace(/k(?=i)/g, 'c').replace(/g(?=i)/g, 'z').replace(/ky/g, 'c').replace(/gy/g, 'zy');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "ハカ行转呼：-p(h)->-Ø-(/_非a); -ph->-w-/_a; {k,g}y>{c,zy}/{i,ï}_; {k,g}>{c,z}/_i; {k,g}y>{c,zy}" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：awa>aa", /awa/g, 'aa');
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：-w->-Ø-(/_非a)", /(?<!^)w(?=[^a])/g, '');
+
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：au>oo", /au/g, 'oo');
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：ai>ee", /ai/g, 'ee');
+
+                    let prevForm = currentForm;
+                    currentForm = currentForm.replace(/tsï/g, 'çi').replace(/sï/g, 'şi').replace(/zï/g, 'z̧i').replace(/ï/g, 'i');
+                    if (currentForm !== prevForm) {
+                        stages.push({ form: currentForm, label: "MVR 后", rule: "*{i,ï} 合流：ï>i; {s,z,ts}ï>{ş,z,ç}i" });
+                    }
+
+                    currentForm = applyRule(currentForm, "MVR 后", "舌冠音合流：{ş,z̧,ç}>{s,z,c}", /ş/g, 's');
+                    currentForm = applyRule(currentForm, "MVR 后", "舌冠音合流：{ş,z̧,ç}>{s,z,c}", /z̧/g, 'z');
+                    currentForm = applyRule(currentForm, "MVR 后", "舌冠音合流：{ş,z̧,ç}>{s,z,c}", /ç/g, 'c');
+                }
+                else if (dialect === "centralsouthern_okinawa") {
+                    currentForm = currentForm.replace(/i([tskdzgn])/g, 'i$1y');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "*i 的顺行颚化：{t,s,k,d,z,g,n}>{t,s,k,d,z,g,n}y/i_" });
+
+                    currentForm = currentForm.replace(/t(?=i)/g, 'c').replace(/d(?=i)/g, 'z').replace(/ty/g, 'c').replace(/dy/g, 'zy').replace(/t(?=u)/g, 'ts').replace(/d(?=u)/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "辅音擦化-颚化：{t,d}i>{c,z}i; {t,d}y>{c,zy}; {t,d}u>{ts,z}u" });
+
+                    currentForm = currentForm.replace(/bir/g, 'nzy').replace(/bur/g, 'nd').replace(/kur/g, 'Qkw').replace(/gur/g, 'ngw').replace(/sur/g, 'ş').replace(/zur/g, 'nd');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "*C{i,u}r 同化：bir>nzy; bur>nd; kur>Qkw; gur>ngw; sur>ş; zur>nd" });
+
+                    currentForm = applyRule(currentForm, "MVR 前", "舌冠音后 u 央化：u>ï/*{s,z,ts}_", /([sz]|ts)u/g, '$1ï');
+                    currentForm = applyRule(currentForm, "MVR 前", "*r 条件失落：r>Ø/_{i,y}", /r(?=[iy])/g, '');
+                    currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{m,n}{i,u}>n", /([mn])[iu]/g, 'n');
+
+                    currentForm = currentForm.replace(/e/g, 'ï').replace(/o/g, 'u');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（北）：{e,o}>{ï,u}" });
+
+                    currentForm = currentForm.replace(/^p(?=[iïu])/g, 'f').replace(/^p(?=a)/g, 'h').replace(/(?<!^)p(?=a)/g, 'w').replace(/(?<!^)p/g, '').replace(/ky(?=[iï])/g, 'cy').replace(/gy(?=[iï])/g, 'zy').replace(/k(?=i)/g, 'c').replace(/g(?=i)/g, 'z').replace(/ky/g, 'c').replace(/gy/g, 'zy');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "ハカ行转呼：p->f-/_{i,ï,u}; p->h-/_a; -p->-Ø-(/_非a); -p->-w-/_a; {k,g}y>{c,zy}/{i,ï}_; {k,g}>{c,z}/_i; {k,g}y>{c,zy}" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/音衰弱：awa>aa", /awa/g, 'aa');
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/音衰弱：-w->-Ø-(/_非a)", /(?<!^)w(?=[^a])/g, '');
+
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：au>oo", /au/g, 'oo');
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：ai>ee", /ai/g, 'ee');
+
+                    let prevForm = currentForm;
+                    currentForm = currentForm.replace(/tsï/g, 'çi').replace(/sï/g, 'şi').replace(/zï/g, 'z̧i').replace(/ï/g, 'i');
+                    if (currentForm !== prevForm) {
+                        stages.push({ form: currentForm, label: "MVR 后", rule: "*{i, ï} 合流：ï>i; {s,z,ts}ï>{ş,z̧,ç}i" });
+                    }
+
+                    currentForm = applyRule(currentForm, "MVR 后", "舌冠音合流：{ş,z̧,ç}>{s,z,c}", /ş/g, 's');
+                    currentForm = applyRule(currentForm, "MVR 后", "舌冠音合流：{ş,z̧,ç}>{s,z,c}", /z̧/g, 'z');
+                    currentForm = applyRule(currentForm, "MVR 后", "舌冠音合流：{ş,z̧,ç}>{s,z,c}", /ç/g, 'c');
+                }
+                else if (dialect === "miyako") {
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k}>{ph,kh}/_u", /p(?=u)/g, 'ph');
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k}>{ph,kh}/_u", /k(?=u)/g, 'kh');
+
+                    currentForm = applyRule(currentForm, "MVR 前", "词首 w 强化：w->b-", /^w/g, 'b');
+
+                    currentForm = currentForm.replace(/t(?=i)/g, 'ts').replace(/d(?=i)/g, 'z').replace(/t(?=u)/g, 'ts').replace(/d(?=u)/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "齿龈音擦化-颚化：{t,d}i>{ts,z}i; {t,d}u>{ts,z}u" });
+
+                    currentForm = currentForm.replace(/bur/g, 'Qv').replace(/kir/g, 'kïs').replace(/khur/g, 'Qkh').replace(/gir/g, 'gïr').replace(/gur/g, 'Qv').replace(/sir/g, 'Qs').replace(/sur/g, 'Qs').replace(/zir/g, 'Qz').replace(/zur/g, 'Qz');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "C{i,u}r 同化：bur>Qv; kir>kïs; khur>Qkh; gir>gïr; gur>Qv; sir>Qs; sur>Qs; zir>Qz; zur>Qz" });
+
+                    currentForm = applyRule(currentForm, "MVR 前", "舌冠音后 u 央化：u>ï/{s,z,ts,r}_", /([sz]|ts|r)u/g, '$1ï');
+                    currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{i,u}>Ø/{m,n}_", /([mn])[iu]/g, '$1');
+
+                    currentForm = currentForm.replace(/iy/g, 'ïz').replace(/i/g, 'ï').replace(/e/g, 'i').replace(/([bg])u/g, 'v').replace(/^u/g, 'v').replace(/uw/g, 'v').replace(/o/g, 'u').replace(/ï̈/g, 'ï');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（南）：i>ï; iy>ïz; e>i; {b,g}u>v; u->v-; uw>v; o>u" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "r 条件失落：r>Ø/_ï", /r(?=ï)/g, '');
+
+                    currentForm = currentForm.replace(/^ph/g, 'f').replace(/(?<!^)p(?:h)?(?=a)/g, 'w').replace(/(?<!^)p(?:h)?/g, '').replace(/kh/g, 'f').replace(/khuw/g, 'Qf');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "ハカ行转呼：ph->f; -p(h)->-Ø-(/_非a); -p->-w-/_a; kh>f; khuw>Qf" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：awa>aa", /awa/g, 'aa');
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：-w->-Ø-(/_非a)", /(?<!^)w(?=[^a])/g, '');
+
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：au>uu", /au/g, 'uu');
+                }
+                else if (dialect === "irabu") {
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k}>{ph,kh}/_u", /p(?=u)/g, 'ph');
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k}>{ph,kh}/_u", /k(?=u)/g, 'kh');
+
+                    currentForm = applyRule(currentForm, "MVR 前", "词首 w 强化：w->b-", /^w/g, 'b');
+
+                    currentForm = currentForm.replace(/t(?=i)/g, 'ts').replace(/k(?=i)/g, 'ts').replace(/d(?=i)/g, 'z').replace(/g(?=i)/g, 'z').replace(/t(?=u)/g, 'ts').replace(/d(?=u)/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "辅音擦化-颚化：{t,k,d,g}i>{ts,ts,z,z}i; {t,d}u>{ts,z}u" });
+
+                    currentForm = currentForm.replace(/bur/g, 'Qv').replace(/tsir/g, 'ts').replace(/khur/g, 'Qkh').replace(/zir/g, 'z').replace(/gur/g, 'Qv').replace(/sir/g, 'Qs').replace(/sur/g, 'Qs').replace(/zur/g, 'Qz');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "C{i,u}r 同化：bur>Qv; tsir>ts; khur>Qkh; zir>z; gur>Qv; sir>Qs; sur>Qs; zur>Qz" });
+
+                    currentForm = applyRule(currentForm, "MVR 前", "舌冠音后 u 央化：u>ï/{s,z,ts,r}_", /([sz]|ts|r)u/g, '$1ï');
+                    currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{i,u}>Ø/*{m,n}_", /([mn])[iu]/g, '$1');
+
+                    let temp = currentForm.replace(/([pbr])i/g, '$1TEMP_I').replace(/i/g, 'ï').replace(/([pbr])TEMP_I/g, '$1i');
+                    temp = temp.replace(/iy/g, 'ïz').replace(/e/g, 'i').replace(/([bg])u/g, 'u').replace(/uw/g, 'v').replace(/o/g, 'u').replace(/ï̈/g, 'ï');
+                    if (temp !== currentForm) {
+                        stages.push({ form: temp, label: "MVR 后", rule: "MVR（南）：i>ï (/_非{p,b,r}); iy>ïz; e>i; {b,g}u>u; uw>v; o>u" });
+                        currentForm = temp;
+                    }
+
+                    currentForm = applyRule(currentForm, "MVR 后", "r 条件失落：r>Ø/_i", /r(?=i)/g, '');
+
+                    currentForm = currentForm.replace(/^p(?=[ia])/g, 'h').replace(/^p(?=u)/g, 'f').replace(/(?<!^)p(?:h)?(?=a)/g, 'w').replace(/(?<!^)p(?:h)?/g, '').replace(/kh/g, 'f').replace(/khuw/g, 'Qf');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "ハカ行转呼：p->h-/_{i,a}; p->f-/_u; -p(h)->-Ø-(/_非a); -p->-w-/_a; kh>f; khuw>Qf" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：awa>aa", /awa/g, 'aa');
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：-w->-Ø-(/_非a)", /(?<!^)w(?=[^a])/g, '');
+                }
+                else if (dialect === "ishigaki") {
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k} > {ph,kh}/_u", /p(?=u)/g, 'ph');
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k} > {ph,kh}/_u", /k(?=u)/g, 'kh');
+
+                    currentForm = applyRule(currentForm, "MVR 前", "词首 w 强化：w->b-", /^w/g, 'b');
+
+                    currentForm = currentForm.replace(/t(?=i)/g, 'ts').replace(/d(?=i)/g, 'z').replace(/t(?=u)/g, 'ts').replace(/d(?=u)/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "辅音擦化-颚化：{t,d}i>{ts,z}i; {t,d}u>{ts,z}u" });
+
+                    currentForm = currentForm.replace(/bur/g, 'b').replace(/kir/g, 'kïs').replace(/khur/g, 'Qkh').replace(/sir/g, 'Qs').replace(/zur/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "C{i,u}r 同化：bur>b; kir>kïs; khur>Qkh; sir>Qs; zur>z" });
+
+                    currentForm = applyRule(currentForm, "MVR 前", "舌冠音后 u 央化：u>ï/{s,z,ts}_", /([sz]|ts)u/g, '$1ï');
+                    currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{m,n}{i,u}>n", /([mn])[iu]/g, 'n');
+
+                    currentForm = currentForm.replace(/i/g, 'ï').replace(/e/g, 'i').replace(/o/g, 'u').replace(/ï̈/g, 'ï');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（南）：i>ï; e>i; o>u" });
+
+                    currentForm = currentForm.replace(/^ph/g, 'f').replace(/(?<!^)p(?:h)?(?=a)/g, 'w').replace(/(?<!^)p(?:h)?/g, '').replace(/kh/g, 'f').replace(/(?<!^)g/g, '').replace(/(?<!^)k(?!h)/g, 'g');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "ハカ行转呼：ph->f; -p(h)->-Ø-(/_非a); -p->-w-/_a; kh>f; -g->-Ø-; -k->-g-" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：awa>aa", /awa/g, 'aa');
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：-w->-Ø-(/_非a)", /(?<!^)w(?=[^a])/g, '');
+
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：au>oo", /au/g, 'oo');
+                }
+                else if (dialect === "hatoma") {
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k}>{ph,kh}/_u", /p(?=u)/g, 'ph');
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k}>{ph,kh}/_u", /k(?=u)/g, 'kh');
+
+                    currentForm = applyRule(currentForm, "MVR 前", "词首 w 强化：w->b-", /^w/g, 'b');
+
+                    currentForm = currentForm.replace(/t(?=i)/g, 'ts').replace(/d(?=i)/g, 'z').replace(/t(?=u)/g, 'ts').replace(/d(?=u)/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "辅音擦化-颚化：{t,d}i>{ts,z}i; {t,d}u>{ts,z}u" });
+
+                    currentForm = currentForm.replace(/bur/g, 'b').replace(/kir/g, 'kïs').replace(/khur/g, 'Qkh').replace(/sir/g, 'Qs').replace(/zur/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "C{i,u}r 同化：bur>b; kir>kïs; khur>Qkh; sir>Qs; zur>z" });
+
+                    currentForm = applyRule(currentForm, "MVR 前", "舌冠音后 u 央化：u>ï/{s,z,ts}_", /([sz]|ts)u/g, '$1ï');
+                    currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{m,n}{i,u}>n", /([mn])[iu]/g, 'n');
+
+                    currentForm = currentForm.replace(/i/g, 'ï').replace(/e/g, 'i').replace(/o/g, 'u').replace(/ï̈/g, 'ï');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（南）：i>ï; e>i; o>u" });
+
+                    currentForm = currentForm.replace(/^ph/g, 'f').replace(/(?<!^)p(?:h)?(?=a)/g, 'w').replace(/(?<!^)p(?:h)?/g, '').replace(/kh/g, 'f').replace(/(?<!^)g/g, '').replace(/(?<!^)k(?!h)/g, 'g');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "ハカ行转呼：ph->f; -p(h)->-Ø-(/_非a); -p->-w-/_a; kh>f; -g->-Ø-; -k->-g-" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：awa>aa", /awa/g, 'aa');
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：-w->-Ø-(/_非a)", /(?<!^)w(?=[^a])/g, '');
+
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：au>oo", /au/g, 'oo');
+
+                    currentForm = currentForm.replace(/tsï/g, 'ci').replace(/ï/g, 'i');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "{i,ï} 合流：ï>i (tsï>ci)" });
+                }
+                else if (dialect === "yonaguni") {
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k}>{ph,kh}/_u", /p(?=u)/g, 'ph');
+                    currentForm = applyRule(currentForm, "MVR 前", "辅音送气（南）：{p,k}>{ph,kh}/_u", /k(?=u)/g, 'kh');
+
+                    currentForm = applyRule(currentForm, "MVR 前", "词首 w 强化：w->b-", /^w/g, 'b');
+
+                    currentForm = currentForm.replace(/kh/g, 'khy').replace(/i([tskg])/g, 'i$1y').replace(/kyhy/g, 'khy');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "*i 的顺行颚化：{t,s,k,kh,g}>{t,s,k,kh,g}y/i_" });
+
+                    currentForm = currentForm
+                    // 1. -{k,t}y{a,o} > -TS{a,o} (优先处理带 y 的辅音)
+                    .replace(/(?<!^)[kt]y([ao])/g, 'TS$1')
+
+                        // 2. -ki > -TSi
+                        .replace(/(?<!^)ki/g, 'TSi')
+
+                        // 3. -t{i,u} > -TS{i,u}
+                        .replace(/(?<!^)t([iu])/g, 'TS$1')
+                    .replace(/t(?=i)/g, 'ts').replace(/k(?=i)/g, 'ts').replace(/d(?=i)/g, 'z').replace(/g(?=i)/g, 'z').replace(/p(?=i)/g, 's').replace(/ty/g, 'ts').replace(/ky/g, 'ts').replace(/gy/g, 'zy').replace(/tu/g, 'tsu');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "辅音擦化-颚化：{t,k,d,g,p}i>{ts,ts,z,z,s}i; ty>ts; ky>ts; gy>zy; tu>tsu" });
+
+                    currentForm = currentForm.replace(/bur/g, 'nr').replace(/tsir/g, 'Qts').replace(/sir/g, 'Qs').replace(/sur/g, 'Qs').replace(/zir/g, 'Qz').replace(/zur/g, 'nr');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "C{i,u}r 同化：bur>nr; tsir>Qts; sir>Qs; sur>Qs; zir>Qz; zur>nr" });
+
+                    currentForm = currentForm.replace(/sy/g, 's').replace(/ts/g, 's').replace(/TS/g, 'S');
+                    currentForm = currentForm.replace(/zy/g, 'z').replace(/^ry/g, 'z');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 前", rule: "辅音进一步擦化：{sy,ts}>s; zy>z; ry->z-" });
+
+                    currentForm = applyRule(currentForm, "MVR 前", "舌面音后的 u 央化：u>ï/{s,z,d}_", /([szd])u/g, '$1ï');
+                    currentForm = applyRule(currentForm, "MVR 前", "拨音化：{m,n}{i,u}>n", /([mn])[iu]/g, 'n');
+
+                    currentForm = currentForm.replace(/i/g, 'ï').replace(/e/g, 'i').replace(/o/g, 'u').replace(/ï̈/g, 'ï');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（南）：i>ï; e>i; o>u" });
+
+                    currentForm = applyRule(currentForm, "MVR 后", "r 条件失落：r>Ø/_ï", /r(?=ï)/g, '');
+
+                    // 辅音塞化-咽化
+                    currentForm = currentForm
+                        // 1. 先处理 Q 前缀组合
+                        .replace(/Qz/g, 'd')
+                        .replace(/Qs/g, 'ts\'')
+                        .replace(/S/g, 't\'')
+                        .replace(/sï/g, 'ts\'ï')
+                        .replace(/Qp/g, 'p\'')
+                        .replace(/Qt/g, 't\'')
+                        .replace(/Qk/g, 'k\'')
+
+                        // 2. 处理普通辅音
+                        .replace(/z/g, 'd')
+                        .replace(/nr/g, 'nd')
+                        .replace(/^r/g, 'd')
+                        .replace(/^ïy/g, 'd')
+                        .replace(/^y/g, 'd')
+
+                    if (currentForm !== stages[stages.length - 1].form) {
+                        stages.push({ form: currentForm, label: "MVR 后", rule: "辅音塞化-咽化：{z,Qz}>d; {ïy-,y-}>d-; r->d-; nr>nd; {Qs,Qts}>ts'; sï>ts'ï; ts-（来自t-,k-）>ts'-/_非{a,u}; -ts-（来自-t(y)-,-k(y)-）>-t'-; {Qp,Qt,Qk}>{p',t',k'}" });
+                    }
+
+                    currentForm = currentForm
+                        .replace(/^ph/g, 'f')                     // ph->f- (词首)
+                        .replace(/^p/g, 'h')                      // p->h- (词首，此时已无 ph)
+                        .replace(/(?<!^)p(h)?(?=a)/g, 'w')        // -p->-w-/_a (词中 a 前)
+                        .replace(/(?<!^)p(h)?/g, '')              // -p(h)->-Ø-(/_非a) (词中其余位置)
+                        .replace(/kh/g, 'f')
+                        .replace(/(?<!^)g/g, 'ŋ')
+                        .replace(/(?<!^)k(h)?/g, 'g');
+                    if (currentForm !== stages[stages.length - 1].form) {
+                        stages.push({ form: currentForm, label: "MVR 后", rule: "ハカ行转呼：p->h-; ph->f-; -p(h)->-Ø-(/_非a); -p->-w-/_a; kh->f; -g->-ŋ-; -k(h)->-g-" });
+                    }
+
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：awa>aa", /awa/g, 'aa'); 
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：-w->-Ø-(/_非a)", /(?<!^)w(?=[^a])/g, '');
+                    currentForm = applyRule(currentForm, "MVR 后", "/w/ 音衰弱：uw>w", /uw/g, 'w');
+
+                    currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：au>uu", /au/g, 'uu');
+
+                    currentForm = currentForm.replace(/ts'ï/g, 'c\'i').replace(/ï/g, 'i');
+                    if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "{i,ï} 合流：ï>i (ts'ï>c'i)" });
+                }
+                else {
+                    currentForm = currentForm.replace(/^\*/, '');
+                    stages.push({ form: currentForm, label: "MVR 前", rule: "（待补充规则）" });
+                    stages.push({ form: currentForm, label: "MVR 后", rule: "（待补充规则）" });
+                    stages.push({ form: "（方言形式）", label: "现代琉球诸语", rule: "（待补充规则）" });
+                }
+
+                let finalForm = currentForm.replace(/^([^aeiouï]*)([aeiouï])$/i, '$1$2$2');
+                if (finalForm !== currentForm) {
+                    stages.push({ form: finalForm, label: "MVR 后", rule: "单音节词元音延长" });
+                    currentForm = finalForm;
+                }
+
+                let finalLabel = "现代琉球诸语";
+                if (dialect === "northern_amami") finalLabel = "北奄美大岛语风格";
+                else if (dialect === "northern_okinawa") finalLabel = "北冲绳语风格";
+                else if (dialect === "centralsouthern_okinawa") finalLabel = "中南冲绳语风格";
+                else if (dialect === "miyako") finalLabel = "宫古平良语风格";
+                else if (dialect === "irabu") finalLabel = "池间-伊良部语风格";
+                else if (dialect === "ishigaki") finalLabel = "八重山石垣语风格";
+                else if (dialect === "hatoma") finalLabel = "八重山鸠间语风格";
+                else if (dialect === "yonaguni") finalLabel = "与那国语风格";
+
+                if (stages[stages.length - 1].label !== finalLabel) {
+                    stages.push({ form: currentForm, label: finalLabel, rule: "" });
+                } else {
+                    stages[stages.length - 1].form = currentForm;
+                }
+                return stages;
+            }
+
+
+        function onInputLangChange() {
+                const langSelect = document.getElementById("inputLangSelect").value;
+                const outputSelect = document.getElementById("outputLangSelect");
+                const inputVal = document.getElementById("inputForm").value.trim();
+                const options = outputSelect.options;
+
+                if (langSelect === "japanese") {
+                    // 1. 强制选中现代日语
+                    outputSelect.value = "modern_japanese";
+                    // 2. 禁用除现代日语外的所有其他选项
+                    for (let i = 0; i < options.length; i++) {
+                        options[i].disabled = (options[i].value !== "modern_japanese");
+                    }
+                } else if (langSelect === "ryukyuan") {
+                    // 1. 禁用“现代日语风格”，启用其他所有琉球方言选项
+                    for (let i = 0; i < options.length; i++) {
+                        options[i].disabled = (options[i].value === "modern_japanese");
+                    }
+                    // 2. 如果当前选中的是现代日语，自动切换到默认的琉球方言
+                    if (outputSelect.value === "modern_japanese") {
+                        outputSelect.value = "northern_amami";
+                    }
+                }
+
+                // 动态更新底部提示文字
+                if (typeof updateDisclaimerText === 'function') {
+                    updateDisclaimerText(outputSelect.value);
+                }
+
+                // 切换语言时，如果有输入值则实时推导，否则重置
+            if (!inputVal) {
+                renderDefaultTimeline();
+            } else {
+                derive(); // 切换语言时实时推导
+            }
+
+                // 清空输入时重置时间轴
+                if (!inputVal) {
+                    renderDefaultTimeline();
+                }
+            }
+
+            // 3. 动态更新底部提示文字的函数
+            function updateDisclaimerText(outputValue) {
+                const disclaimerSpan = document.getElementById("dynamicDisclaimerText");
+                if (!disclaimerSpan) return;
+
+                let prefixText = "";
+                switch (outputValue) {
+                    case "modern_japanese":
+                        prefixText = "本推导工具参考了现代日语词形。<br>";
+                        break;
+                    case "northern_amami":
+                        prefixText = "本推导工具参考了北奄美大岛大和浜语的音变规律。<br>";
+                        break;
+                    case "northern_okinawa":
+                        prefixText = "本推导工具参考了北冲绳今归仁语的音变规律。<br>";
+                        break;
+                    case "centralsouthern_okinawa":
+                        prefixText = "本推导工具参考了中南冲绳首里那霸语的音变规律。<br>";
+                        break;
+                    case "miyako":
+                        prefixText = "本推导工具参考了宫古平良语的音变规律。<br>";
+                        break;
+                    case "irabu":
+                        prefixText = "本推导工具参考了宫古佐良浜语的音变规律。<br>";
+                        break;
+                    case "ishigaki": 
+                        prefixText = "本推导工具参考了八重山石垣语的音变规律。<br>";
+                        break;
+                    case "hatoma":
+                        prefixText = "本推导工具参考了八重山鸠间语的音变规律。<br>";
+                        break;
+                    case "yonaguni":
+                        prefixText = "本推导工具参考了八重山与那国语的音变规律。<br>";
+                        break;
+                    default:
+                        prefixText = "本推导工具参考了目标语言的历史音变规律。<br>";
+                        break;
+                }
+                disclaimerSpan.innerHTML = prefixText;
+            }
+
+        function renderDefaultTimeline() {
+                const langSelect = document.getElementById("inputLangSelect").value;
+                const dialect = document.getElementById("outputLangSelect").value; // 新增：获取当前选中的输出语言
+                let lang = langSelect === "auto" ? "japanese" : langSelect;
+
+                // 将 dialect 传入，实现动态更新
+                const defaultStages = getDefaultStages(lang, dialect);
+                currentDerivation = { lang: lang, dialect: dialect, stages: defaultStages, isDefault: true };
+
+                document.getElementById("outputDisplay").innerHTML = '<span class="output-placeholder">请输入词形...</span>';
+                renderTimeline(defaultStages);
+
+                const slider = document.getElementById("timelineSlider");
+                slider.max = defaultStages.length - 1;
+                slider.value = 0;
+                currentStageIndex = 0;
+                updateStageHighlight(0);
+                showStageDetails(0);
+            }
+
+                    function derive() {
+                        const input = document.getElementById("inputForm").value.trim();
+                        if (!input) {
+                            renderDefaultTimeline();
+                            return;
+                        }
+
+                        const langSelect = document.getElementById("inputLangSelect").value;
+                        let lang;
+                        if (langSelect === "auto") {
+                            lang = detectLanguage(input);
+                            document.getElementById("inputLangSelect").value = lang;
+                            onInputLangChange(); // sync output select
+                        } else {
+                            lang = langSelect;
+                        }
+
+                        if (lang === "japanese") {
+                            currentDerivation = { lang: "japanese", stages: deriveJapanese(input), isDefault: false };
+                        } else {
+                            const dialect = document.getElementById("outputLangSelect").value;
+                            currentDerivation = {
+                                lang: "ryukyuan",
+                                dialect: dialect,
+                                stages: deriveRyukyuan(input, dialect),
+                                isDefault: false
+                            };
+                        }
+
+                        updateDisclaimerText(document.getElementById("outputLangSelect").value);
+
+                        // ================= 双写辅音及自动修正（仅在最后一步统一执行） =================
+                        function applyFinalProcessing(form) {
+                            // 如果包含临时标记，直接返回，不处理
+                            if (form.includes('_TMP')) {
+                                return form;
+                            }
+                            // ([^aeiouïë'\s]) 匹配任意非元音且非空白的字符，\1 匹配相同的下一个字符
+                            return form.replace(/([^aeiouïë'\s])\1/gi, 'Q$1').replace(/TS/g, 'ts').replace(/S/g, 's').replace(/yi/g, 'i').replace(/yï/g, 'ï').replace(/yy/g, 'y');
+                        }
+
+                        if (currentDerivation && currentDerivation.stages) {
+                            currentDerivation.stages.forEach(stage => {
+                                stage.form = applyFinalProcessing(stage.form);
+                            });
+                        }
+                        // ==================================================================================
+
+                        displayDerivation(currentDerivation);
+                    }
+
+        function displayDerivation(derivation) {
+            const outputDisplay = document.getElementById("outputDisplay");
+            const lastStage = derivation.stages[derivation.stages.length - 1];
+            outputDisplay.innerHTML = `<span>${lastStage.form}</span>`;
+
+            renderTimeline(derivation.stages);
+
+            const slider = document.getElementById("timelineSlider");
+            slider.max = derivation.stages.length - 1;
+            slider.value = derivation.stages.length - 1;
+            currentStageIndex = derivation.stages.length - 1;
+            updateStageHighlight(currentStageIndex);
+            showStageDetails(currentStageIndex);
+        }
+
+        function renderTimeline(stages) {
+                const timelineStages = document.getElementById("timelineStages");
+                let html = '';
+
+                stages.forEach((stage, index) => {
+                    const isEmpty = stage.form === "（无）";
+                    const ruleName = getRuleName(stage.rule);  // 提取规则名
+                    html += `
+            <div class="timeline-stage ${index === stages.length - 1 ? 'active' : ''}" 
+                 onclick="selectStage(${index})" id="stage-${index}">
+                <div class="stage-label">${stage.label}</div>
+                <div class="stage-form ${isEmpty ? 'empty' : ''}">${stage.form}</div>
+                <div class="stage-rule">${ruleName}</div>  <!-- 只显示规则名 -->
+                ${index < stages.length - 1 ? '<span class="stage-arrow">→</span>' : ''}
+            </div>
+        `;
+                });
+
+                timelineStages.innerHTML = html;
+
+                // 检测是否需要左对齐
+                setTimeout(() => {
+                    const track = document.getElementById("timelineTrack");
+                    const stagesContainer = document.getElementById("timelineStages");
+                    if (stagesContainer.scrollWidth > track.clientWidth) {
+                        stagesContainer.classList.add("long-content");
+                    } else {
+                        stagesContainer.classList.remove("long-content");
+                    }
+                }, 0);
+            }
+
+        function selectStage(index) {
+            currentStageIndex = index;
+            const slider = document.getElementById("timelineSlider");
+            slider.value = index;
+            updateStageHighlight(index);
+            showStageDetails(index);
+        }
+
+        function updateTimelineView(value) {
+            currentStageIndex = parseInt(value);
+            updateStageHighlight(currentStageIndex);
+            showStageDetails(currentStageIndex);
+        }
+
+        function updateStageHighlight(index) {
+            document.querySelectorAll(".timeline-stage").forEach(el => {
+                el.classList.remove("active");
+            });
+            const stageEl = document.getElementById(`stage-${index}`);
+            if (stageEl) {
+                stageEl.classList.add("active");
+            }
+        }
+
+        function showStageDetails(index) {
+                if (!currentDerivation) return;
+
+                const stage = currentDerivation.stages[index];
+                const ruleDetails = document.getElementById("ruleDetails");
+                const ruleTitle = document.getElementById("ruleTitle");
+                const ruleDescription = document.getElementById("ruleDescription");
+
+                ruleDetails.style.display = "block";
+                ruleTitle.textContent = `阶段 ${index + 1}: ${stage.label}`;
+
+                if (stage.form === "" || stage.form === "（无）") {
+                    // 默认无输入状态：将 \n 替换为 <br> 实现换行显示
+                    const ruleText = stage.rule ? stage.rule.replace(/\n/g, '<br>') : "无音变";
+                    ruleDescription.innerHTML = `<strong>该阶段可能发生的音变：</strong><br>${ruleText}`;
+                } else {
+                    // 推导后状态：显示实际触发的音变
+                    ruleDescription.innerHTML = `
+            <strong>词形：</strong><span>${stage.form}</span><br>
+            <strong>音变规则：</strong>${stage.rule || "无"}
+        `;
+                }
+            }
+
+        // Event Listeners
+        document.getElementById("inputForm").addEventListener("input", function () {
+            // 自动删除半角方括号
+            this.value = this.value.replace(/[\[\]]/g, '');
+
+            if (this.value.trim() === "") {
+                renderDefaultTimeline();
+            } else {
+                derive(); // 实时推导
+            }
+        });
+
+        document.getElementById("inputForm").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                derive();
+            }
+        });
+
+        // Initialize
+        window.addEventListener("DOMContentLoaded", () => {
+            onInputLangChange();
+            renderDefaultTimeline();
+        });
+    </script>
+</body>
+
+</html>
