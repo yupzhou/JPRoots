@@ -615,7 +615,7 @@
                     currentForm = applyRule(currentForm, "MVR 前", "*r 条件失落：r>Ø/_{i,y}", /r(?=[iy])/g, '');
                     currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{m,n}{i,u}>n", /([mn])[iu]/g, 'n');
 
-                    currentForm = currentForm.replace(/e/g, 'ï').replace(/o/g, 'u');
+                    currentForm = currentForm.replace(/ke/g, 'kї').replace(/ge/g, 'gї').replace(/e/g, 'ï').replace(/o/g, 'u');
                     if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（北）：{e,o}>{ï,u}" });
 
                     currentForm = currentForm.replace(/(?<!^)ph(?=a)/g, 'w').replace(/(?<!^)p(?:h)?/g, '').replace(/ky(?=[iï])/g, 'cy').replace(/gy(?=[iï])/g, 'zy').replace(/k(?=i)/g, 'c').replace(/g(?=i)/g, 'z').replace(/ky/g, 'c').replace(/gy/g, 'zy');
@@ -628,7 +628,7 @@
                     currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：ai>ee", /ai/g, 'ee');
 
                     let prevForm = currentForm;
-                    currentForm = currentForm.replace(/tsï/g, 'çi').replace(/sï/g, 'şi').replace(/zï/g, 'z̧i').replace(/ï/g, 'i');
+                    currentForm = currentForm.replace(/kї/g, 'ki').replace(/gї/g, 'gi').replace(/tsï/g, 'çi').replace(/sï/g, 'şi').replace(/zï/g, 'z̧i').replace(/ï/g, 'i');
                     if (currentForm !== prevForm) {
                         stages.push({ form: currentForm, label: "MVR 后", rule: "*{i,ï} 合流：ï>i; {s,z,ts}ï>{ş,z,ç}i" });
                     }
@@ -651,7 +651,7 @@
                     currentForm = applyRule(currentForm, "MVR 前", "*r 条件失落：r>Ø/_{i,y}", /r(?=[iy])/g, '');
                     currentForm = applyRule(currentForm, "MVR 前", "鼻音拨音化：{m,n}{i,u}>n", /([mn])[iu]/g, 'n');
 
-                    currentForm = currentForm.replace(/e/g, 'ï').replace(/o/g, 'u');
+                    currentForm = currentForm.replace(/ke/g, 'kї').replace(/ge/g, 'gї').replace(/e/g, 'ï').replace(/o/g, 'u');
                     if (currentForm !== stages[stages.length - 1].form) stages.push({ form: currentForm, label: "MVR 后", rule: "MVR（北）：{e,o}>{ï,u}" });
 
                     currentForm = currentForm.replace(/^p(?=[iïu])/g, 'f').replace(/^p(?=a)/g, 'h').replace(/(?<!^)p(?=a)/g, 'w').replace(/(?<!^)p/g, '').replace(/ky(?=[iï])/g, 'cy').replace(/gy(?=[iï])/g, 'zy').replace(/k(?=i)/g, 'c').replace(/g(?=i)/g, 'z').replace(/ky/g, 'c').replace(/gy/g, 'zy');
@@ -664,7 +664,7 @@
                     currentForm = applyRule(currentForm, "MVR 后", "连续元音融合：ai>ee", /ai/g, 'ee');
 
                     let prevForm = currentForm;
-                    currentForm = currentForm.replace(/tsï/g, 'çi').replace(/sï/g, 'şi').replace(/zï/g, 'z̧i').replace(/ï/g, 'i');
+                    currentForm = currentForm.replace(/kї/g, 'ki').replace(/gї/g, 'gi').replace(/tsï/g, 'çi').replace(/sï/g, 'şi').replace(/zï/g, 'z̧i').replace(/ï/g, 'i');
                     if (currentForm !== prevForm) {
                         stages.push({ form: currentForm, label: "MVR 后", rule: "*{i, ï} 合流：ï>i; {s,z,ts}ï>{ş,z̧,ç}i" });
                     }
